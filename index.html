@@ -46,15 +46,15 @@
         }
         
         /* Estilos para o Modal */
-        #details-modal-backdrop {
+        .modal-backdrop {
             transition: opacity 0.3s ease;
         }
-        #details-modal-content {
+        .modal-content {
             transition: all 0.3s ease;
             transform: translateY(20px) scale(0.95);
             opacity: 0;
         }
-        #details-modal.open #details-modal-content {
+        .modal.open .modal-content {
             transform: translateY(0) scale(1);
             opacity: 1;
         }
@@ -63,14 +63,17 @@
         html, body {
             height: 100%;
         }
-        /* REMOVIDO: Estilos do body que centralizavam tudo. 
-           Isto será controlado pelo JavaScript agora.
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Estilos do body são controlados por JS */
+
+        /* Oculta setas de input[type=number] */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-        */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-full antialiased flex items-center justify-center">
@@ -218,7 +221,7 @@
                         <!-- Seção de Informações Eclesiásticas -->
                         <div>
                             <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Eclesiásticas</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                            <div class_grid="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                                 <div>
                                     <label for="data_batismo" class="block text-sm font-medium text-gray-300 mb-1">Data de Batismo</label>
                                     <input type="date" id="data_batismo" name="data_batismo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -269,24 +272,24 @@
     </div>
     
     <!-- Modal de Detalhes -->
-    <div id="details-modal" class="hidden fixed inset-0 z-40 overflow-y-auto">
+    <div id="details-modal" class="modal hidden fixed inset-0 z-40 overflow-y-auto">
         <!-- Fundo escuro (Backdrop) -->
-        <div id="details-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-75"></div>
+        <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div>
         
         <!-- Conteúdo do Modal -->
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div id="details-modal-content" class="relative bg-gray-100 text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
+            <div class="modal-content relative bg-gray-100 text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
                 <!-- Cabeçalho do Modal -->
                 <div class="flex justify-between items-center pb-3 border-b border-gray-300">
                     <h2 class="text-2xl font-bold text-blue-800">Detalhes do Membro</h2>
-                    <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800 transition-colors">
+                    <button class="modal-close-btn text-gray-500 hover:text-gray-800 transition-colors">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
 
                 <!-- Corpo do Modal (Layout fornecido pelo usuário) -->
                 <div class="space-y-6 mt-5">
-                    <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+                    <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                         <h3 class="text-lg font-semibold text-blue-700">Informações Pessoais</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
                             <div class="md:col-span-2"><strong>Nome:</strong> <span id="modal-detalhes-nome" class="font-medium text-gray-700"></span></div>
@@ -317,6 +320,211 @@
                     </div>
                 </div>
                 
+                <!-- Rodapé do Modal com Botões -->
+                <div class="flex flex-col md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
+                    <button id="modal-edit-btn" class="w-full md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                        Editar
+                    </button>
+                    <button id="modal-delete-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="edit-modal" class="modal hidden fixed inset-0 z-50 overflow-y-auto">
+        <!-- Fundo escuro (Backdrop) -->
+        <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div>
+        
+        <!-- Conteúdo do Modal -->
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content relative bg-gray-800 text-gray-100 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
+                <!-- Cabeçalho do Modal -->
+                <div class="flex justify-between items-center pb-3 border-b border-gray-700">
+                    <h2 class="text-2xl font-bold text-blue-400">Editar Membro</h2>
+                    <button class="modal-close-btn text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Formulário de Edição -->
+                <form id="edit-form" class="mt-5 space-y-8">
+                    <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                        <!-- Campos de Edição (iguais ao de cadastro, mas com 'edit-' no id) -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Pessoais</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                                <div class="md:col-span-2">
+                                    <label for="edit-nome" class="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
+                                    <input type="text" id="edit-nome" name="nome" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-funcao" class="block text-sm font-medium text-gray-300 mb-1">Função/Ministério</label>
+                                    <input type="text" id="edit-funcao" name="funcao" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-data_nascimento" class="block text-sm font-medium text-gray-300 mb-1">Data de Nasc.</label>
+                                    <input type="date" id="edit-data_nascimento" name="data_nascimento" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-telefone" class="block text-sm font-medium text-gray-300 mb-1">Telefone</label>
+                                    <input type="tel" id="edit-telefone" name="telefone" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                                    <input type="email" id="edit-email" name="email" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-cpf" class="block text-sm font-medium text-gray-300 mb-1">CPF</label>
+                                    <input type="text" id="edit-cpf" name="cpf" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-rg" class="block text-sm font-medium text-gray-300 mb-1">RG</label>
+                                    <input type="text" id="edit-rg" name="rg" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-naturalidade" class="block text-sm font-medium text-gray-300 mb-1">Naturalidade</label>
+                                    <input type="text" id="edit-naturalidade" name="naturalidade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="md:col-span-3">
+                                    <label for="edit-endereco" class="block text-sm font-medium text-gray-300 mb-1">Endereço</label>
+                                    <textarea id="edit-endereco" name="endereco" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                </div>
+                                <div class="md:col-span-1">
+                                    <label for="edit-nome_pai" class="block text-sm font-medium text-gray-300 mb-1">Nome do Pai</label>
+                                    <input type="text" id="edit-nome_pai" name="nome_pai" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="edit-nome_mae" class="block text-sm font-medium text-gray-300 mb-1">Nome da Mãe</label>
+                                    <input type="text" id="edit-nome_mae" name="nome_mae" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-estado_civil" class="block text-sm font-medium text-gray-300 mb-1">Estado Civil</label>
+                                    <select id="edit-estado_civil" name="estado_civil" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Selecione...</option>
+                                        <option value="Solteiro(a)">Solteiro(a)</option>
+                                        <option value="Casado(a)">Casado(a)</option>
+                                        <option value="Divorciado(a)">Divorciado(a)</option>
+                                        <option value="Viúvo(a)">Viúvo(a)</option>
+                                    </select>
+                                </div>
+                                <div id="edit-conjuge-field" class="hidden md:col-span-2">
+                                    <label for="edit-conjuge" class="block text-sm font-medium text-gray-300 mb-1">Nome do Cônjuge</label>
+                                    <input type="text" id="edit-conjuge" name="conjuge" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-profissao" class="block text-sm font-medium text-gray-300 mb-1">Profissão</label>
+                                    <input type="text" id="edit-profissao" name="profissao" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="edit-escolaridade" class="block text-sm font-medium text-gray-300 mb-1">Escolaridade</label>
+                                    <select id="edit-escolaridade" name="escolaridade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Selecione...</option>
+                                        <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
+                                        <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
+                                        <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+                                        <option value="Ensino Médio Completo">Ensino Médio Completo</option>
+                                        <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
+                                        <option value="Ensino Superior Completo">Ensino Superior Completo</option>
+                                        <option value="Pós-graduação">Pós-graduação</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Eclesiásticas</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                                <div>
+                                    <label for="edit-data_batismo" class="block text-sm font-medium text-gray-300 mb-1">Data de Batismo</label>
+                                    <input type="date" id="edit-data_batismo" name="data_batismo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="edit-data_chegada" class="block text-sm font-medium text-gray-300 mb-1">Data de Chegada na Igreja</label>
+                                    <input type="date" id="edit-data_chegada" name="data_chegada" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="md:col-span-3"></div> <!-- Espaçador -->
+                                <div>
+                                    <label for="edit-igreja_anterior" class="block text-sm font-medium text-gray-300 mb-1">Igreja de Onde Veio</label>
+                                    <input type="text" id="edit-igreja_anterior" name="igreja_anterior" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="edit-cargo_anterior" class="block text-sm font-medium text-gray-300 mb-1">Cargo que Ocupava</label>
+                                    <input type="text" id="edit-cargo_anterior" name="cargo_anterior" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção de Senha e Salvar -->
+                    <div class="pt-6 mt-6 border-t border-gray-700 space-y-4">
+                        <div>
+                            <label for="edit-password" class="block text-sm font-medium text-gray-300 mb-1">Sua Senha (Obrigatória)</label>
+                            <input type="password" id="edit-password" name="edit-password" required placeholder="Digite sua senha para confirmar"
+                                   class="w-full md:w-1/2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div id="edit-error" class="text-red-400 text-sm h-4">
+                            <!-- Mensagens de erro de edição aqui -->
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                                Cancelar
+                            </button>
+                            <button type="submit" id="edit-submit-button" 
+                                    class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                                <span>Salvar Alterações</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Exclusão -->
+    <div id="delete-modal" class="modal hidden fixed inset-0 z-50 overflow-y-auto">
+        <!-- Fundo escuro (Backdrop) -->
+        <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div>
+        
+        <!-- Conteúdo do Modal -->
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content relative bg-gray-800 text-gray-100 rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 mx-auto">
+                <form id="delete-form">
+                    <!-- Cabeçalho do Modal -->
+                    <div class="flex justify-between items-center pb-3">
+                        <h2 class="text-2xl font-bold text-red-400">Confirmar Exclusão</h2>
+                        <button type="button" class="modal-close-btn text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Corpo do Modal -->
+                    <div class="mt-4 space-y-4">
+                        <p class="text-gray-300">Você tem certeza que deseja excluir este membro? Esta ação não pode ser desfeita.</p>
+                        <p class="text-yellow-400 text-sm">Aviso: Isso excluirá permanentemente o registro do membro. Os registros financeiros (dízimos, etc.) associados a ele NÃO serão excluídos.</p>
+                        
+                        <div>
+                            <label for="delete-password" class="block text-sm font-medium text-gray-300 mb-1">Sua Senha (Obrigatória)</label>
+                            <input type="password" id="delete-password" name="delete-password" required placeholder="Digite sua senha para confirmar"
+                                   class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div id="delete-error" class="text-red-400 text-sm h-4">
+                            <!-- Mensagens de erro de exclusão aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Rodapé do Modal com Botões -->
+                    <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-700">
+                        <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="delete-submit-button" 
+                                class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                            <span>Excluir Permanentemente</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -330,12 +538,23 @@
             getAuth, 
             signInWithEmailAndPassword, 
             signOut, 
-            onAuthStateChanged 
+            onAuthStateChanged,
+            EmailAuthProvider, // Importa para reautenticação
+            reauthenticateWithCredential // Importa para reautenticação
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, addDoc, collection, onSnapshot, query, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { 
+            getFirestore, 
+            doc, 
+            addDoc, 
+            collection, 
+            onSnapshot, 
+            query, 
+            setLogLevel,
+            updateDoc, // Importa para edição
+            deleteDoc  // Importa para exclusão
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Configuração do Firebase ---
-        // Usa APENAS a configuração fornecida pelo usuário, já que o login é por e-mail/senha
         const userProvidedConfigString = `{
           "apiKey": "AIzaSyA59Apn8I_8uT7XBrMIS_zD1RdtHgJCzOA",
           "authDomain": "gestao-capoeira.firebaseapp.com",
@@ -349,8 +568,9 @@
 
         // --- Variáveis Globais do App ---
         let app, auth, db, userId, membersCollectionRef;
-        let membersCache = {}; // Cache para guardar dados dos membros para o modal
+        let membersCache = {}; // Cache para guardar dados dos membros
         let unsubscribeMembers = null; // Para parar de ouvir os dados ao fazer logout
+        let currentMemberId = null; // Guarda o ID do membro selecionado (para edição/exclusão)
 
         // --- Elementos do DOM (Autenticação) ---
         const authScreen = document.getElementById('auth-screen');
@@ -367,7 +587,7 @@
         const tabCadastro = document.getElementById('tab-cadastro');
         const tabVisualizar = document.getElementById('tab-visualizar');
 
-        // --- Elementos do DOM (Formulário) ---
+        // --- Elementos do DOM (Formulário de Cadastro) ---
         const memberForm = document.getElementById('member-form');
         const submitButton = document.getElementById('submit-button');
         const submitButtonText = submitButton.querySelector('span');
@@ -378,10 +598,10 @@
         const memberList = document.getElementById('member-list');
         const listLoading = document.getElementById('list-loading');
 
-        // --- Elementos do DOM (Modal) ---
+        // --- Elementos do DOM (Modal de Detalhes) ---
         const detailsModal = document.getElementById('details-modal');
-        const modalBackdrop = document.getElementById('details-modal-backdrop');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalEditBtn = document.getElementById('modal-edit-btn');
+        const modalDeleteBtn = document.getElementById('modal-delete-btn');
         const modalSpans = {
             nome: document.getElementById('modal-detalhes-nome'),
             funcao: document.getElementById('modal-detalhes-funcao'),
@@ -405,14 +625,31 @@
             cargo_anterior: document.getElementById('modal-detalhes-cargo_anterior'),
         };
 
+        // --- Elementos do DOM (Modal de Edição) ---
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-form');
+        const editEstadoCivilSelect = document.getElementById('edit-estado_civil');
+        const editConjugeField = document.getElementById('edit-conjuge-field');
+        const editSubmitButton = document.getElementById('edit-submit-button');
+        const editSubmitButtonText = editSubmitButton.querySelector('span');
+        const editError = document.getElementById('edit-error');
+
+        // --- Elementos do DOM (Modal de Exclusão) ---
+        const deleteModal = document.getElementById('delete-modal');
+        const deleteForm = document.getElementById('delete-form');
+        const deleteSubmitButton = document.getElementById('delete-submit-button');
+        const deleteSubmitButtonText = deleteSubmitButton.querySelector('span');
+        const deleteError = document.getElementById('delete-error');
+
         // --- Elementos do DOM (Geral) ---
         const messageBox = document.getElementById('message-box');
+        const allCloseModalButtons = document.querySelectorAll('.modal-close-btn');
+        const allModalBackdrops = document.querySelectorAll('.modal-backdrop');
 
         // --- Funções Auxiliares ---
 
         /**
          * Exibe uma mensagem de feedback no canto da tela.
-         * (Função showMessage permanece a mesma)
          */
         function showMessage(message, isError = false) {
             messageBox.textContent = message;
@@ -427,8 +664,6 @@
 
         /**
          * Formata data (AAAA-MM-DD) para DD/MM/AAAA.
-         * @param {string} dateString - A data no formato AAAA-MM-DD.
-         * @returns {string} - A data formatada ou "N/A".
          */
         function formatarData(dateString) {
             if (!dateString) return "N/A";
@@ -460,32 +695,128 @@
         }
 
         /**
-         * Exibe o modal com os detalhes do membro.
-         * @param {object} member - O objeto com os dados do membro (chaves em camelCase).
+         * Reautentica o usuário com a senha fornecida.
+         * Lança um erro se a reautenticação falhar.
          */
-        function showDetailsModal(member) {
+        async function reauthenticateUser(password) {
+            const user = auth.currentUser;
+            if (!user) {
+                throw new Error("Usuário não está logado.");
+            }
+            if (!user.email) {
+                throw new Error("Usuário não tem email associado.");
+            }
+
+            try {
+                const credential = EmailAuthProvider.credential(user.email, password);
+                await reauthenticateWithCredential(user, credential);
+                return true; // Sucesso
+            } catch (error) {
+                console.error("Erro ao reautenticar:", error.code);
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    throw new Error("Senha incorreta.");
+                } else {
+                    throw new Error("Erro de autenticação.");
+                }
+            }
+        }
+
+        /**
+         * Mapeia os dados de um membro (camelCase) para os campos do formulário de edição (snake_case).
+         */
+        function populateEditForm(member) {
+            document.getElementById('edit-nome').value = member.nome || '';
+            document.getElementById('edit-funcao').value = member.funcao || '';
+            document.getElementById('edit-data_nascimento').value = member.dataNascimento || ''; // Correção
+            document.getElementById('edit-telefone').value = member.telefone || '';
+            document.getElementById('edit-email').value = member.email || '';
+            document.getElementById('edit-cpf').value = member.cpf || '';
+            document.getElementById('edit-rg').value = member.rg || '';
+            document.getElementById('edit-naturalidade').value = member.naturalidade || '';
+            document.getElementById('edit-endereco').value = member.endereco || '';
+            document.getElementById('edit-nome_pai').value = member.nomePai || ''; // Correção
+            document.getElementById('edit-nome_mae').value = member.nomeMae || ''; // Correção
+            document.getElementById('edit-estado_civil').value = member.estadoCivil || ''; // Correção
+            document.getElementById('edit-conjuge').value = member.conjuge || '';
+            document.getElementById('edit-profissao').value = member.profissao || '';
+            document.getElementById('edit-escolaridade').value = member.escolaridade || '';
+            document.getElementById('edit-data_batismo').value = member.dataBatismo || ''; // Correção
+            document.getElementById('edit-data_chegada').value = member.dataChegada || ''; // Correção
+            document.getElementById('edit-igreja_anterior').value = member.igrejaAnterior || ''; // Correção
+            document.getElementById('edit-cargo_anterior').value = member.cargoAnterior || ''; // Correção
+
+            // Lógica do campo Cônjuge
+            if (member.estadoCivil === 'Casado(a)') { // Correção
+                editConjugeField.classList.remove('hidden');
+            } else {
+                editConjugeField.classList.add('hidden');
+            }
+            
+            // Limpa campos de senha e erro
+            document.getElementById('edit-password').value = '';
+            editError.textContent = '';
+        }
+
+        /**
+         * Abre um modal.
+         * @param {string} modalId - O ID do elemento modal ('details-modal', 'edit-modal', 'delete-modal').
+         */
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                void modal.offsetWidth; // Força reflow para animação
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
+            }
+        }
+
+        /**
+         * Fecha o modal ativo.
+         * @param {HTMLElement} modal - O elemento modal a ser fechado.
+         */
+        function hideModal(modal) {
+            if (modal) {
+                modal.classList.remove('open');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    // Só restaura a rolagem se nenhum outro modal estiver aberto
+                    if (document.querySelectorAll('.modal.open').length === 0) {
+                        document.body.style.overflow = '';
+                    }
+                }, 300); // Espera a animação de saída
+            }
+        }
+
+        /**
+         * Exibe o modal com os detalhes do membro.
+         */
+        function showDetailsModal() {
+            const member = membersCache[currentMemberId];
+            if (!member) return;
+
             // Preenche os campos do modal lendo chaves camelCase
             modalSpans.nome.textContent = member.nome || 'N/A';
             modalSpans.funcao.textContent = member.funcao || 'N/A';
-            modalSpans.data_nascimento.textContent = formatarData(member.dataNascimento); // Correção: dataNascimento
+            modalSpans.data_nascimento.textContent = formatarData(member.dataNascimento);
             modalSpans.telefone.textContent = member.telefone || 'N/A';
             modalSpans.email.textContent = member.email || 'N/A';
             modalSpans.cpf.textContent = member.cpf || 'N/A';
             modalSpans.rg.textContent = member.rg || 'N/A';
             modalSpans.naturalidade.textContent = member.naturalidade || 'N/A';
             modalSpans.endereco.textContent = member.endereco || 'N/A';
-            modalSpans.nome_pai.textContent = member.nomePai || 'N/A'; // Correção: nomePai
-            modalSpans.nome_mae.textContent = member.nomeMae || 'N/A'; // Correção: nomeMae
-            modalSpans.estado_civil.textContent = member.estadoCivil || 'N/A'; // Correção: estadoCivil
+            modalSpans.nome_pai.textContent = member.nomePai || 'N/A';
+            modalSpans.nome_mae.textContent = member.nomeMae || 'N/A';
+            modalSpans.estado_civil.textContent = member.estadoCivil || 'N/A';
             modalSpans.profissao.textContent = member.profissao || 'N/A';
             modalSpans.escolaridade.textContent = member.escolaridade || 'N/A';
-            modalSpans.data_batismo.textContent = formatarData(member.dataBatismo); // Correção: dataBatismo
-            modalSpans.data_chegada.textContent = formatarData(member.dataChegada); // Correção: dataChegada
-            modalSpans.igreja_anterior.textContent = member.igrejaAnterior || 'N/A'; // Correção: igrejaAnterior
-            modalSpans.cargo_anterior.textContent = member.cargoAnterior || 'N/A'; // Correção: cargoAnterior
+            modalSpans.data_batismo.textContent = formatarData(member.dataBatismo);
+            modalSpans.data_chegada.textContent = formatarData(member.dataChegada);
+            modalSpans.igreja_anterior.textContent = member.igrejaAnterior || 'N/A';
+            modalSpans.cargo_anterior.textContent = member.cargoAnterior || 'N/A';
             
             // Lógica para campo Cônjuge
-            if (member.estadoCivil === 'Casado(a)' && member.conjuge) { // Correção: estadoCivil
+            if (member.estadoCivil === 'Casado(a)' && member.conjuge) {
                 modalSpans.conjuge.textContent = member.conjuge;
                 modalSpans.conjugeContainer.classList.remove('hidden');
             } else {
@@ -494,27 +825,11 @@
             }
 
             // Exibe o modal
-            detailsModal.classList.remove('hidden');
-            // Força um reflow para a animação de entrada funcionar
-            void detailsModal.offsetWidth;
-            detailsModal.classList.add('open');
-            document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
-        }
-
-        /**
-         * Fecha o modal de detalhes.
-         */
-        function hideDetailsModal() {
-            detailsModal.classList.remove('open');
-            setTimeout(() => {
-                detailsModal.classList.add('hidden');
-                document.body.style.overflow = ''; // Restaura rolagem
-            }, 300); // Espera a animação de saída
+            showModal('details-modal');
         }
 
         /**
          * Renderiza a lista de membros no DOM.
-         * @param {Array<object>} memberDocs - Um array de documentos do Firestore.
          */
         function renderMemberList(memberDocs) {
             listLoading.classList.add('hidden');
@@ -578,7 +893,6 @@
 
             }, (error) => {
                 console.error("Erro ao carregar membros: ", error);
-                // Este é o erro de permissão que o usuário está vendo
                 if (error.code === 'permission-denied' || error.code === 'unauthenticated') {
                      showMessage("Sessão expirada ou sem permissão. Faça login novamente.", true);
                      signOut(auth); // Força o logout para mostrar a tela de login
@@ -591,11 +905,10 @@
 
         /**
          * Manipula o envio do formulário de cadastro.
-         * @param {Event} e - O evento de submit do formulário.
          */
         async function handleFormSubmit(e) {
             e.preventDefault();
-            if (!userId) { // Verifica se o usuário está logado
+            if (!userId) { 
                 showMessage("Você precisa estar logado para cadastrar um membro.", true);
                 return;
             }
@@ -614,23 +927,23 @@
                     createdAt: new Date(),
                     nome: formData.get('nome') || null,
                     funcao: formData.get('funcao') || null,
-                    dataNascimento: formData.get('data_nascimento') || null, // Correção
+                    dataNascimento: formData.get('data_nascimento') || null,
                     telefone: formData.get('telefone') || null,
                     email: formData.get('email') || null,
                     cpf: formData.get('cpf') || null,
                     rg: formData.get('rg') || null,
                     naturalidade: formData.get('naturalidade') || null,
                     endereco: formData.get('endereco') || null,
-                    nomePai: formData.get('nome_pai') || null, // Correção
-                    nomeMae: formData.get('nome_mae') || null, // Correção
-                    estadoCivil: formData.get('estado_civil') || null, // Correção
-                    conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null, // Correção
+                    nomePai: formData.get('nome_pai') || null,
+                    nomeMae: formData.get('nome_mae') || null,
+                    estadoCivil: formData.get('estado_civil') || null,
+                    conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null,
                     profissao: formData.get('profissao') || null,
                     escolaridade: formData.get('escolaridade') || null,
-                    dataBatismo: formData.get('data_batismo') || null, // Correção
-                    dataChegada: formData.get('data_chegada') || null, // Correção
-                    igrejaAnterior: formData.get('igreja_anterior') || null, // Correção
-                    cargoAnterior: formData.get('cargo_anterior') || null // Correção
+                    dataBatismo: formData.get('data_batismo') || null,
+                    dataChegada: formData.get('data_chegada') || null,
+                    igrejaAnterior: formData.get('igreja_anterior') || null,
+                    cargoAnterior: formData.get('cargo_anterior') || null
                 };
 
                 // Validação básica
@@ -661,8 +974,126 @@
         }
         
         /**
+         * Manipula o envio do formulário de EDIÇÃO.
+         */
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            if (!userId || !currentMemberId) return;
+
+            const password = document.getElementById('edit-password').value;
+            if (!password) {
+                editError.textContent = 'A senha é obrigatória para salvar.';
+                return;
+            }
+
+            // Ativa o loading
+            editSubmitButton.disabled = true;
+            editSubmitButtonText.textContent = 'Salvando...';
+            const spinner = document.createElement('div');
+            spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
+            editSubmitButton.prepend(spinner);
+            editError.textContent = '';
+
+            try {
+                // 1. Reautenticar
+                await reauthenticateUser(password);
+
+                // 2. Coletar dados do formulário
+                const formData = new FormData(editForm);
+                const updatedMember = {
+                    nome: formData.get('nome') || null,
+                    funcao: formData.get('funcao') || null,
+                    dataNascimento: formData.get('data_nascimento') || null,
+                    telefone: formData.get('telefone') || null,
+                    email: formData.get('email') || null,
+                    cpf: formData.get('cpf') || null,
+                    rg: formData.get('rg') || null,
+                    naturalidade: formData.get('naturalidade') || null,
+                    endereco: formData.get('endereco') || null,
+                    nomePai: formData.get('nome_pai') || null,
+                    nomeMae: formData.get('nome_mae') || null,
+                    estadoCivil: formData.get('estado_civil') || null,
+                    conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null,
+                    profissao: formData.get('profissao') || null,
+                    escolaridade: formData.get('escolaridade') || null,
+                    dataBatismo: formData.get('data_batismo') || null,
+                    dataChegada: formData.get('data_chegada') || null,
+                    igrejaAnterior: formData.get('igreja_anterior') || null,
+                    cargoAnterior: formData.get('cargo_anterior') || null,
+                    updatedAt: new Date() // Adiciona um timestamp de atualização
+                };
+
+                // 3. Atualizar no Firestore
+                const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
+                await updateDoc(docRef, updatedMember);
+                
+                // 4. Sucesso
+                showMessage("Membro atualizado com sucesso!");
+                hideModal(editModal);
+                currentMemberId = null; // Limpa o ID selecionado
+
+            } catch (error) {
+                console.error("Erro ao atualizar membro:", error);
+                editError.textContent = error.message; // Exibe "Senha incorreta." ou outro erro
+            } finally {
+                // Desativa o loading
+                editSubmitButton.disabled = false;
+                editSubmitButtonText.textContent = 'Salvar Alterações';
+                if(editSubmitButton.firstChild) {
+                    editSubmitButton.removeChild(editSubmitButton.firstChild);
+                }
+            }
+        }
+        
+        /**
+         * Manipula o envio do formulário de EXCLUSÃO.
+         */
+        async function handleDeleteSubmit(e) {
+            e.preventDefault();
+            if (!userId || !currentMemberId) return;
+
+            const password = document.getElementById('delete-password').value;
+            if (!password) {
+                deleteError.textContent = 'A senha é obrigatória para excluir.';
+                return;
+            }
+            
+            // Ativa o loading
+            deleteSubmitButton.disabled = true;
+            deleteSubmitButtonText.textContent = 'Excluindo...';
+            const spinner = document.createElement('div');
+            spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
+            deleteSubmitButton.prepend(spinner);
+            deleteError.textContent = '';
+
+            try {
+                // 1. Reautenticar
+                await reauthenticateUser(password);
+
+                // 2. Excluir do Firestore
+                const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
+                await deleteDoc(docRef);
+
+                // 3. Sucesso
+                showMessage("Membro excluído com sucesso.");
+                hideModal(deleteModal);
+                currentMemberId = null; // Limpa o ID selecionado
+
+            } catch (error) {
+                console.error("Erro ao excluir membro:", error);
+                deleteError.textContent = error.message; // Exibe "Senha incorreta." ou outro erro
+            } finally {
+                // Desativa o loading
+                deleteSubmitButton.disabled = false;
+                deleteSubmitButtonText.textContent = 'Excluir Permanentemente';
+                if(deleteSubmitButton.firstChild) {
+                    deleteSubmitButton.removeChild(deleteSubmitButton.firstChild);
+                }
+            }
+        }
+
+        /**
          * Alterna a visibilidade das abas.
-         * @param {string} tabName - O nome da aba para ativar ('cadastro' ou 'visualizar').
          */
         function switchTab(tabName) {
             if (tabName === 'cadastro') {
@@ -697,12 +1128,10 @@
                         userId = user.uid;
                         console.log("Usuário autenticado:", userId);
 
-                        // *** CORREÇÃO DE LAYOUT ***
                         // Remove o 'flex' do body para alinhar o app no topo
                         document.body.style.display = 'block';
                         document.body.style.alignItems = '';
                         document.body.style.justifyContent = '';
-                        // *** FIM DA CORREÇÃO ***
 
                         // Esconde login, mostra app
                         authScreen.classList.add('hidden');
@@ -721,12 +1150,10 @@
                         console.log("Nenhum usuário. Exibindo tela de login.");
                         userId = null;
                         
-                        // *** CORREÇÃO DE LAYOUT ***
                         // Adiciona 'flex' ao body para centralizar o login
                         document.body.style.display = 'flex';
                         document.body.style.alignItems = 'center';
                         document.body.style.justifyContent = 'center';
-                        // *** FIM DA CORREÇÃO ***
                         
                         // Esconde app, mostra login
                         authScreen.classList.remove('hidden');
@@ -742,6 +1169,11 @@
                         // Limpa dados da tela
                         memberList.innerHTML = '';
                         membersCache = {};
+                        
+                        // Fecha todos os modais caso estejam abertos
+                        hideModal(detailsModal);
+                        hideModal(editModal);
+                        hideModal(deleteModal);
                     }
                 });
 
@@ -767,7 +1199,7 @@
                         // Sucesso! onAuthStateChanged vai cuidar de mostrar o app
                     } catch (error) {
                         console.error("Erro no login:", error.code);
-                        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                             loginError.textContent = 'Email ou senha inválidos.';
                         } else {
                             loginError.textContent = 'Erro ao tentar fazer login.';
@@ -797,7 +1229,7 @@
                 tabBtnCadastro.addEventListener('click', () => switchTab('cadastro'));
                 tabBtnVisualizar.addEventListener('click', () => switchTab('visualizar'));
 
-                // Formulário
+                // Formulário de Cadastro
                 memberForm.addEventListener('submit', handleFormSubmit);
                 estadoCivilSelect.addEventListener('change', (e) => {
                     if (e.target.value === 'Casado(a)') {
@@ -807,29 +1239,69 @@
                     }
                 });
 
+                // Formulário de Edição
+                editForm.addEventListener('submit', handleEditSubmit);
+                editEstadoCivilSelect.addEventListener('change', (e) => {
+                    if (e.target.value === 'Casado(a)') {
+                        editConjugeField.classList.remove('hidden');
+                    } else {
+                        editConjugeField.classList.add('hidden');
+                    }
+                });
+                
+                // Formulário de Exclusão
+                deleteForm.addEventListener('submit', handleDeleteSubmit);
+
                 // Lista de Membros (Delegação de Eventos para Modal)
                 memberList.addEventListener('click', (e) => {
                     const detailsButton = e.target.closest('.details-button');
                     if (detailsButton) {
-                        const memberId = detailsButton.dataset.memberId;
-                        const memberData = membersCache[memberId];
+                        currentMemberId = detailsButton.dataset.memberId; // Salva o ID
+                        const memberData = membersCache[currentMemberId];
                         if (memberData) {
-                            showDetailsModal(memberData);
+                            showDetailsModal();
                         } else {
-                            console.warn("Não foi possível encontrar dados do membro no cache para o ID:", memberId);
+                            console.warn("Não foi possível encontrar dados do membro no cache para o ID:", currentMemberId);
                             showMessage("Erro ao carregar detalhes.", true);
                         }
                     }
                 });
                 
-                // Modal
-                modalCloseBtn.addEventListener('click', hideDetailsModal);
-                modalBackdrop.addEventListener('click', hideDetailsModal);
+                // Botões do Modal de Detalhes
+                modalEditBtn.addEventListener('click', () => {
+                    const member = membersCache[currentMemberId];
+                    if (member) {
+                        populateEditForm(member);
+                        hideModal(detailsModal);
+                        showModal('edit-modal');
+                    }
+                });
+                
+                modalDeleteBtn.addEventListener('click', () => {
+                    deleteError.textContent = ''; // Limpa erro anterior
+                    document.getElementById('delete-password').value = ''; // Limpa senha
+                    hideModal(detailsModal);
+                    showModal('delete-modal');
+                });
+
+                // Listeners para fechar Modais
+                allCloseModalButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const modal = e.target.closest('.modal');
+                        hideModal(modal);
+                    });
+                });
+                
+                allModalBackdrops.forEach(backdrop => {
+                    backdrop.addEventListener('click', (e) => {
+                        const modal = e.target.closest('.modal');
+                        hideModal(modal);
+                    });
+                });
 
             } catch (e) {
                 console.error("Erro crítico na inicialização do Firebase:", e);
-                showMessage("Erro ao conectar com o Firebase. Verifique o console.", true);
-                listLoading.innerHTML = '<p class="text-red-500 text-center">Erro ao conectar ao Firebase.</p>';
+                document.body.innerHTML = `<div class="p-8 text-red-300">Erro crítico ao conectar. Verifique o console.</div>`;
             }
         }
 
