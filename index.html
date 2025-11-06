@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secretária ADCA - Capoeira Grande</title>
+    <title>GESTÃO ADCA - CAPOEIRA GRANDE</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="secretaria.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -22,7 +22,6 @@
     </div>
 
     <!-- Tela de Autenticação (Login/Cadastro) -->
-    <!-- Este ecrã é idêntico ao do site principal, pois usa o mesmo sistema de login -->
     <div id="auth-screen" class="min-h-screen flex items-center justify-center bg-gray-200 p-4">
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
             <!-- Abas de Login / Cadastro -->
@@ -33,9 +32,10 @@
                     class="auth-tab-button flex-1 py-2 px-4 text-center text-lg">Primeiro Acesso</button>
             </div>
 
+            <!-- Conteúdo das Abas de Autenticação -->
             <!-- Formulário de Login -->
             <div id="auth-login-tab" class="auth-content-tab active">
-                <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Aceder à Secretaria ADCA</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Aceder à GESTÃO ADCA</h2>
                 <form id="login-form">
                     <div class="mb-4">
                         <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email:</label>
@@ -62,12 +62,12 @@
                     <div class="mb-4">
                         <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">Nome
                             Completo:</label>
-                        <input type="text" id="register-name" placeholder="Ex: Vitoria" required
+                        <input type="text" id="register-name" placeholder="Ex: Gabriel Angelino" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
                     </div>
                      <div class="mb-4">
                         <label for="register-phone" class="block text-sm font-medium text-gray-700 mb-1">Nº de Telefone:</label>
-                        <input type="tel" id="register-phone" placeholder="Ex: 21988611788" required
+                        <input type="tel" id="register-phone" placeholder="Ex: 21964597378" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
                     </div>
                     <div class="mb-4">
@@ -98,7 +98,7 @@
         <!-- Cabeçalho -->
         <header class="bg-blue-600 text-white shadow-md">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold">Secretária ADCA - Capoeira Grande</h1>
+                <h1 class="text-2xl font-bold">GESTÃO ADCA - CAPOEIRA GRANDE</h1>
                 <div>
                     <span id="user-email-display" class="text-sm mr-4"></span>
                     <button id="logout-button"
@@ -109,11 +109,26 @@
             </div>
             <!-- Abas de Navegação -->
             <nav class="container mx-auto px-4 flex space-x-4 overflow-x-auto">
-                <button id="tab-btn-cadastrar-membro" data-tab="cadastrar-membro" class="app-tab-button py-3 px-3 text-sm font-medium active">
+                <button id="tab-btn-dashboard" data-tab="dashboard" class="app-tab-button py-3 px-3 text-sm font-medium active">
+                    <i data-lucide="layout-dashboard" class="inline-block w-4 h-4 mr-1"></i> Dashboard
+                </button>
+                <button id="tab-btn-cadastrar-membro" data-tab="cadastrar-membro" class="app-tab-button py-3 px-3 text-sm font-medium">
                     <i data-lucide="user-plus" class="inline-block w-4 h-4 mr-1"></i> Cadastrar Membro
                 </button>
                 <button id="tab-btn-visualizar-membros" data-tab="visualizar-membros" class="app-tab-button py-3 px-3 text-sm font-medium">
                     <i data-lucide="users" class="inline-block w-4 h-4 mr-1"></i> Visualizar Membros
+                </button>
+                <button id="tab-btn-dizimos" data-tab="dizimos" class="app-tab-button py-3 px-3 text-sm font-medium">
+                    <i data-lucide="hand-heart" class="inline-block w-4 h-4 mr-1"></i> Dízimos
+                </button>
+                <button id="tab-btn-ofertas" data-tab="ofertas" class="app-tab-button py-3 px-3 text-sm font-medium">
+                    <i data-lucide="gift" class="inline-block w-4 h-4 mr-1"></i> Ofertas e Outras
+                </button>
+                <button id="tab-btn-financeiro" data-tab="financeiro" class="app-tab-button py-3 px-3 text-sm font-medium">
+                    <i data-lucide="dollar-sign" class="inline-block w-4 h-4 mr-1"></i> Financeiro (Caixa)
+                </button>
+                <button id="tab-btn-aniversariantes" data-tab="aniversariantes" class="app-tab-button py-3 px-3 text-sm font-medium">
+                    <i data-lucide="cake" class="inline-block w-4 h-4 mr-1"></i> Aniversariantes
                 </button>
             </nav>
         </header>
@@ -121,9 +136,96 @@
         <!-- Container Principal -->
         <main class="container mx-auto p-4">
 
+            <!-- (ABA) Dashboard -->
+            <div id="dashboard" class="app-content-tab active">
+                <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card Saldo Atual -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 uppercase">Saldo Atual (Caixa)</h3>
+                                <p id="saldo-total-dashboard" class="text-3xl font-bold text-blue-700 mt-1">R$ 0,00</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i data-lucide="scale" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Entradas do Mês -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 uppercase">Entradas (Mês Atual)</h3>
+                                <p id="entradas-mes-dashboard" class="text-3xl font-bold text-green-700 mt-1">R$ 0,00
+                                </p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i data-lucide="arrow-down-left" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Saídas do Mês -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 uppercase">Saídas (Mês Atual)</h3>
+                                <p id="saidas-mes-dashboard" class="text-3xl font-bold text-red-700 mt-1">R$ 0,00</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <i data-lucide="arrow-up-right" class="w-6 h-6 text-red-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Saldo do Mês -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-indigo-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 uppercase">Saldo (Mês Atual)</h3>
+                                <p id="saldo-mes-dashboard" class="text-3xl font-bold text-indigo-700 mt-1">R$ 0,00</p>
+                            </div>
+                            <div class="bg-indigo-100 p-3 rounded-full">
+                                <i data-lucide="trending-up" class="w-6 h-6 text-indigo-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão de Relatório -->
+                <div id="relatorio-geral-card" class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Gerar Relatório Mensal</h3>
+                    <p class="text-gray-600 mb-4 text-center">Selecione o mês e o ano para gerar um relatório financeiro detalhado.</p>
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                        <div class="flex-1 w-full sm:w-auto">
+                            <label for="relatorio-geral-mes" class="block text-sm font-medium text-gray-700">Mês</label>
+                            <select id="relatorio-geral-mes"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <!-- Opções de mês -->
+                            </select>
+                        </div>
+                         <div class="flex-1 w-full sm:w-auto">
+                            <label for="relatorio-geral-ano" class="block text-sm font-medium text-gray-700">Ano</label>
+                            <select id="relatorio-geral-ano"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <!-- Opções de ano -->
+                            </select>
+                        </div>
+                        <div class="mt-5 sm:mt-0">
+                            <button id="gerar-relatorio-btn"
+                                class="w-full sm:w-auto bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-150 flex items-center justify-center">
+                                <i data-lucide="printer" class="inline-block w-4 h-4 mr-2"></i>
+                                Gerar Relatório do Mês
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aviso de Carregamento -->
+                <p id="dashboard-loading" class="text-gray-500 mt-4 flex items-center justify-center"></p>
+            </div>
+
             <!-- (ABA) Cadastrar Membro -->
-            <!-- Este HTML é idêntico ao do site principal -->
-            <div id="cadastrar-membro" class="app-content-tab active">
+            <div id="cadastrar-membro" class="app-content-tab">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
                     <h2 class="text-2xl font-semibold mb-6">Cadastrar Novo Membro</h2>
                     <form id="form-membro">
@@ -274,8 +376,7 @@
             </div>
 
             <!-- (ABA) Visualizar Membros -->
-            <!-- Este HTML é idêntico ao do site principal -->
-            <div id="visualizar-membros" class="app-content-tab hidden">
+            <div id="visualizar-membros" class="app-content-tab">
                 <div class="bg-white p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-semibold mb-6">Membros Cadastrados</h2>
                     <input type="text" id="filtro-membros"
@@ -310,19 +411,333 @@
                 </div>
             </div>
 
+            <!-- (ABA) Dízimos -->
+            <div id="dizimos" class="app-content-tab">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Coluna de Registro -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h2 class="text-2xl font-semibold mb-6">Registar Dízimo</h2>
+                            <form id="form-dizimo">
+                                <div class="mb-4">
+                                    <label for="dizimo-membro"
+                                        class="block text-sm font-medium text-gray-700">Membro</label>
+                                    <select id="dizimo-membro"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                        <option value="">Selecione o Membro</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="dizimo-valor"
+                                        class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                    <input type="number" id="dizimo-valor" step="0.01"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="dizimo-data"
+                                        class="block text-sm font-medium text-gray-700">Data</label>
+                                    <input type="date" id="dizimo-data"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                </div>
+                                <div class="mt-6">
+                                    <button id="dizimo-submit-btn" type="submit"
+                                        class="w-full bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-150 flex items-center justify-center disabled:opacity-75">
+                                        Registar Dízimo
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Coluna de Relatório -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                                <h2 class="text-2xl font-semibold">Relatório de Dízimos</h2>
+                                <div class="flex gap-4">
+                                    <select id="filtro-dizimo-mes"
+                                        class="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </select>
+                                    <select id="filtro-dizimo-ano"
+                                        class="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Data</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Membro</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Valor (R$)</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-dizimos" class="bg-white divide-y divide-gray-200">
+                                        <!-- Linhas de dízimos -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- (ABA) Ofertas e Outras -->
+            <div id="ofertas" class="app-content-tab">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Coluna de Registro -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h2 class="text-2xl font-semibold mb-6">Registar Oferta / Outra Entrada</h2>
+                            <form id="form-oferta">
+                                <div class="mb-4">
+                                    <label for="oferta-tipo"
+                                        class="block text-sm font-medium text-gray-700">Tipo</label>
+                                    <select id="oferta-tipo"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                        <option value="Oferta">Oferta</option>
+                                        <option value="Oferta Alçada">Oferta Alçada</option>
+                                        <option value="Venda Evento">Venda Evento</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="oferta-descricao"
+                                        class="block text-sm font-medium text-gray-700">Descrição Breve</label>
+                                    <input type="text" id="oferta-descricao"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Ex: Oferta do culto de domingo" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="oferta-valor"
+                                        class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                    <input type="number" id="oferta-valor" step="0.01"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="oferta-data"
+                                        class="block text-sm font-medium text-gray-700">Data</label>
+                                    <input type="date" id="oferta-data"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                </div>
+                                <div class="mt-6">
+                                    <button id="oferta-submit-btn" type="submit"
+                                        class="w-full bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-150 flex items-center justify-center disabled:opacity-75">
+                                        Registar Entrada
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Coluna de Relatório -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                                <h2 class="text-2xl font-semibold">Relatório de Ofertas e Outras Entradas</h2>
+                                <div class="flex gap-4">
+                                    <select id="filtro-oferta-mes"
+                                        class="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </select>
+                                    <select id="filtro-oferta-ano"
+                                        class="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Data</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Tipo</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Descrição</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Valor (R$)</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-ofertas" class="bg-white divide-y divide-gray-200">
+                                        <!-- Linhas de ofertas -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- (ABA) Financeiro (Caixa) -->
+            <div id="financeiro" class="app-content-tab">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Coluna de Registro -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h2 class="text-2xl font-semibold mb-6">Registar Saída (Caixa)</h2>
+                            <form id="form-financeiro">
+                                <div class="mb-4">
+                                    <label for="fin-descricao"
+                                        class="block text-sm font-medium text-gray-700">Descrição da Saída</label>
+                                    <input type="text" id="fin-descricao"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Ex: Conta de luz, material de limpeza" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="fin-valor"
+                                        class="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                                    <input type="number" id="fin-valor" step="0.01"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Digite o valor da saída" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="fin-data"
+                                        class="block text-sm font-medium text-gray-700">Data</label>
+                                    <input type="date" id="fin-data"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        required>
+                                </div>
+                                <div class="mt-6">
+                                    <button id="financeiro-submit-btn" type="submit"
+                                        class="w-full bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition duration-150 flex items-center justify-center disabled:opacity-75">
+                                        Registar Saída
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Coluna de Relatório -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                                <h2 class="text-2xl font-semibold">Extrato do Caixa</h2>
+                                <div class="flex gap-4">
+                                    <select id="filtro-financeiro-mes"
+                                        class="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </select>
+                                    <select id="filtro-financeiro-ano"
+                                        class="border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- (NOVO) Resumo do Mês -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mb-6 border-b pb-6">
+                                <div class="bg-green-100 p-4 rounded-lg">
+                                    <div class="text-sm font-medium text-green-800">Entradas (Mês)</div>
+                                    <p id="entradas-mes-financeiro" class="text-2xl font-bold text-green-700">R$ 0,00</p>
+                                </div>
+                                <div class="bg-red-100 p-4 rounded-lg">
+                                    <div class="text-sm font-medium text-red-800">Saídas (Mês)</div>
+                                    <p id="saidas-mes-financeiro" class="text-2xl font-bold text-red-700">R$ 0,00</p>
+                                </div>
+                                <div class="bg-indigo-100 p-4 rounded-lg">
+                                    <div class="text-sm font-medium text-indigo-800">Saldo (Mês)</div>
+                                    <p id="saldo-mes-financeiro-aba" class="text-2xl font-bold text-indigo-700">R$ 0,00</p>
+                                </div>
+                                <div class="bg-blue-100 p-4 rounded-lg">
+                                    <div class="text-sm font-medium text-blue-800">Saldo Atual (Total)</div>
+                                    <p id="saldo-total-financeiro" class="text-2xl font-bold text-blue-700">R$ 0,00</p>
+                                </div>
+                            </div>
+                            <!-- Fim Resumo do Mês -->
+
+
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Data</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Descrição</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Valor (R$)</th>
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-financeiro" class="bg-white divide-y divide-gray-200">
+                                        <!-- Linhas do financeiro -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- (ABA) Aniversariantes -->
+            <div id="aniversariantes" class="app-content-tab">
+                <h2 class="text-2xl font-semibold mb-6">Aniversariantes</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Mês Vigente -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 id="titulo-aniversariantes-atual" class="text-xl font-semibold text-blue-700 mb-4">...</h3>
+                        <div id="lista-aniversariantes-atual" class="divide-y divide-gray-200">
+                            <p class="text-gray-500 p-4">Carregando...</p>
+                        </div>
+                    </div>
+                    <!-- Próximos Meses -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4">Próximos Meses</h3>
+                         <div id="lista-aniversariantes-proximos" class="space-y-4 max-h-96 overflow-y-auto">
+                            <p class="text-gray-500 p-4">Carregando...</p>
+                         </div>
+                    </div>
+                </div>
+                
+                 <!-- Botão de Relatório -->
+                <div class="mt-8 bg-white p-6 rounded-lg shadow-lg text-center">
+                    <h3 class="text-xl font-semibold mb-4">Relatório de Aniversariantes</h3>
+                    <p class="text-gray-600 mb-4">Gere uma lista de todos os aniversariantes para impressão.</p>
+                    <button id="gerar-relatorio-aniversariantes-btn"
+                        class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-150">
+                        <i data-lucide="printer" class="inline-block w-4 h-4 mr-2"></i>
+                        Gerar Relatório de Aniversariantes
+                    </button>
+                </div>
+            </div>
+
         </main>
     </div>
 
     <!-- Modal: Detalhes do Membro -->
-    <!-- Este HTML é idêntico ao do site principal -->
     <div id="membro-detalhes-modal" class="modal">
-        <div class="modal-content max-w-4xl"> 
+        <div class="modal-content max-w-4xl"> <!-- Layout aumentado -->
             <div class="flex justify-between items-center mb-4 pb-2 border-b">
                  <h2 class="text-2xl font-semibold">Detalhes do Membro</h2>
                 <span class="close-button" id="close-membro-modal">&times;</span>
             </div>
             
+            <!-- Conteúdo -->
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+                <!-- Informações Pessoais -->
                 <h3 class="text-lg font-semibold text-blue-700">Informações Pessoais</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
                     <div class="md:col-span-2"><strong>Nome:</strong> <span id="modal-detalhes-nome"></span></div>
@@ -336,13 +751,18 @@
                     <div class="md:col-span-3"><strong>Endereço:</strong> <span id="modal-detalhes-endereco" class="block whitespace-pre-wrap"></span></div>
                     <div class="md:col-span-1"><strong>Nome do Pai:</strong> <span id="modal-detalhes-pai"></span></div>
                     <div class="md:col-span-2"><strong>Nome da Mãe:</strong> <span id="modal-detalhes-mae"></span></div>
-                    <div><strong>Estado Civil:</strong> <span id="modal-detalhes-estado-civil"></span></div>
+                </div>
+                
+                 <!-- Informações Adicionais -->
+                <h3 class="text-lg font-semibold mt-4 pt-4 border-t text-blue-700">Informações Adicionais e Ministeriais</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
+                     <div><strong>Estado Civil:</strong> <span id="modal-detalhes-estado-civil"></span></div>
                     <div id="conjuge-detalhes-container" class="hidden md:col-span-2"><strong>Cônjuge:</strong> <span id="modal-detalhes-conjuge"></span></div>
                     <div><strong>Profissão:</strong> <span id="modal-detalhes-profissao"></span></div>
                     <div class="md:col-span-2"><strong>Escolaridade:</strong> <span id="modal-detalhes-escolaridade"></span></div>
                     <div><strong>Data de Batismo:</strong> <span id="modal-detalhes-data-batismo"></span></div>
                     <div><strong>Data de Chegada:</strong> <span id="modal-detalhes-data-chegada"></span></div>
-                    <div class="md:col-span-3"></div>
+                    <div class="md:col-span-3"></div> <!-- Espaçador -->
                     <div><strong>Igreja de Onde Veio:</strong> <span id="modal-detalhes-igreja-anterior"></span></div>
                     <div class="md:col-span-2"><strong>Cargo que Ocupava:</strong> <span id="modal-detalhes-cargo-anterior"></span></div>
                 </div>
@@ -364,7 +784,6 @@
     </div>
     
     <!-- Modal: Editar Membro -->
-    <!-- Este HTML é idêntico ao do site principal -->
     <div id="membro-edit-modal" class="modal">
         <div class="modal-content max-w-4xl">
             <div class="flex justify-between items-center mb-4 pb-2 border-b">
@@ -372,7 +791,9 @@
                 <span class="close-button" id="close-membro-edit-modal">&times;</span>
             </div>
             
+            <!-- Formulário de Edição -->
             <form id="form-edit-membro" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+                 <!-- Seção 1: Informações Pessoais -->
                 <h3 class="text-lg font-semibold mb-4 border-b pb-2 text-blue-700">Informações Pessoais</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                     <div class="md:col-span-2">
@@ -497,7 +918,6 @@
     </div>
 
     <!-- Modal: Confirmação de Exclusão (Universal) -->
-    <!-- Este HTML é idêntico ao do site principal -->
     <div id="delete-confirm-modal" class="modal">
         <div class="modal-content max-w-lg">
             <span class="close-button" id="close-delete-modal">&times;</span>
@@ -528,7 +948,9 @@
     <!-- Carrega o Lucide (deve vir antes do script module que o chama) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Carrega o Script da Aplicação -->
-    <script type="module" src="secretaria.js"></script>
+    <!-- Corrigido: Movido para o final do <body> -->
+    <script type="module" src="gestao-igje.js"></script>
 
 </body>
+
 </html>
