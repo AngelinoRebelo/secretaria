@@ -63,11 +63,14 @@
         html, body {
             height: 100%;
         }
+        /* REMOVIDO: Estilos do body que centralizavam tudo. 
+           Isto será controlado pelo JavaScript agora.
         body {
             display: flex;
             align-items: center;
             justify-content: center;
         }
+        */
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-full antialiased flex items-center justify-center">
@@ -694,6 +697,13 @@
                         userId = user.uid;
                         console.log("Usuário autenticado:", userId);
 
+                        // *** CORREÇÃO DE LAYOUT ***
+                        // Remove o 'flex' do body para alinhar o app no topo
+                        document.body.style.display = 'block';
+                        document.body.style.alignItems = '';
+                        document.body.style.justifyContent = '';
+                        // *** FIM DA CORREÇÃO ***
+
                         // Esconde login, mostra app
                         authScreen.classList.add('hidden');
                         authScreen.classList.remove('flex'); // Remove flex
@@ -710,6 +720,13 @@
                         // Usuário NÃO está logado
                         console.log("Nenhum usuário. Exibindo tela de login.");
                         userId = null;
+                        
+                        // *** CORREÇÃO DE LAYOUT ***
+                        // Adiciona 'flex' ao body para centralizar o login
+                        document.body.style.display = 'flex';
+                        document.body.style.alignItems = 'center';
+                        document.body.style.justifyContent = 'center';
+                        // *** FIM DA CORREÇÃO ***
                         
                         // Esconde app, mostra login
                         authScreen.classList.remove('hidden');
