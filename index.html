@@ -107,7 +107,8 @@
     </div>
 
     <!-- Container Principal do App (Oculto por padrão) -->
-    <div id="app-content" class="hidden container mx-auto max-w-6xl p-4 md:p-8">
+    <div id="app-content" class="hidden w-full h-full">
+      <div class="container mx-auto max-w-6xl p-4 md:p-8">
         
         <header class="text-center mb-8 relative">
             <h1 class="text-4xl font-bold text-blue-400">SECRETÁRIA ADCA - CAPOEIRA GRANDE</h1>
@@ -119,20 +120,41 @@
 
         <!-- Navegação das Abas -->
         <div class="mb-8 border-b border-gray-700">
-            <nav class="flex space-x-6" aria-label="Tabs">
-                <button id="tab-btn-cadastro" type="button" class="tab-button active text-lg font-medium py-3 px-1 border-b-2">
+            <nav class="flex flex-wrap space-x-6" aria-label="Tabs">
+                <button id="tab-btn-dashboard" type="button" class="tab-button active text-lg font-medium py-3 px-1 border-b-2">
+                    Dashboard
+                </button>
+                <button id="tab-btn-cadastro" type="button" class="tab-button text-lg font-medium py-3 px-1 border-b-2">
                     Cadastrar Membro
                 </button>
                 <button id="tab-btn-visualizar" type="button" class="tab-button text-lg font-medium py-3 px-1 border-b-2">
                     Visualizar Membros
+                </button>
+                <button id="tab-btn-aniversariantes" type="button" class="tab-button text-lg font-medium py-3 px-1 border-b-2">
+                    Aniversariantes
                 </button>
             </nav>
         </div>
 
         <!-- Conteúdo das Abas -->
         <div>
+            <!-- Aba 0: Dashboard -->
+            <div id="tab-dashboard">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card Total de Membros -->
+                    <div class="bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700 flex flex-col justify-between">
+                        <h3 class="text-lg font-semibold text-blue-300">Total de Membros</h3>
+                        <div id="dashboard-total-membros" class="text-5xl font-bold text-white mt-4">
+                            <!-- Spinner de carregamento -->
+                            <div class="spinner h-10 w-10 border-4 border-blue-400 rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- Outros cards do dashboard podem ser adicionados aqui -->
+                </div>
+            </div>
+
             <!-- Aba 1: Formulário de Cadastro -->
-            <div id="tab-cadastro">
+            <div id="tab-cadastro" class="hidden">
                 <div class="bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-700">
                     <form id="member-form" class="space-y-8">
                         
@@ -221,7 +243,7 @@
                         <!-- Seção de Informações Eclesiásticas -->
                         <div>
                             <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Eclesiásticas</h3>
-                            <div class_grid="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                                 <div>
                                     <label for="data_batismo" class="block text-sm font-medium text-gray-300 mb-1">Data de Batismo</label>
                                     <input type="date" id="data_batismo" name="data_batismo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -263,7 +285,36 @@
                     <!-- Membros serão inseridos aqui pelo JavaScript -->
                 </div>
             </div>
+
+            <!-- Aba 3: Aniversariantes -->
+            <div id="tab-aniversariantes" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Coluna Mês Atual -->
+                    <div class="bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700">
+                        <h3 id="aniversariantes-mes-atual-titulo" class="text-2xl font-semibold text-blue-300 mb-5 border-b border-gray-700 pb-3">
+                            Aniversariantes de...
+                        </h3>
+                        <div id="aniversariantes-mes-atual-lista" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                            <!-- Lista do mês atual será inserida aqui -->
+                            <div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna Próximos Meses -->
+                    <div class="bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700">
+                        <h3 class="text-2xl font-semibold text-blue-300 mb-5 border-b border-gray-700 pb-3">
+                            Próximos Meses
+                        </h3>
+                        <div id="aniversariantes-proximos-lista" class="space-y-5 max-h-[60vh] overflow-y-auto pr-2">
+                            <!-- Lista dos próximos meses será inserida aqui -->
+                            <div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+      </div>
     </div>
 
     <!-- Caixa de Mensagem (para feedback, sem alert()) -->
@@ -565,6 +616,10 @@
         }`;
         
         const firebaseConfig = JSON.parse(userProvidedConfigString);
+        
+        // --- Constantes ---
+        const MESES_DO_ANO = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
 
         // --- Variáveis Globais do App ---
         let app, auth, db, userId, membersCollectionRef;
@@ -582,10 +637,21 @@
         const logoutButton = document.getElementById('logout-button');
 
         // --- Elementos do DOM (Abas) ---
-        const tabBtnCadastro = document.getElementById('tab-btn-cadastro');
-        const tabBtnVisualizar = document.getElementById('tab-btn-visualizar');
-        const tabCadastro = document.getElementById('tab-cadastro');
-        const tabVisualizar = document.getElementById('tab-visualizar');
+        const tabButtons = document.querySelectorAll('.tab-button'); // Pega todos os botões de aba
+        const tabContents = {
+            dashboard: document.getElementById('tab-dashboard'),
+            cadastro: document.getElementById('tab-cadastro'),
+            visualizar: document.getElementById('tab-visualizar'),
+            aniversariantes: document.getElementById('tab-aniversariantes')
+        };
+
+        // --- Elementos do DOM (Dashboard) ---
+        const dashboardTotalMembros = document.getElementById('dashboard-total-membros');
+
+        // --- Elementos do DOM (Aniversariantes) ---
+        const aniverMesAtualTitulo = document.getElementById('aniversariantes-mes-atual-titulo');
+        const aniverMesAtualLista = document.getElementById('aniversariantes-mes-atual-lista');
+        const aniverProximosLista = document.getElementById('aniversariantes-proximos-lista');
 
         // --- Elementos do DOM (Formulário de Cadastro) ---
         const memberForm = document.getElementById('member-form');
@@ -663,34 +729,48 @@
         }
 
         /**
-         * Formata data (AAAA-MM-DD) para DD/MM/AAAA.
+         * Converte string 'aaaa-mm-dd' para um Date UTC.
+         * Retorna null se a data for inválida.
          */
-        function formatarData(dateString) {
-            if (!dateString) return "N/A";
+        function getDateFromInput(dataInput) {
             try {
-                // Tenta converter se for um objeto Timestamp do Firebase
-                if (dateString && typeof dateString.toDate === 'function') {
-                    dateString = dateString.toDate();
+                if (!dataInput) return null;
+                
+                // Se for Timestamp do Firebase
+                if (dataInput && typeof dataInput.toDate === 'function') {
+                    return dataInput.toDate();
                 }
-
-                // Se for um objeto Date
-                if (dateString instanceof Date) {
-                    return dateString.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+                // Se já for Date
+                if (dataInput instanceof Date) {
+                    return dataInput;
                 }
-
-                // Se for string AAAA-MM-DD
-                const parts = dateString.split('-');
-                if (parts.length === 3) {
-                    const [ano, mes, dia] = parts;
-                    if (ano && mes && dia) { // Garante que não são undefined
-                        return `${dia}/${mes}/${ano}`;
+                // Se for string 'aaaa-mm-dd'
+                if (typeof dataInput === 'string' && dataInput.includes('-')) {
+                    const parts = dataInput.split('-');
+                    if (parts.length === 3) {
+                        // Ano, Mês (base 0), Dia
+                        const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+                        if (!isNaN(date.getTime())) return date;
                     }
                 }
-                
-                return dateString; // Retorna o original se falhar
             } catch (e) {
-                console.warn("Erro ao formatar data:", dateString, e);
-                return dateString; // Retorna o original se falhar
+                console.error("Data inválida:", dataInput, e);
+                return null;
+            }
+            return null;
+        }
+
+        /**
+         * Formata data (AAAA-MM-DD ou Date) para DD/MM/AAAA.
+         */
+        function formatarData(dataInput) {
+            const dateObj = getDateFromInput(dataInput);
+            if (!dateObj) return "N/A";
+            
+            try {
+                return dateObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+            } catch (e) {
+                return "N/A";
             }
         }
 
@@ -759,7 +839,6 @@
 
         /**
          * Abre um modal.
-         * @param {string} modalId - O ID do elemento modal ('details-modal', 'edit-modal', 'delete-modal').
          */
         function showModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -773,7 +852,6 @@
 
         /**
          * Fecha o modal ativo.
-         * @param {HTMLElement} modal - O elemento modal a ser fechado.
          */
         function hideModal(modal) {
             if (modal) {
@@ -862,6 +940,87 @@
                 memberList.appendChild(memberEl);
             });
         }
+        
+        /**
+         * Atualiza o card do Dashboard com o total de membros.
+         */
+        function updateDashboard(total) {
+            dashboardTotalMembros.textContent = total;
+        }
+        
+        /**
+         * Processa e renderiza as listas de aniversariantes.
+         */
+        function updateAniversariantes(membros) {
+            const hoje = new Date();
+            const mesAtual = hoje.getMonth(); // 0-11
+            const anoAtual = hoje.getFullYear();
+            
+            aniverMesAtualTitulo.textContent = `Aniversariantes de ${MESES_DO_ANO[mesAtual]}`;
+            
+            const grupos = {};
+            for (let i = 0; i < 12; i++) { grupos[i] = []; }
+
+            // 1. Agrupar membros por mês
+            membros.forEach(membro => {
+                const dataNasc = getDateFromInput(membro.dataNascimento);
+                if (dataNasc) {
+                    const mes = dataNasc.getUTCMonth();
+                    grupos[mes].push({
+                        dia: dataNasc.getUTCDate(),
+                        nome: membro.nome,
+                        funcao: membro.funcao || 'Membro'
+                    });
+                }
+            });
+
+            // 2. Ordenar aniversariantes dentro de cada mês pelo dia
+            for (let i = 0; i < 12; i++) {
+                grupos[i].sort((a, b) => a.dia - b.dia);
+            }
+
+            // 3. Renderizar Mês Atual
+            aniverMesAtualLista.innerHTML = "";
+            if (grupos[mesAtual].length === 0) {
+                aniverMesAtualLista.innerHTML = `<p class="text-gray-500">Nenhum aniversariante este mês.</p>`;
+            } else {
+                grupos[mesAtual].forEach(membro => {
+                    const div = document.createElement('div');
+                    div.className = "py-3 flex items-center space-x-4 border-b border-gray-700 last:border-b-0";
+                    div.innerHTML = `
+                        <div class="font-bold text-blue-400 text-2xl w-10 text-center">${membro.dia}</div>
+                        <div class="flex-1">
+                            <p class="text-base font-medium text-gray-100">${membro.nome}</p>
+                            <p class="text-sm text-gray-400">${membro.funcao}</p>
+                        </div>
+                    `;
+                    aniverMesAtualLista.appendChild(div);
+                });
+            }
+
+            // 4. Renderizar Próximos Meses
+            aniverProximosLista.innerHTML = "";
+            let proximosMesesContent = "";
+            for (let i = 1; i <= 11; i++) {
+                const proximoMesIndex = (mesAtual + i) % 12;
+                const mes = grupos[proximoMesIndex];
+                
+                if (mes.length > 0) {
+                    let listaHTML = mes.map(membro => {
+                        return `<li class="text-sm text-gray-300 ml-5 list-disc">${membro.dia} - ${membro.nome}</li>`;
+                    }).join('');
+                    
+                    proximosMesesContent += `
+                        <div class="py-2">
+                            <h4 class="font-semibold text-lg text-blue-300">${MESES_DO_ANO[proximoMesIndex]}</h4>
+                            <ul class_mt="2">${listaHTML}</ul>
+                        </div>
+                    `;
+                }
+            }
+            aniverProximosLista.innerHTML = proximosMesesContent || `<p class="text-gray-500">Nenhum aniversariante nos próximos meses.</p>`;
+        }
+
 
         /**
          * Inicia o listener em tempo real (onSnapshot) para a coleção de membros.
@@ -876,11 +1035,18 @@
             unsubscribeMembers = onSnapshot(q, (snapshot) => {
                 console.log("Recebido snapshot da coleção de membros.");
                 membersCache = {}; // Limpa o cache
+                let totalMembros = 0;
+                
+                const membrosParaAniversario = [];
                 
                 snapshot.docs.forEach(doc => {
-                    membersCache[doc.id] = { id: doc.id, ...doc.data() };
+                    const memberData = { id: doc.id, ...doc.data() };
+                    membersCache[doc.id] = memberData;
+                    membrosParaAniversario.push(memberData); // Adiciona para processamento
+                    totalMembros++;
                 });
                 
+                // Ordena alfabeticamente
                 const sortedDocs = Object.values(membersCache).sort((a, b) => {
                     const nameA = a.nome?.toLowerCase() || '';
                     const nameB = b.nome?.toLowerCase() || '';
@@ -889,7 +1055,10 @@
                     return 0;
                 });
                 
+                // Atualiza as abas com os dados processados
                 renderMemberList(sortedDocs.map(m => ({ id: m.id, data: () => m }))); // Adapta para o formato esperado
+                updateDashboard(totalMembros);
+                updateAniversariantes(membrosParaAniversario);
 
             }, (error) => {
                 console.error("Erro ao carregar membros: ", error);
@@ -900,6 +1069,10 @@
                     showMessage("Erro ao carregar lista de membros.", true);
                 }
                 listLoading.classList.add('hidden');
+                // Limpa dashboard e aniversariantes em caso de erro
+                dashboardTotalMembros.textContent = "Erro";
+                aniverMesAtualLista.innerHTML = `<p class="text-red-400">Erro ao carregar dados.</p>`;
+                aniverProximosLista.innerHTML = `<p class="text-red-400">Erro ao carregar dados.</p>`;
             });
         }
 
@@ -1095,17 +1268,24 @@
         /**
          * Alterna a visibilidade das abas.
          */
-        function switchTab(tabName) {
-            if (tabName === 'cadastro') {
-                tabCadastro.classList.remove('hidden');
-                tabVisualizar.classList.add('hidden');
-                tabBtnCadastro.classList.add('active');
-                tabBtnVisualizar.classList.remove('active');
-            } else {
-                tabCadastro.classList.add('hidden');
-                tabVisualizar.classList.remove('hidden');
-                tabBtnCadastro.classList.remove('active');
-                tabBtnVisualizar.classList.add('active');
+        function switchTab(targetId) {
+            // Esconde todos os conteúdos
+            Object.values(tabContents).forEach(content => {
+                if (content) content.classList.add('hidden');
+            });
+            // Remove 'active' de todos os botões
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Mostra o conteúdo alvo
+            if (tabContents[targetId]) {
+                tabContents[targetId].classList.remove('hidden');
+            }
+            // Adiciona 'active' ao botão alvo
+            const activeButton = document.getElementById(`tab-btn-${targetId}`);
+            if (activeButton) {
+                activeButton.classList.add('active');
             }
         }
 
@@ -1132,15 +1312,20 @@
                         document.body.style.display = 'block';
                         document.body.style.alignItems = '';
                         document.body.style.justifyContent = '';
+                        document.body.classList.remove('flex', 'items-center', 'justify-center');
 
                         // Esconde login, mostra app
                         authScreen.classList.add('hidden');
                         authScreen.classList.remove('flex'); // Remove flex
                         appContent.classList.remove('hidden');
+                        appContent.classList.add('w-full', 'h-full'); // Garante que o app ocupe o espaço
 
                         // Define a referência da coleção (SÓ DEPOIS de logar)
                         membersCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "membros");
                         console.log("Caminho da coleção:", membersCollectionRef.path);
+                        
+                        // Define a aba inicial
+                        switchTab('dashboard');
 
                         // Começa a ouvir os dados
                         listenForMembers();
@@ -1154,11 +1339,13 @@
                         document.body.style.display = 'flex';
                         document.body.style.alignItems = 'center';
                         document.body.style.justifyContent = 'center';
+                        document.body.classList.add('flex', 'items-center', 'justify-center');
                         
                         // Esconde app, mostra login
                         authScreen.classList.remove('hidden');
                         authScreen.classList.add('flex'); // Adiciona flex para centralizar
                         appContent.classList.add('hidden');
+                        appContent.classList.remove('w-full', 'h-full');
 
                         // Para de ouvir dados se estava ouvindo
                         if (unsubscribeMembers) {
@@ -1169,6 +1356,9 @@
                         // Limpa dados da tela
                         memberList.innerHTML = '';
                         membersCache = {};
+                        dashboardTotalMembros.innerHTML = `<div class="spinner h-10 w-10 border-4 border-blue-400 rounded-full"></div>`;
+                        aniverMesAtualLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>`;
+                        aniverProximosLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>`;
                         
                         // Fecha todos os modais caso estejam abertos
                         hideModal(detailsModal);
@@ -1226,8 +1416,13 @@
                 });
                 
                 // Abas
-                tabBtnCadastro.addEventListener('click', () => switchTab('cadastro'));
-                tabBtnVisualizar.addEventListener('click', () => switchTab('visualizar'));
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // 'tab-btn-cadastro' -> 'cadastro'
+                        const tabId = button.id.replace('tab-btn-', ''); 
+                        switchTab(tabId);
+                    });
+                });
 
                 // Formulário de Cadastro
                 memberForm.addEventListener('submit', handleFormSubmit);
