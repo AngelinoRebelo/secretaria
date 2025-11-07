@@ -19,51 +19,204 @@
         }
     </script>
     <style>
-        /* Estilo para o spinner de carregamento */
-        .spinner {
-            border-top-color: transparent;
-            border-right-color: transparent;
-            animation: spin 0.6s linear infinite;
+        /* Estilos para abas (Autenticação) - DO SEU CSS */
+        .auth-tab-button.active {
+            border-bottom-color: #3b82f6; /* Cor azul */
+            color: #3b82f6;
+            font-weight: 600;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Estilos para Abas */
-        .tab-button {
-            transition: all 0.3s ease;
-        }
-        .tab-button.active {
-            border-bottom-color: #3b82f6; /* blue-500 */
-            color: #dbeafe; /* blue-100 */
-        }
-        .tab-button:not(.active) {
+        .auth-tab-button {
+            border-bottom-width: 3px;
             border-bottom-color: transparent;
-            color: #9ca3af; /* gray-400 */
+            color: #6b7280; /* Cinza para inativo */
         }
-        .tab-button:not(.active):hover {
-            color: #e5e7eb; /* gray-200 */
+        /* Ocultar conteúdo das abas de autenticação por padrão */
+        .auth-content-tab {
+            display: none;
+        }
+        /* Mostrar conteúdo da aba de autenticação ativa */
+        .auth-content-tab.active {
+            display: block;
+        }
+
+        /* Estilos para abas (Aplicação Principal) - DO SEU CSS */
+        .app-tab-button.active {
+            border-bottom-color: #ffffff; /* Cor branca */
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .app-tab-button {
+            border-bottom-width: 3px;
+            border-bottom-color: transparent;
+            color: #dbeafe; /* Azul claro para inativo */
+            opacity: 0.8;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+        .app-tab-button:hover {
+            opacity: 1;
+        }
+        /* Ocultar conteúdo das abas da aplicação por padrão */
+        .app-content-tab {
+            display: none;
+        }
+        /* Mostrar conteúdo da aba da aplicação ativa */
+        .app-content-tab.active {
+            display: block;
+        }
+
+        /* Estilo para modal (Janela Pop-up) - DO SEU CSS */
+        .modal {
+            display: none; /* Oculto por padrão */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo mais escuro */
+            padding-top: 50px;
+            padding-bottom: 50px;
         }
         
-        /* Estilos para o Modal */
-        .modal-backdrop {
+        /* Ajuste para animação de fade-in/out */
+        .modal {
+            opacity: 0;
             transition: opacity 0.3s ease;
         }
+        .modal.open {
+            display: flex; /* Usar flex para centralizar */
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
         .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Centralizado pelo flex */
+            padding: 24px;
+            border: 1px solid #888;
+            width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
             transform: translateY(20px) scale(0.95);
             opacity: 0;
         }
+        
         .modal.open .modal-content {
-            transform: translateY(0) scale(1);
-            opacity: 1;
+             transform: translateY(0) scale(1);
+             opacity: 1;
         }
 
-        /* Garante que o body centralize o login */
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Spinner de Carregamento - DO SEU CSS */
+        .spinner {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            border: 3px solid #d1d5db; /* border-gray-300 */
+            border-top-color: #3b82f6; /* border-t-blue-500 */
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Spinner dentro de botões */
+        button:disabled .spinner {
+            border-top-color: #ffffff;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Toast (Notificações) - DO SEU CSS */
+        #toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+
+        .toast-success {
+            background-color: #10b981; /* green-500 */
+        }
+        .toast-error {
+            background-color: #ef4444; /* red-500 */
+        }
+        .toast-warning {
+            background-color: #f59e0b; /* amber-500 */
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Estilos Adicionais para Layout */
         html, body {
             height: 100%;
         }
-        /* Estilos do body são controlados por JS */
+        
+        /* Centraliza a tela de login */
+        body.logged-out {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         /* Oculta setas de input[type=number] */
         input[type=number]::-webkit-inner-spin-button,
@@ -76,25 +229,26 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-full antialiased flex items-center justify-center">
+<body class="bg-gray-100 text-gray-900 font-sans min-h-full antialiased">
 
     <!-- Tela de Autenticação (Login) -->
     <div id="auth-screen" class="w-full max-w-md p-8">
-        <div class="bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700">
-            <h2 class="text-3xl font-bold text-center text-blue-400 mb-8">Login</h2>
+        <!-- Card de Login Branco, parecido com a imagem -->
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+            <h2 class="text-3xl font-bold text-center text-blue-600 mb-8">SECRETÁRIA ADCA</h2>
             <form id="login-form" class="space-y-6">
                 <div>
-                    <label for="login-email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input type="email" id="login-email" name="email" required 
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
                     <input type="password" id="login-password" name="password" required 
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                           class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 
-                <div id="login-error" class="text-red-400 text-sm h-4">
+                <div id="login-error" class="text-red-600 text-sm h-4">
                     <!-- Mensagens de erro de login aqui -->
                 </div>
 
@@ -108,296 +262,300 @@
 
     <!-- Container Principal do App (Oculto por padrão) -->
     <div id="app-content" class="hidden w-full h-full">
-      <div class="container mx-auto max-w-6xl p-4 md:p-8">
         
-        <header class="text-center mb-8 relative">
-            <h1 class="text-4xl font-bold text-blue-400">SECRETÁRIA ADCA - CAPOEIRA GRANDE</h1>
-            <p class="text-lg text-gray-400 mt-2">Cadastro e visualização de membros</p>
-            <button id="logout-button" class="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 text-sm">
-                Sair
-            </button>
+        <!-- NOVO CABEÇALHO AZUL -->
+        <header class="bg-blue-700 text-white shadow-md sticky top-0 z-30">
+            <div class="container mx-auto max-w-6xl px-4 md:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <h1 class="text-2xl font-bold">
+                        GESTÃO ADCA - CAPOEIRA GRANDE
+                    </h1>
+                    <div class="flex items-center gap-4">
+                        <span id="user-email-display" class="text-sm text-blue-100 hidden md:block"></span>
+                        <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 text-sm">
+                            Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- NOVA NAVEGAÇÃO DAS ABAS -->
+            <nav class="bg-blue-700 border-t border-blue-600">
+                <div class="container mx-auto max-w-6xl px-4 md:px-8">
+                    <div class="flex flex-wrap space-x-6" aria-label="Tabs">
+                        <button id="tab-btn-dashboard" type="button" data-tab="dashboard" class="app-tab-button active text-lg font-medium">
+                            Dashboard
+                        </button>
+                        <button id="tab-btn-cadastro" type="button" data-tab="cadastro" class="app-tab-button text-lg font-medium">
+                            Cadastrar Membro
+                        </button>
+                        <button id="tab-btn-visualizar" type="button" data-tab="visualizar" class="app-tab-button text-lg font-medium">
+                            Visualizar Membros
+                        </button>
+                        <button id="tab-btn-aniversariantes" type="button" data-tab="aniversariantes" class="app-tab-button text-lg font-medium">
+                            Aniversariantes
+                        </button>
+                    </div>
+                </div>
+            </nav>
         </header>
 
-        <!-- Navegação das Abas -->
-        <div class="mb-8 border-b border-gray-700">
-            <nav class="flex flex-wrap space-x-6" aria-label="Tabs">
-                <button id="tab-btn-dashboard" type="button" class="tab-button active text-lg font-medium py-3 px-1 border-b-2">
-                    Dashboard
-                </button>
-                <button id="tab-btn-cadastro" type="button" class="tab-button text-lg font-medium py-3 px-1 border-b-2">
-                    Cadastrar Membro
-                </button>
-                <button id="tab-btn-visualizar" type="button" class="tab-button text-lg font-medium py-3 px-1 border-b-2">
-                    Visualizar Membros
-                </button>
-                <button id="tab-btn-aniversariantes" type="button" class="tab-button text-lg font-medium py-3 px-1 border-b-2">
-                    Aniversariantes
-                </button>
-            </nav>
-        </div>
-
-        <!-- Conteúdo das Abas -->
-        <div>
-            <!-- Aba 0: Dashboard -->
-            <div id="tab-dashboard">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Card Total de Membros -->
-                    <div class="bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700 flex flex-col justify-between">
-                        <h3 class="text-lg font-semibold text-blue-300">Total de Membros</h3>
-                        <div id="dashboard-total-membros" class="text-5xl font-bold text-white mt-4">
-                            <!-- Spinner de carregamento -->
-                            <div class="spinner h-10 w-10 border-4 border-blue-400 rounded-full"></div>
+        <!-- NOVO CONTAINER DE CONTEÚDO PRINCIPAL -->
+        <main class="container mx-auto max-w-6xl p-4 md:p-8">
+            <!-- Conteúdo das Abas -->
+            <div>
+                <!-- Aba 0: Dashboard -->
+                <div id="dashboard" class="app-content-tab active">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Card Total de Membros -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 flex flex-col justify-between">
+                            <h3 class="text-lg font-semibold text-blue-700">Total de Membros</h3>
+                            <div id="dashboard-total-membros" class="text-5xl font-bold text-gray-900 mt-4">
+                                <!-- Spinner de carregamento -->
+                                <div class="spinner h-10 w-10 border-4 border-blue-500 rounded-full"></div>
+                            </div>
                         </div>
+                        <!-- Outros cards do dashboard podem ser adicionados aqui -->
                     </div>
-                    <!-- Outros cards do dashboard podem ser adicionados aqui -->
                 </div>
-            </div>
 
-            <!-- Aba 1: Formulário de Cadastro -->
-            <div id="tab-cadastro" class="hidden">
-                <div class="bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-700">
-                    <form id="member-form" class="space-y-8">
-                        
-                        <!-- Seção de Informações Pessoais -->
-                        <div>
-                            <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Pessoais</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                                <div class="md:col-span-2">
-                                    <label for="nome" class="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
-                                    <input type="text" id="nome" name="nome" placeholder="Nome do membro" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <!-- Aba 1: Formulário de Cadastro -->
+                <div id="cadastro" class="app-content-tab">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200">
+                        <form id="member-form" class="space-y-8">
+                            
+                            <!-- Seção de Informações Pessoais -->
+                            <div>
+                                <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Pessoais</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                                    <div class="md:col-span-2">
+                                        <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                                        <input type="text" id="nome" name="nome" placeholder="Nome do membro" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="funcao" class="block text-sm font-medium text-gray-700 mb-1">Função/Ministério</label>
+                                        <input type="text" id="funcao" name="funcao" placeholder="Ex: Diácono, Louvor" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
+                                        <input type="date" id="data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                                        <input type="tel" id="telefone" name="telefone" placeholder="(00) 90000-0000" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input type="email" id="email" name="email" placeholder="email@exemplo.com" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+                                        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="rg" class="block text-sm font-medium text-gray-700 mb-1">RG</label>
+                                        <input type="text" id="rg" name="rg" placeholder="00.000.000-0" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="naturalidade" class="block text-sm font-medium text-gray-700 mb-1">Naturalidade</label>
+                                        <input type="text" id="naturalidade" name="naturalidade" placeholder="Ex: Rio de Janeiro - RJ" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="md:col-span-3">
+                                        <label for="endereco" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                                        <textarea id="endereco" name="endereco" rows="3" placeholder="Rua, Número, Bairro, CEP, Cidade, Estado" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                    </div>
+                                    <div class="md:col-span-1">
+                                        <label for="nome_pai" class="block text-sm font-medium text-gray-700 mb-1">Nome do Pai</label>
+                                        <input type="text" id="nome_pai" name="nome_pai" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="nome_mae" class="block text-sm font-medium text-gray-700 mb-1">Nome da Mãe</label>
+                                        <input type="text" id="nome_mae" name="nome_mae" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="estado_civil" class="block text-sm font-medium text-gray-700 mb-1">Estado Civil</label>
+                                        <select id="estado_civil" name="estado_civil" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="">Selecione...</option>
+                                            <option value="Solteiro(a)">Solteiro(a)</option>
+                                            <option value="Casado(a)">Casado(a)</option>
+                                            <option value="Divorciado(a)">Divorciado(a)</option>
+                                            <option value="Viúvo(a)">Viúvo(a)</option>
+                                        </select>
+                                    </div>
+                                    <div id="conjuge-field" class="hidden md:col-span-2">
+                                        <label for="conjuge" class="block text-sm font-medium text-gray-700 mb-1">Nome do Cônjuge</label>
+                                        <input type="text" id="conjuge" name="conjuge" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="profissao" class="block text-sm font-medium text-gray-700 mb-1">Profissão</label>
+                                        <input type="text" id="profissao" name="profissao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="escolaridade" class="block text-sm font-medium text-gray-700 mb-1">Escolaridade</label>
+                                        <select id="escolaridade" name="escolaridade" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="">Selecione...</option>
+                                            <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
+                                            <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
+                                            <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+                                            <option value="Ensino Médio Completo">Ensino Médio Completo</option>
+                                            <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
+                                            <option value="Ensino Superior Completo">Ensino Superior Completo</option>
+                                            <option value="Pós-graduação">Pós-graduação</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="funcao" class="block text-sm font-medium text-gray-300 mb-1">Função/Ministério</label>
-                                    <input type="text" id="funcao" name="funcao" placeholder="Ex: Diácono, Louvor" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Seção de Informações Eclesiásticas -->
+                            <div>
+                                <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Eclesiásticas</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                                    <div>
+                                        <label for="data_batismo" class="block text-sm font-medium text-gray-700 mb-1">Data de Batismo</label>
+                                        <input type="date" id="data_batismo" name="data_batismo" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="data_chegada" class="block text-sm font-medium text-gray-700 mb-1">Data de Chegada na Igreja</label>
+                                        <input type="date" id="data_chegada" name="data_chegada" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="md:col-span-3"></div> <!-- Espaçador -->
+                                    <div>
+                                        <label for="igreja_anterior" class="block text-sm font-medium text-gray-700 mb-1">Igreja de Onde Veio</label>
+                                        <input type="text" id="igreja_anterior" name="igreja_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="cargo_anterior" class="block text-sm font-medium text-gray-700 mb-1">Cargo que Ocupava</label>
+                                        <input type="text" id="cargo_anterior" name="cargo_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="data_nascimento" class="block text-sm font-medium text-gray-300 mb-1">Data de Nasc.</label>
-                                    <input type="date" id="data_nascimento" name="data_nascimento" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="telefone" class="block text-sm font-medium text-gray-300 mb-1">Telefone</label>
-                                    <input type="tel" id="telefone" name="telefone" placeholder="(00) 90000-0000" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                                    <input type="email" id="email" name="email" placeholder="email@exemplo.com" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="cpf" class="block text-sm font-medium text-gray-300 mb-1">CPF</label>
-                                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="rg" class="block text-sm font-medium text-gray-300 mb-1">RG</label>
-                                    <input type="text" id="rg" name="rg" placeholder="00.000.000-0" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="naturalidade" class="block text-sm font-medium text-gray-300 mb-1">Naturalidade</label>
-                                    <input type="text" id="naturalidade" name="naturalidade" placeholder="Ex: Rio de Janeiro - RJ" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-3">
-                                    <label for="endereco" class="block text-sm font-medium text-gray-300 mb-1">Endereço</label>
-                                    <textarea id="endereco" name="endereco" rows="3" placeholder="Rua, Número, Bairro, CEP, Cidade, Estado" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                </div>
-                                <div class="md:col-span-1">
-                                    <label for="nome_pai" class="block text-sm font-medium text-gray-300 mb-1">Nome do Pai</label>
-                                    <input type="text" id="nome_pai" name="nome_pai" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="nome_mae" class="block text-sm font-medium text-gray-300 mb-1">Nome da Mãe</label>
-                                    <input type="text" id="nome_mae" name="nome_mae" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="estado_civil" class="block text-sm font-medium text-gray-300 mb-1">Estado Civil</label>
-                                    <select id="estado_civil" name="estado_civil" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">Selecione...</option>
-                                        <option value="Solteiro(a)">Solteiro(a)</option>
-                                        <option value="Casado(a)">Casado(a)</option>
-                                        <option value="Divorciado(a)">Divorciado(a)</option>
-                                        <option value="Viúvo(a)">Viúvo(a)</option>
-                                    </select>
-                                </div>
-                                <div id="conjuge-field" class="hidden md:col-span-2">
-                                    <label for="conjuge" class="block text-sm font-medium text-gray-300 mb-1">Nome do Cônjuge</label>
-                                    <input type="text" id="conjuge" name="conjuge" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="profissao" class="block text-sm font-medium text-gray-300 mb-1">Profissão</label>
-                                    <input type="text" id="profissao" name="profissao" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="escolaridade" class="block text-sm font-medium text-gray-300 mb-1">Escolaridade</label>
-                                    <select id="escolaridade" name="escolaridade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">Selecione...</option>
-                                        <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
-                                        <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
-                                        <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
-                                        <option value="Ensino Médio Completo">Ensino Médio Completo</option>
-                                        <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
-                                        <option value="Ensino Superior Completo">Ensino Superior Completo</option>
-                                        <option value="Pós-graduação">Pós-graduação</option>
-                                    </select>
-                                </div>
+                            </div>
+
+                            <button type="submit" id="submit-button" 
+                                    class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                                <span>Cadastrar Membro</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Aba 2: Lista de Membros -->
+                <div id="visualizar" class="app-content-tab">
+                    <!-- Indicador de Carregamento -->
+                    <div id="list-loading" class="text-center py-10">
+                        <div class="spinner h-12 w-12 border-4 border-blue-500 rounded-full mx-auto"></div>
+                        <p class="text-gray-600 mt-3">Carregando membros...</p>
+                    </div>
+
+                    <!-- Container da Lista -->
+                    <div id="member-list" class="space-y-4">
+                        <!-- Membros serão inseridos aqui (Ex: bg-white p-5 rounded-lg shadow-md) -->
+                    </div>
+                </div>
+
+                <!-- Aba 3: Aniversariantes -->
+                <div id="aniversariantes" class="app-content-tab">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Coluna Mês Atual -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                            <h3 id="aniversariantes-mes-atual-titulo" class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">
+                                Aniversariantes de...
+                            </h3>
+                            <div id="aniversariantes-mes-atual-lista" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                                <!-- Lista do mês atual será inserida aqui -->
+                                <div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>
                             </div>
                         </div>
 
-                        <!-- Seção de Informações Eclesiásticas -->
-                        <div>
-                            <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Eclesiásticas</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                                <div>
-                                    <label for="data_batismo" class="block text-sm font-medium text-gray-300 mb-1">Data de Batismo</label>
-                                    <input type="date" id="data_batismo" name="data_batismo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="data_chegada" class="block text-sm font-medium text-gray-300 mb-1">Data de Chegada na Igreja</label>
-                                    <input type="date" id="data_chegada" name="data_chegada" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-3"></div> <!-- Espaçador -->
-                                <div>
-                                    <label for="igreja_anterior" class="block text-sm font-medium text-gray-300 mb-1">Igreja de Onde Veio</label>
-                                    <input type="text" id="igreja_anterior" name="igreja_anterior" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="cargo_anterior" class="block text-sm font-medium text-gray-300 mb-1">Cargo que Ocupava</label>
-                                    <input type="text" id="cargo_anterior" name="cargo_anterior" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
+                        <!-- Coluna Próximos Meses -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+                            <h3 class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">
+                                Próximos Meses
+                            </h3>
+                            <div id="aniversariantes-proximos-lista" class="space-y-5 max-h-[60vh] overflow-y-auto pr-2">
+                                <!-- Lista dos próximos meses será inserida aqui -->
+                                <div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>
                             </div>
                         </div>
-
-                        <button type="submit" id="submit-button" 
-                                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                            <span>Cadastrar Membro</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Aba 2: Lista de Membros -->
-            <div id="tab-visualizar" class="hidden">
-                <!-- Indicador de Carregamento -->
-                <div id="list-loading" class="text-center py-10">
-                    <div class="spinner h-12 w-12 border-4 border-blue-400 rounded-full mx-auto"></div>
-                    <p class="text-gray-400 mt-3">Carregando membros...</p>
-                </div>
-
-                <!-- Container da Lista -->
-                <div id="member-list" class="space-y-4">
-                    <!-- Membros serão inseridos aqui pelo JavaScript -->
-                </div>
-            </div>
-
-            <!-- Aba 3: Aniversariantes -->
-            <div id="tab-aniversariantes" class="hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Coluna Mês Atual -->
-                    <div class="bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700">
-                        <h3 id="aniversariantes-mes-atual-titulo" class="text-2xl font-semibold text-blue-300 mb-5 border-b border-gray-700 pb-3">
-                            Aniversariantes de...
-                        </h3>
-                        <div id="aniversariantes-mes-atual-lista" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                            <!-- Lista do mês atual será inserida aqui -->
-                            <div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>
-                        </div>
-                    </div>
-
-                    <!-- Coluna Próximos Meses -->
-                    <div class="bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-700">
-                        <h3 class="text-2xl font-semibold text-blue-300 mb-5 border-b border-gray-700 pb-3">
-                            Próximos Meses
-                        </h3>
-                        <div id="aniversariantes-proximos-lista" class="space-y-5 max-h-[60vh] overflow-y-auto pr-2">
-                            <!-- Lista dos próximos meses será inserida aqui -->
-                            <div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>
-                        </div>
                     </div>
                 </div>
+
             </div>
-
-        </div>
-      </div>
+        </main>
     </div>
 
-    <!-- Caixa de Mensagem (para feedback, sem alert()) -->
-    <div id="message-box" class="hidden fixed top-5 right-5 p-4 rounded-lg text-white shadow-xl transition-all duration-300 max-w-sm z-50">
-        <!-- Mensagem será inserida aqui -->
-    </div>
+    <!-- Container de Toasts (Notificações) -->
+    <div id="toast-container"></div>
     
     <!-- Modal de Detalhes -->
-    <div id="details-modal" class="modal hidden fixed inset-0 z-40 overflow-y-auto">
+    <div id="details-modal" class="modal">
         <!-- Fundo escuro (Backdrop) -->
-        <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div>
+        <!-- <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div> -->
         
-        <!-- Conteúdo do Modal -->
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content relative bg-gray-100 text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
-                <!-- Cabeçalho do Modal -->
-                <div class="flex justify-between items-center pb-3 border-b border-gray-300">
-                    <h2 class="text-2xl font-bold text-blue-800">Detalhes do Membro</h2>
-                    <button class="modal-close-btn text-gray-500 hover:text-gray-800 transition-colors">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
+        <!-- Conteúdo do Modal (light mode já estava ok) -->
+        <div class="modal-content relative bg-gray-100 text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
+            <!-- Cabeçalho do Modal -->
+            <div class="flex justify-between items-center pb-3 border-b border-gray-300">
+                <h2 class="text-2xl font-bold text-blue-800">Detalhes do Membro</h2>
+                <button class="close-button modal-close-btn">&times;</button>
+            </div>
 
-                <!-- Corpo do Modal (Layout fornecido pelo usuário) -->
-                <div class="space-y-6 mt-5">
-                    <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                        <h3 class="text-lg font-semibold text-blue-700">Informações Pessoais</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
-                            <div class="md:col-span-2"><strong>Nome:</strong> <span id="modal-detalhes-nome" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Função/Ministério:</strong> <span id="modal-detalhes-funcao" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Data de Nasc.:</strong> <span id="modal-detalhes-data_nascimento" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Telefone:</strong> <span id="modal-detalhes-telefone" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Email:</strong> <span id="modal-detalhes-email" class="font-medium text-gray-700"></span></div>
-                            <div><strong>CPF:</strong> <span id="modal-detalhes-cpf" class="font-medium text-gray-700"></span></div>
-                            <div><strong>RG:</strong> <span id="modal-detalhes-rg" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Naturalidade:</strong> <span id="modal-detalhes-naturalidade" class="font-medium text-gray-700"></span></div>
-                            <div class="md:col-span-3"><strong>Endereço:</strong> <span id="modal-detalhes-endereco" class="block whitespace-pre-wrap font-medium text-gray-700"></span></div>
-                            <div class="md:col-span-1"><strong>Nome do Pai:</strong> <span id="modal-detalhes-nome_pai" class="font-medium text-gray-700"></span></div>
-                            <div class="md:col-span-2"><strong>Nome da Mãe:</strong> <span id="modal-detalhes-nome_mae" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Estado Civil:</strong> <span id="modal-detalhes-estado_civil" class="font-medium text-gray-700"></span></div>
-                            <div id="conjuge-detalhes-container" class="hidden md:col-span-2"><strong>Cônjuge:</strong> <span id="modal-detalhes-conjuge" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Profissão:</strong> <span id="modal-detalhes-profissao" class="font-medium text-gray-700"></span></div>
-                            <div class="md:col-span-2"><strong>Escolaridade:</strong> <span id="modal-detalhes-escolaridade" class="font-medium text-gray-700"></span></div>
-                        </div>
-                        
-                        <h3 class="text-lg font-semibold text-blue-700 pt-4 border-t border-gray-300">Informações Eclesiásticas</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
-                            <div><strong>Data de Batismo:</strong> <span id="modal-detalhes-data_batismo" class="font-medium text-gray-700"></span></div>
-                            <div><strong>Data de Chegada:</strong> <span id="modal-detalhes-data_chegada" class="font-medium text-gray-700"></span></div>
-                            <div class="md:col-span-3"></div>
-                            <div><strong>Igreja de Onde Veio:</strong> <span id="modal-detalhes-igreja_anterior" class="font-medium text-gray-700"></span></div>
-                            <div class="md:col-span-2"><strong>Cargo que Ocupava:</strong> <span id="modal-detalhes-cargo_anterior" class="font-medium text-gray-700"></span></div>
-                        </div>
+            <!-- Corpo do Modal (Layout fornecido pelo usuário) -->
+            <div class="space-y-6 mt-5">
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <h3 class="text-lg font-semibold text-blue-700">Informações Pessoais</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
+                        <div class="md:col-span-2"><strong>Nome:</strong> <span id="modal-detalhes-nome" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Função/Ministério:</strong> <span id="modal-detalhes-funcao" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Data de Nasc.:</strong> <span id="modal-detalhes-data_nascimento" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Telefone:</strong> <span id="modal-detalhes-telefone" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Email:</strong> <span id="modal-detalhes-email" class="font-medium text-gray-700"></span></div>
+                        <div><strong>CPF:</strong> <span id="modal-detalhes-cpf" class="font-medium text-gray-700"></span></div>
+                        <div><strong>RG:</strong> <span id="modal-detalhes-rg" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Naturalidade:</strong> <span id="modal-detalhes-naturalidade" class="font-medium text-gray-700"></span></div>
+                        <div class="md:col-span-3"><strong>Endereço:</strong> <span id="modal-detalhes-endereco" class="block whitespace-pre-wrap font-medium text-gray-700"></span></div>
+                        <div class="md:col-span-1"><strong>Nome do Pai:</strong> <span id="modal-detalhes-nome_pai" class="font-medium text-gray-700"></span></div>
+                        <div class="md:col-span-2"><strong>Nome da Mãe:</strong> <span id="modal-detalhes-nome_mae" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Estado Civil:</strong> <span id="modal-detalhes-estado_civil" class="font-medium text-gray-700"></span></div>
+                        <div id="conjuge-detalhes-container" class="hidden md:col-span-2"><strong>Cônjuge:</strong> <span id="modal-detalhes-conjuge" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Profissão:</strong> <span id="modal-detalhes-profissao" class="font-medium text-gray-700"></span></div>
+                        <div class="md:col-span-2"><strong>Escolaridade:</strong> <span id="modal-detalhes-escolaridade" class="font-medium text-gray-700"></span></div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-blue-700 pt-4 border-t border-gray-300">Informações Eclesiásticas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
+                        <div><strong>Data de Batismo:</strong> <span id="modal-detalhes-data_batismo" class="font-medium text-gray-700"></span></div>
+                        <div><strong>Data de Chegada:</strong> <span id="modal-detalhes-data_chegada" class="font-medium text-gray-700"></span></div>
+                        <div class="md:col-span-3"></div>
+                        <div><strong>Igreja de Onde Veio:</strong> <span id="modal-detalhes-igreja_anterior" class="font-medium text-gray-700"></span></div>
+                        <div class="md:col-span-2"><strong>Cargo que Ocupava:</strong> <span id="modal-detalhes-cargo_anterior" class="font-medium text-gray-700"></span></div>
                     </div>
                 </div>
-                
-                <!-- Rodapé do Modal com Botões -->
-                <div class="flex flex-col md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
-                    <button id="modal-edit-btn" class="w-full md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-                        Editar
-                    </button>
-                    <button id="modal-delete-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-                        Excluir
-                    </button>
-                </div>
+            </div>
+            
+            <!-- Rodapé do Modal com Botões -->
+            <div class="flex flex-col md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
+                <button id="modal-edit-btn" class="w-full md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                    Editar
+                </button>
+                <button id="modal-delete-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                    Excluir
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Edição -->
-    <div id="edit-modal" class="modal hidden fixed inset-0 z-50 overflow-y-auto">
+    <!-- Modal de Edição (Agora light mode) -->
+    <div id="edit-modal" class="modal">
         <!-- Fundo escuro (Backdrop) -->
-        <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div>
+        <!-- <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div> -->
         
         <!-- Conteúdo do Modal -->
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content relative bg-gray-800 text-gray-100 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
+            <div class="modal-content relative bg-white text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
                 <!-- Cabeçalho do Modal -->
-                <div class="flex justify-between items-center pb-3 border-b border-gray-700">
-                    <h2 class="text-2xl font-bold text-blue-400">Editar Membro</h2>
-                    <button class="modal-close-btn text-gray-400 hover:text-white transition-colors">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+                <div class="flex justify-between items-center pb-3 border-b border-gray-300">
+                    <h2 class="text-2xl font-bold text-blue-700">Editar Membro</h2>
+                    <button class="close-button modal-close-btn">&times;</button>
                 </div>
 
                 <!-- Formulário de Edição -->
@@ -405,55 +563,55 @@
                     <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                         <!-- Campos de Edição (iguais ao de cadastro, mas com 'edit-' no id) -->
                         <div>
-                            <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Pessoais</h3>
+                            <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Pessoais</h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                                 <div class="md:col-span-2">
-                                    <label for="edit-nome" class="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
-                                    <input type="text" id="edit-nome" name="nome" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-nome" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                                    <input type="text" id="edit-nome" name="nome" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-funcao" class="block text-sm font-medium text-gray-300 mb-1">Função/Ministério</label>
-                                    <input type="text" id="edit-funcao" name="funcao" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-funcao" class="block text-sm font-medium text-gray-700 mb-1">Função/Ministério</label>
+                                    <input type="text" id="edit-funcao" name="funcao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-data_nascimento" class="block text-sm font-medium text-gray-300 mb-1">Data de Nasc.</label>
-                                    <input type="date" id="edit-data_nascimento" name="data_nascimento" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
+                                    <input type="date" id="edit-data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-telefone" class="block text-sm font-medium text-gray-300 mb-1">Telefone</label>
-                                    <input type="tel" id="edit-telefone" name="telefone" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                                    <input type="tel" id="edit-telefone" name="telefone" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                                    <input type="email" id="edit-email" name="email" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" id="edit-email" name="email" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-cpf" class="block text-sm font-medium text-gray-300 mb-1">CPF</label>
-                                    <input type="text" id="edit-cpf" name="cpf" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
+                                    <input type="text" id="edit-cpf" name="cpf" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-rg" class="block text-sm font-medium text-gray-300 mb-1">RG</label>
-                                    <input type="text" id="edit-rg" name="rg" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-rg" class="block text-sm font-medium text-gray-700 mb-1">RG</label>
+                                    <input type="text" id="edit-rg" name="rg" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-naturalidade" class="block text-sm font-medium text-gray-300 mb-1">Naturalidade</label>
-                                    <input type="text" id="edit-naturalidade" name="naturalidade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-naturalidade" class="block text-sm font-medium text-gray-700 mb-1">Naturalidade</label>
+                                    <input type="text" id="edit-naturalidade" name="naturalidade" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div class="md:col-span-3">
-                                    <label for="edit-endereco" class="block text-sm font-medium text-gray-300 mb-1">Endereço</label>
-                                    <textarea id="edit-endereco" name="endereco" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                    <label for="edit-endereco" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                                    <textarea id="edit-endereco" name="endereco" rows="3" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                                 </div>
                                 <div class="md:col-span-1">
-                                    <label for="edit-nome_pai" class="block text-sm font-medium text-gray-300 mb-1">Nome do Pai</label>
-                                    <input type="text" id="edit-nome_pai" name="nome_pai" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-nome_pai" class="block text-sm font-medium text-gray-700 mb-1">Nome do Pai</label>
+                                    <input type="text" id="edit-nome_pai" name="nome_pai" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label for="edit-nome_mae" class="block text-sm font-medium text-gray-300 mb-1">Nome da Mãe</label>
-                                    <input type="text" id="edit-nome_mae" name="nome_mae" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-nome_mae" class="block text-sm font-medium text-gray-700 mb-1">Nome da Mãe</label>
+                                    <input type="text" id="edit-nome_mae" name="nome_mae" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-estado_civil" class="block text-sm font-medium text-gray-300 mb-1">Estado Civil</label>
-                                    <select id="edit-estado_civil" name="estado_civil" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-estado_civil" class="block text-sm font-medium text-gray-700 mb-1">Estado Civil</label>
+                                    <select id="edit-estado_civil" name="estado_civil" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <option value="">Selecione...</option>
                                         <option value="Solteiro(a)">Solteiro(a)</option>
                                         <option value="Casado(a)">Casado(a)</option>
@@ -462,16 +620,16 @@
                                     </select>
                                 </div>
                                 <div id="edit-conjuge-field" class="hidden md:col-span-2">
-                                    <label for="edit-conjuge" class="block text-sm font-medium text-gray-300 mb-1">Nome do Cônjuge</label>
-                                    <input type="text" id="edit-conjuge" name="conjuge" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-conjuge" class="block text-sm font-medium text-gray-700 mb-1">Nome do Cônjuge</label>
+                                    <input type="text" id="edit-conjuge" name="conjuge" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-profissao" class="block text-sm font-medium text-gray-300 mb-1">Profissão</label>
-                                    <input type="text" id="edit-profissao" name="profissao" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-profissao" class="block text-sm font-medium text-gray-700 mb-1">Profissão</label>
+                                    <input type="text" id="edit-profissao" name="profissao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label for="edit-escolaridade" class="block text-sm font-medium text-gray-300 mb-1">Escolaridade</label>
-                                    <select id="edit-escolaridade" name="escolaridade" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-escolaridade" class="block text-sm font-medium text-gray-700 mb-1">Escolaridade</label>
+                                    <select id="edit-escolaridade" name="escolaridade" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                         <option value="">Selecione...</option>
                                         <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
                                         <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
@@ -485,41 +643,41 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-xl font-semibold mb-5 text-blue-300 border-b border-gray-700 pb-2">Informações Eclesiásticas</h3>
+                            <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Eclesiásticas</h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
                                 <div>
-                                    <label for="edit-data_batismo" class="block text-sm font-medium text-gray-300 mb-1">Data de Batismo</label>
-                                    <input type="date" id="edit-data_batismo" name="data_batismo" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-data_batismo" class="block text-sm font-medium text-gray-700 mb-1">Data de Batismo</label>
+                                    <input type="date" id="edit-data_batismo" name="data_batismo" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
-                                    <label for="edit-data_chegada" class="block text-sm font-medium text-gray-300 mb-1">Data de Chegada na Igreja</label>
-                                    <input type="date" id="edit-data_chegada" name="data_chegada" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-data_chegada" class="block text-sm font-medium text-gray-700 mb-1">Data de Chegada na Igreja</label>
+                                    <input type="date" id="edit-data_chegada" name="data_chegada" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div class="md:col-span-3"></div> <!-- Espaçador -->
                                 <div>
-                                    <label for="edit-igreja_anterior" class="block text-sm font-medium text-gray-300 mb-1">Igreja de Onde Veio</label>
-                                    <input type="text" id="edit-igreja_anterior" name="igreja_anterior" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-igreja_anterior" class="block text-sm font-medium text-gray-700 mb-1">Igreja de Onde Veio</label>
+                                    <input type="text" id="edit-igreja_anterior" name="igreja_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label for="edit-cargo_anterior" class="block text-sm font-medium text-gray-300 mb-1">Cargo que Ocupava</label>
-                                    <input type="text" id="edit-cargo_anterior" name="cargo_anterior" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-cargo_anterior" class="block text-sm font-medium text-gray-700 mb-1">Cargo que Ocupava</label>
+                                    <input type="text" id="edit-cargo_anterior" name="cargo_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Seção de Senha e Salvar -->
-                    <div class="pt-6 mt-6 border-t border-gray-700 space-y-4">
+                    <div class="pt-6 mt-6 border-t border-gray-300 space-y-4">
                         <div>
-                            <label for="edit-password" class="block text-sm font-medium text-gray-300 mb-1">Sua Senha (Obrigatória)</label>
+                            <label for="edit-password" class="block text-sm font-medium text-gray-700 mb-1">Sua Senha (Obrigatória)</label>
                             <input type="password" id="edit-password" name="edit-password" required placeholder="Digite sua senha para confirmar"
-                                   class="w-full md:w-1/2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                   class="w-full md:w-1/2 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div id="edit-error" class="text-red-400 text-sm h-4">
+                        <div id="edit-error" class="text-red-600 text-sm h-4">
                             <!-- Mensagens de erro de edição aqui -->
                         </div>
                         <div class="flex justify-end gap-3">
-                            <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
                                 Cancelar
                             </button>
                             <button type="submit" id="edit-submit-button" 
@@ -533,41 +691,39 @@
         </div>
     </div>
     
-    <!-- Modal de Exclusão -->
-    <div id="delete-modal" class="modal hidden fixed inset-0 z-50 overflow-y-auto">
+    <!-- Modal de Exclusão (Agora light mode) -->
+    <div id="delete-modal" class="modal">
         <!-- Fundo escuro (Backdrop) -->
-        <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div>
+        <!-- <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div> -->
         
         <!-- Conteúdo do Modal -->
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content relative bg-gray-800 text-gray-100 rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 mx-auto">
+            <div class="modal-content relative bg-white text-gray-800 rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 mx-auto">
                 <form id="delete-form">
                     <!-- Cabeçalho do Modal -->
                     <div class="flex justify-between items-center pb-3">
-                        <h2 class="text-2xl font-bold text-red-400">Confirmar Exclusão</h2>
-                        <button type="button" class="modal-close-btn text-gray-400 hover:text-white transition-colors">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
+                        <h2 class="text-2xl font-bold text-red-600">Confirmar Exclusão</h2>
+                        <button type="button" class="close-button modal-close-btn">&times;</button>
                     </div>
 
                     <!-- Corpo do Modal -->
                     <div class="mt-4 space-y-4">
-                        <p class="text-gray-300">Você tem certeza que deseja excluir este membro? Esta ação não pode ser desfeita.</p>
-                        <p class="text-yellow-400 text-sm">Aviso: Isso excluirá permanentemente o registro do membro. Os registros financeiros (dízimos, etc.) associados a ele NÃO serão excluídos.</p>
+                        <p class="text-gray-700">Você tem certeza que deseja excluir este membro? Esta ação não pode ser desfeita.</p>
+                        <p class="text-yellow-600 text-sm">Aviso: Isso excluirá permanentemente o registro do membro. Os registros financeiros (dízimos, etc.) associados a ele NÃO serão excluídos.</p>
                         
                         <div>
-                            <label for="delete-password" class="block text-sm font-medium text-gray-300 mb-1">Sua Senha (Obrigatória)</label>
+                            <label for="delete-password" class="block text-sm font-medium text-gray-700 mb-1">Sua Senha (Obrigatória)</label>
                             <input type="password" id="delete-password" name="delete-password" required placeholder="Digite sua senha para confirmar"
-                                   class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                   class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div id="delete-error" class="text-red-400 text-sm h-4">
+                        <div id="delete-error" class="text-red-600 text-sm h-4">
                             <!-- Mensagens de erro de exclusão aqui -->
                         </div>
                     </div>
 
                     <!-- Rodapé do Modal com Botões -->
-                    <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-700">
-                        <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                    <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
+                        <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
                             Cancelar
                         </button>
                         <button type="submit" id="delete-submit-button" 
@@ -635,16 +791,11 @@
         const loginButtonText = loginButton.querySelector('span');
         const loginError = document.getElementById('login-error');
         const logoutButton = document.getElementById('logout-button');
+        const userEmailDisplay = document.getElementById('user-email-display');
 
         // --- Elementos do DOM (Abas) ---
-        const tabButtons = document.querySelectorAll('.tab-button'); // Pega todos os botões de aba
-        const tabContents = {
-            dashboard: document.getElementById('tab-dashboard'),
-            cadastro: document.getElementById('tab-cadastro'),
-            visualizar: document.getElementById('tab-visualizar'),
-            aniversariantes: document.getElementById('tab-aniversariantes')
-        };
-
+        const tabButtons = document.querySelectorAll('.app-tab-button'); // Pega todos os botões de aba
+        
         // --- Elementos do DOM (Dashboard) ---
         const dashboardTotalMembros = document.getElementById('dashboard-total-membros');
 
@@ -708,23 +859,31 @@
         const deleteError = document.getElementById('delete-error');
 
         // --- Elementos do DOM (Geral) ---
-        const messageBox = document.getElementById('message-box');
+        const toastContainer = document.getElementById('toast-container');
         const allCloseModalButtons = document.querySelectorAll('.modal-close-btn');
-        const allModalBackdrops = document.querySelectorAll('.modal-backdrop');
 
         // --- Funções Auxiliares ---
 
         /**
-         * Exibe uma mensagem de feedback no canto da tela.
+         * Exibe uma mensagem de feedback (Toast).
          */
-        function showMessage(message, isError = false) {
-            messageBox.textContent = message;
-            messageBox.classList.remove('hidden', 'bg-green-600', 'bg-red-600', 'opacity-0');
-            messageBox.classList.add(isError ? 'bg-red-600' : 'bg-green-600', 'opacity-100');
+        function showMessage(message, type = 'success') {
+            const toast = document.createElement('div');
+            let typeClass = 'toast-success';
+            if (type === 'error') typeClass = 'toast-error';
+            if (type === 'warning') typeClass = 'toast-warning';
             
+            toast.className = `toast ${typeClass}`;
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+
+            // Remove o toast após 3 segundos
             setTimeout(() => {
-                messageBox.classList.add('opacity-0');
-                setTimeout(() => messageBox.classList.add('hidden'), 300);
+                toast.style.animation = "slideOut 0.3s ease-out forwards";
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
             }, 3000);
         }
 
@@ -843,8 +1002,6 @@
         function showModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
-                modal.classList.remove('hidden');
-                void modal.offsetWidth; // Força reflow para animação
                 modal.classList.add('open');
                 document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
             }
@@ -856,13 +1013,8 @@
         function hideModal(modal) {
             if (modal) {
                 modal.classList.remove('open');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    // Só restaura a rolagem se nenhum outro modal estiver aberto
-                    if (document.querySelectorAll('.modal.open').length === 0) {
-                        document.body.style.overflow = '';
-                    }
-                }, 300); // Espera a animação de saída
+                // O CSS do modal agora o esconde (display: none)
+                document.body.style.overflow = '';
             }
         }
 
@@ -914,14 +1066,15 @@
             memberList.innerHTML = ''; // Limpa a lista atual
 
             if (memberDocs.length === 0) {
-                memberList.innerHTML = '<p class="text-gray-500 text-center">Nenhum membro cadastrado ainda.</p>';
+                memberList.innerHTML = '<p class="text-gray-600 text-center">Nenhum membro cadastrado ainda.</p>';
                 return;
             }
 
             memberDocs.forEach((doc) => {
                 const member = doc.data();
                 const memberEl = document.createElement('div');
-                memberEl.className = "bg-gray-800 p-5 rounded-lg shadow-md border border-gray-700 flex justify-between items-center";
+                // Card de membro com estilo light mode
+                memberEl.className = "bg-white p-5 rounded-lg shadow-md border border-gray-200 flex justify-between items-center";
                 
                 const nome = member.nome || 'Nome não informado';
                 const funcao = member.funcao || 'Sem função';
@@ -929,9 +1082,9 @@
 
                 memberEl.innerHTML = `
                     <div>
-                        <h3 class="text-xl font-semibold text-blue-300">${nome}</h3>
-                        <p class="text-gray-300 mt-1">${funcao}</p>
-                        <p class="text-sm text-gray-400 mt-1">${telefone}</p>
+                        <h3 class="text-xl font-semibold text-blue-700">${nome}</h3>
+                        <p class="text-gray-700 mt-1">${funcao}</p>
+                        <p class="text-sm text-gray-500 mt-1">${telefone}</p>
                     </div>
                     <button data-member-id="${doc.id}" class="details-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
                         Ver Detalhes
@@ -986,12 +1139,12 @@
             } else {
                 grupos[mesAtual].forEach(membro => {
                     const div = document.createElement('div');
-                    div.className = "py-3 flex items-center space-x-4 border-b border-gray-700 last:border-b-0";
+                    div.className = "py-3 flex items-center space-x-4 border-b border-gray-200 last:border-b-0";
                     div.innerHTML = `
-                        <div class="font-bold text-blue-400 text-2xl w-10 text-center">${membro.dia}</div>
+                        <div class="font-bold text-blue-600 text-2xl w-10 text-center">${membro.dia}</div>
                         <div class="flex-1">
-                            <p class="text-base font-medium text-gray-100">${membro.nome}</p>
-                            <p class="text-sm text-gray-400">${membro.funcao}</p>
+                            <p class="text-base font-medium text-gray-900">${membro.nome}</p>
+                            <p class="text-sm text-gray-500">${membro.funcao}</p>
                         </div>
                     `;
                     aniverMesAtualLista.appendChild(div);
@@ -1007,13 +1160,13 @@
                 
                 if (mes.length > 0) {
                     let listaHTML = mes.map(membro => {
-                        return `<li class="text-sm text-gray-300 ml-5 list-disc">${membro.dia} - ${membro.nome}</li>`;
+                        return `<li class="text-sm text-gray-700 ml-5 list-disc">${membro.dia} - ${membro.nome}</li>`;
                     }).join('');
                     
                     proximosMesesContent += `
                         <div class="py-2">
-                            <h4 class="font-semibold text-lg text-blue-300">${MESES_DO_ANO[proximoMesIndex]}</h4>
-                            <ul class_mt="2">${listaHTML}</ul>
+                            <h4 class="font-semibold text-lg text-blue-700">${MESES_DO_ANO[proximoMesIndex]}</h4>
+                            <ul class="mt-2">${listaHTML}</ul>
                         </div>
                     `;
                 }
@@ -1063,16 +1216,16 @@
             }, (error) => {
                 console.error("Erro ao carregar membros: ", error);
                 if (error.code === 'permission-denied' || error.code === 'unauthenticated') {
-                     showMessage("Sessão expirada ou sem permissão. Faça login novamente.", true);
+                     showMessage("Sessão expirada ou sem permissão. Faça login novamente.", "error");
                      signOut(auth); // Força o logout para mostrar a tela de login
                 } else {
-                    showMessage("Erro ao carregar lista de membros.", true);
+                    showMessage("Erro ao carregar lista de membros.", "error");
                 }
                 listLoading.classList.add('hidden');
                 // Limpa dashboard e aniversariantes em caso de erro
                 dashboardTotalMembros.textContent = "Erro";
-                aniverMesAtualLista.innerHTML = `<p class="text-red-400">Erro ao carregar dados.</p>`;
-                aniverProximosLista.innerHTML = `<p class="text-red-400">Erro ao carregar dados.</p>`;
+                aniverMesAtualLista.innerHTML = `<p class="text-red-500">Erro ao carregar dados.</p>`;
+                aniverProximosLista.innerHTML = `<p class="text-red-500">Erro ao carregar dados.</p>`;
             });
         }
 
@@ -1082,7 +1235,7 @@
         async function handleFormSubmit(e) {
             e.preventDefault();
             if (!userId) { 
-                showMessage("Você precisa estar logado para cadastrar um membro.", true);
+                showMessage("Você precisa estar logado para cadastrar um membro.", "error");
                 return;
             }
 
@@ -1121,21 +1274,21 @@
 
                 // Validação básica
                 if (!newMember.nome || !newMember.email) {
-                    showMessage("Nome e E-mail são campos obrigatórios.", true);
+                    showMessage("Nome e E-mail são campos obrigatórios.", "warning");
                     throw new Error("Validation failed");
                 }
 
                 const docRef = await addDoc(membersCollectionRef, newMember);
                 console.log("Membro cadastrado com ID: ", docRef.id);
                 
-                showMessage("Membro cadastrado com sucesso!");
+                showMessage("Membro cadastrado com sucesso!", "success");
                 memberForm.reset();
                 conjugeField.classList.add('hidden'); // Esconde campo cônjuge após reset
 
             } catch (error) {
                 console.error("Erro ao adicionar membro: ", error);
                 if (error.message !== "Validation failed") {
-                    showMessage("Erro ao cadastrar membro. Tente novamente.", true);
+                    showMessage("Erro ao cadastrar membro. Tente novamente.", "error");
                 }
             } finally {
                 submitButton.disabled = false;
@@ -1201,7 +1354,7 @@
                 await updateDoc(docRef, updatedMember);
                 
                 // 4. Sucesso
-                showMessage("Membro atualizado com sucesso!");
+                showMessage("Membro atualizado com sucesso!", "success");
                 hideModal(editModal);
                 currentMemberId = null; // Limpa o ID selecionado
 
@@ -1248,7 +1401,7 @@
                 await deleteDoc(docRef);
 
                 // 3. Sucesso
-                showMessage("Membro excluído com sucesso.");
+                showMessage("Membro excluído com sucesso.", "success");
                 hideModal(deleteModal);
                 currentMemberId = null; // Limpa o ID selecionado
 
@@ -1270,8 +1423,8 @@
          */
         function switchTab(targetId) {
             // Esconde todos os conteúdos
-            Object.values(tabContents).forEach(content => {
-                if (content) content.classList.add('hidden');
+            document.querySelectorAll('.app-content-tab').forEach(tab => {
+                tab.style.display = 'none'; // Usa display: none conforme seu CSS
             });
             // Remove 'active' de todos os botões
             tabButtons.forEach(button => {
@@ -1279,11 +1432,12 @@
             });
 
             // Mostra o conteúdo alvo
-            if (tabContents[targetId]) {
-                tabContents[targetId].classList.remove('hidden');
+            const content = document.getElementById(targetId);
+            if (content) {
+                content.style.display = 'block'; // Usa display: block conforme seu CSS
             }
             // Adiciona 'active' ao botão alvo
-            const activeButton = document.getElementById(`tab-btn-${targetId}`);
+            const activeButton = document.querySelector(`.app-tab-button[data-tab="${targetId}"]`);
             if (activeButton) {
                 activeButton.classList.add('active');
             }
@@ -1306,19 +1460,16 @@
                     if (user) {
                         // Usuário ESTÁ logado
                         userId = user.uid;
+                        userEmailDisplay.textContent = user.email;
+                        userEmailDisplay.classList.remove('hidden');
                         console.log("Usuário autenticado:", userId);
 
                         // Remove o 'flex' do body para alinhar o app no topo
-                        document.body.style.display = 'block';
-                        document.body.style.alignItems = '';
-                        document.body.style.justifyContent = '';
-                        document.body.classList.remove('flex', 'items-center', 'justify-center');
+                        document.body.classList.remove('logged-out');
 
                         // Esconde login, mostra app
-                        authScreen.classList.add('hidden');
-                        authScreen.classList.remove('flex'); // Remove flex
-                        appContent.classList.remove('hidden');
-                        appContent.classList.add('w-full', 'h-full'); // Garante que o app ocupe o espaço
+                        authScreen.style.display = 'none';
+                        appContent.style.display = 'block';
 
                         // Define a referência da coleção (SÓ DEPOIS de logar)
                         membersCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "membros");
@@ -1334,18 +1485,14 @@
                         // Usuário NÃO está logado
                         console.log("Nenhum usuário. Exibindo tela de login.");
                         userId = null;
+                        userEmailDisplay.classList.add('hidden');
                         
                         // Adiciona 'flex' ao body para centralizar o login
-                        document.body.style.display = 'flex';
-                        document.body.style.alignItems = 'center';
-                        document.body.style.justifyContent = 'center';
-                        document.body.classList.add('flex', 'items-center', 'justify-center');
+                        document.body.classList.add('logged-out');
                         
                         // Esconde app, mostra login
-                        authScreen.classList.remove('hidden');
-                        authScreen.classList.add('flex'); // Adiciona flex para centralizar
-                        appContent.classList.add('hidden');
-                        appContent.classList.remove('w-full', 'h-full');
+                        authScreen.style.display = 'block';
+                        appContent.style.display = 'none';
 
                         // Para de ouvir dados se estava ouvindo
                         if (unsubscribeMembers) {
@@ -1356,9 +1503,9 @@
                         // Limpa dados da tela
                         memberList.innerHTML = '';
                         membersCache = {};
-                        dashboardTotalMembros.innerHTML = `<div class="spinner h-10 w-10 border-4 border-blue-400 rounded-full"></div>`;
-                        aniverMesAtualLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>`;
-                        aniverProximosLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-400 rounded-full"></div>`;
+                        dashboardTotalMembros.innerHTML = `<div class="spinner h-10 w-10 border-4 border-blue-500 rounded-full"></div>`;
+                        aniverMesAtualLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>`;
+                        aniverProximosLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>`;
                         
                         // Fecha todos os modais caso estejam abertos
                         hideModal(detailsModal);
@@ -1381,7 +1528,7 @@
                     loginButton.disabled = true;
                     loginButtonText.textContent = 'Entrando...';
                     const spinner = document.createElement('div');
-                    spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
+                    spinner.className = 'spinner'; // Usa a classe .spinner do seu CSS
                     loginButton.prepend(spinner);
 
                     try {
@@ -1398,7 +1545,7 @@
                         // Remove estado de carregamento
                         loginButton.disabled = false;
                         loginButtonText.textContent = 'Entrar';
-                        if (loginButton.firstChild) {
+                        if (loginButton.firstChild && loginButton.firstChild.classList.contains('spinner')) {
                             loginButton.removeChild(loginButton.firstChild);
                         }
                     }
@@ -1411,7 +1558,7 @@
                         // Sucesso! onAuthStateChanged vai cuidar de mostrar o login
                     } catch (error) {
                         console.error("Erro ao sair:", error);
-                        showMessage("Erro ao tentar sair.", true);
+                        showMessage("Erro ao tentar sair.", "error");
                     }
                 });
                 
@@ -1419,7 +1566,7 @@
                 tabButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         // 'tab-btn-cadastro' -> 'cadastro'
-                        const tabId = button.id.replace('tab-btn-', ''); 
+                        const tabId = button.dataset.tab;
                         switchTab(tabId);
                     });
                 });
@@ -1457,7 +1604,7 @@
                             showDetailsModal();
                         } else {
                             console.warn("Não foi possível encontrar dados do membro no cache para o ID:", currentMemberId);
-                            showMessage("Erro ao carregar detalhes.", true);
+                            showMessage("Erro ao carregar detalhes.", "error");
                         }
                     }
                 });
@@ -1487,16 +1634,20 @@
                     });
                 });
                 
-                allModalBackdrops.forEach(backdrop => {
-                    backdrop.addEventListener('click', (e) => {
-                        const modal = e.target.closest('.modal');
-                        hideModal(modal);
+                // Fecha modal ao clicar no backdrop (fundo)
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        // Se o clique foi no próprio modal (backdrop) e não no content
+                        if (e.target === modal) {
+                            hideModal(modal);
+                        }
                     });
                 });
 
+
             } catch (e) {
                 console.error("Erro crítico na inicialização do Firebase:", e);
-                document.body.innerHTML = `<div class="p-8 text-red-300">Erro crítico ao conectar. Verifique o console.</div>`;
+                document.body.innerHTML = `<div class="p-8 text-red-600">Erro crítico ao conectar. Verifique o console.</div>`;
             }
         }
 
