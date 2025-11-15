@@ -1674,7 +1674,7 @@
         }
 
         /**
-         * Alterna a visibilidade das abas.
+         * [ALTERADO] Alterna a visibilidade das abas e inicializa o Postimages se necessário.
          */
         function switchTab(targetId) {
             // Esconde todos os conteúdos
@@ -1695,6 +1695,12 @@
             const activeButton = document.querySelector(`.app-tab-button[data-tab="${targetId}"]`);
             if (activeButton) {
                 activeButton.classList.add('active');
+            }
+
+            // [NOVO] Força a reinicialização do Postimages
+            // Se a aba for a de cadastro E o script PostImage já tiver sido carregado
+            if (targetId === 'cadastro' && typeof PostImage !== 'undefined') {
+                PostImage.init();
             }
         }
 
@@ -1882,6 +1888,11 @@
                         populateEditForm(member);
                         hideModal(detailsModal);
                         showModal('edit-modal');
+                        
+                        // [NOVO] Força a reinicialização do Postimages
+                        if (typeof PostImage !== 'undefined') {
+                            PostImage.init();
+                        }
                     }
                 });
                 
