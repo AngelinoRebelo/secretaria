@@ -18,6 +18,47 @@
             }
         }
     </script>
+    
+    <!-- [NOVO] Script do Widget do Postimages -->
+    <script src="https://postimages.org/js/postimage.js" async></script>
+
+    <!-- [NOVO] Funções de Callback para o Postimages -->
+    <script>
+        // Esta função é chamada pelo widget do Postimages após o upload no formulário de CADASTRO
+        function onUploadCadastro(response) {
+            if (response && response.url) {
+                const url = response.url; // Este é o link direto
+                const inputHidden = document.getElementById('foto_url');
+                const previewImg = document.getElementById('foto-preview');
+                
+                if (inputHidden) inputHidden.value = url;
+                if (previewImg) {
+                    previewImg.src = url;
+                    previewImg.classList.remove('hidden');
+                }
+            } else {
+                alert("Ocorreu um erro no upload. Tente novamente.");
+            }
+        }
+
+        // Esta função é chamada pelo widget do Postimages após o upload no formulário de EDIÇÃO
+        function onUploadEdicao(response) {
+             if (response && response.url) {
+                const url = response.url; // Este é o link direto
+                const inputHidden = document.getElementById('edit-foto_url');
+                const previewImg = document.getElementById('edit-foto-preview');
+                
+                if (inputHidden) inputHidden.value = url;
+                if (previewImg) {
+                    previewImg.src = url;
+                    previewImg.classList.remove('hidden');
+                }
+            } else {
+                alert("Ocorreu um erro no upload. Tente novamente.");
+            }
+        }
+    </script>
+
     <style>
         /* Estilos para abas (Autenticação) - DO SEU CSS */
         .auth-tab-button.active {
@@ -228,7 +269,7 @@
             -moz-appearance: textfield;
         }
         
-        /* [NOVO] Estilos para as fotos dos membros */
+        /* Estilos para as fotos dos membros */
         .member-list-photo {
             width: 64px; /* w-16 */
             height: 64px; /* h-16 */
@@ -244,6 +285,15 @@
             object-fit: cover; /* object-cover */
             border: 4px solid #e5e7eb; /* border-4 border-gray-200 */
             margin: 0 auto 1rem auto; /* mx-auto mb-4 */
+        }
+
+        /* [NOVO] Estilo para o preview da foto nos formulários */
+        .form-photo-preview {
+            width: 96px; /* w-24 */
+            height: 96px; /* h-24 */
+            border-radius: 9999px; /* rounded-full */
+            object-fit: cover; /* object-cover */
+            border: 2px solid #d1d5db; /* border-gray-300 */
         }
     </style>
 </head>
@@ -382,22 +432,30 @@
                                         <input type="text" id="nome" name="nome" placeholder="Nome do membro" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
                                     <div>
-                                        <!-- [ALTERADO] Campo de Função movido -->
                                         <label for="funcao" class="block text-sm font-medium text-gray-700 mb-1">Função/Ministério</label>
                                         <input type="text" id="funcao" name="funcao" placeholder="Ex: Diácono, Louvor" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
-                                    <!-- [NOVO] Campo de Foto URL -->
-                                    <div class="md:col-span-2">
-                                        <label for="foto_url" class="block text-sm font-medium text-gray-700 mb-1">Foto (URL)</label>
-                                        <input type="text" id="foto_url" name="foto_url" placeholder="Cole o link direto da imagem (postimages.org)" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <!-- [NOVO] Upload de Foto -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+                                        <!-- O botão chama o widget. data-callback aponta para a função JS global -->
+                                        <button type="button" class="postimage bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium" data-callback="onUploadCadastro">
+                                            Carregar Foto...
+                                        </button>
+                                        <!-- Este input escondido vai guardar a URL da imagem -->
+                                        <input type="hidden" id="foto_url" name="foto_url">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <!-- O preview da imagem aparece aqui -->
+                                        <img id="foto-preview" src="" alt="Preview" class="form-photo-preview hidden">
                                     </div>
                                     <div>
                                         <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
                                         <input type="date" id="data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
                                     <!-- Fim da Alteração -->
-
+                                    
                                     <div>
                                         <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
                                         <input type="tel" id="telefone" name="telefone" placeholder="(00) 90000-0000" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -646,17 +704,23 @@
                                     <input type="text" id="edit-funcao" name="funcao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
 
-                                <!-- [NOVO] Campo de Foto URL (Edição) -->
-                                <div class="md:col-span-2">
-                                    <label for="edit-foto_url" class="block text-sm font-medium text-gray-700 mb-1">Foto (URL)</label>
-                                    <input type="text" id="edit-foto_url" name="foto_url" placeholder="Cole o link direto da imagem (postimages.org)" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <!-- [NOVO] Upload de Foto (Edição) -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+                                    <button type="button" class="postimage bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium" data-callback="onUploadEdicao">
+                                        Alterar Foto...
+                                    </button>
+                                    <input type="hidden" id="edit-foto_url" name="foto_url">
+                                </div>
+                                <div class="flex items-end">
+                                    <img id="edit-foto-preview" src="" alt="Preview" class="form-photo-preview hidden">
                                 </div>
                                 <div>
                                     <label for="edit-data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
                                     <input type="date" id="edit-data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <!-- Fim da Alteração -->
-
+                                
                                 <div>
                                     <label for="edit-telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
                                     <input type="tel" id="edit-telefone" name="telefone" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -893,6 +957,7 @@
         const submitButtonText = submitButton.querySelector('span');
         const estadoCivilSelect = document.getElementById('estado_civil');
         const conjugeField = document.getElementById('conjuge-field');
+        const fotoPreviewCadastro = document.getElementById('foto-preview'); // [NOVO]
 
         // --- Elementos do DOM (Lista) ---
         const memberList = document.getElementById('member-list');
@@ -938,6 +1003,7 @@
         const editSubmitButton = document.getElementById('edit-submit-button');
         const editSubmitButtonText = editSubmitButton.querySelector('span');
         const editError = document.getElementById('edit-error');
+        const fotoPreviewEdicao = document.getElementById('edit-foto-preview'); // [NOVO]
 
         // --- Elementos do DOM (Modal de Exclusão) ---
         const deleteModal = document.getElementById('delete-modal');
@@ -1103,6 +1169,15 @@
             document.getElementById('edit-data_chegada').value = member.dataChegada || ''; 
             document.getElementById('edit-igreja_anterior').value = member.igrejaAnterior || ''; 
             document.getElementById('edit-cargo_anterior').value = member.cargoAnterior || ''; 
+
+            // [NOVO] Lógica do preview de foto na edição
+            if (member.fotoUrl) {
+                fotoPreviewEdicao.src = member.fotoUrl;
+                fotoPreviewEdicao.classList.remove('hidden');
+            } else {
+                fotoPreviewEdicao.src = '';
+                fotoPreviewEdicao.classList.add('hidden');
+            }
 
             // Lógica do campo Cônjuge
             if (member.estadoCivil === 'Casado(a)') { 
@@ -1441,6 +1516,8 @@
                 showMessage("Membro cadastrado com sucesso!", "success");
                 memberForm.reset();
                 conjugeField.classList.add('hidden'); // Esconde campo cônjuge após reset
+                fotoPreviewCadastro.classList.add('hidden'); // [NOVO] Esconde preview
+                fotoPreviewCadastro.src = '';
 
             } catch (error) {
                 console.error("Erro ao adicionar membro: ", error);
