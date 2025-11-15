@@ -235,7 +235,20 @@
     <div id="auth-screen" class="w-full max-w-md p-8">
         <!-- Card de Login Branco, parecido com a imagem -->
         <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-            <h2 class="text-3xl font-bold text-center text-blue-600 mb-8">SECRETÁRIA ADCA</h2>
+            
+            <!-- INÍCIO DA SEÇÃO DO LOGO (LOGIN) -->
+            <div class="flex flex-col items-center mb-8">
+                <!-- 
+                  ADICIONE A URL DA SUA LOGO AQUI 
+                  Recomendo uma imagem com cerca de 80px de altura (h-20)
+                -->
+                <img src="https://placehold.co/200x80/3b82f6/white?text=Sua+Logo&font=inter" 
+                     alt="Logo ADCA" 
+                     class="h-20 w-auto mb-4 rounded-lg">
+                <h2 class="text-3xl font-bold text-center text-blue-600">SECRETÁRIA ADCA</h2>
+            </div>
+            <!-- FIM DA SEÇÃO DO LOGO (LOGIN) -->
+            
             <form id="login-form" class="space-y-6">
                 <div>
                     <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -267,9 +280,27 @@
         <header class="bg-blue-700 text-white shadow-md sticky top-0 z-30">
             <div class="container mx-auto max-w-6xl px-4 md:px-8">
                 <div class="flex justify-between items-center py-4">
-                    <h1 class="text-2xl font-bold">
-                        SECRETARIA ADCA - CAPOEIRA GRANDE
-                    </h1>
+                    
+                    <!-- INÍCIO DA SEÇÃO DO LOGO (CABEÇALHO) -->
+                    <div class="flex items-center gap-3">
+                        <!-- 
+                          ADICIONE A URL DA SUA LOGO AQUI 
+                          Recomendo uma imagem com cerca de 40px de altura (h-10)
+                        -->
+                        <img src="https://placehold.co/100x40/ffffff/3b82f6?text=Logo&font=inter" 
+                             alt="Logo" 
+                             class="h-10 w-auto rounded-md">
+                        <!-- Título completo para telas médias e maiores -->
+                        <h1 class="text-2xl font-bold hidden sm:block">
+                            SECRETARIA ADCA - CAPOEIRA GRANDE
+                        </h1>
+                        <!-- Título curto para telas pequenas -->
+                        <h1 class="text-2xl font-bold sm:hidden">
+                            ADCA-CG
+                        </h1>
+                    </div>
+                    <!-- FIM DA SEÇÃO DO LOGO (CABEÇALHO) -->
+
                     <div class="flex items-center gap-4">
                         <span id="user-email-display" class="text-sm text-blue-100 hidden md:block"></span>
                         <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 text-sm">
@@ -758,8 +789,7 @@
             query, 
             setLogLevel,
             updateDoc, // Importa para edição
-            deleteDoc,  // Importa para exclusão
-            Timestamp // [IMPORTANTE] Importa o Timestamp
+            deleteDoc  // Importa para exclusão
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Configuração do Firebase ---
@@ -864,37 +894,6 @@
         const allCloseModalButtons = document.querySelectorAll('.modal-close-btn');
 
         // --- Funções Auxiliares ---
-
-        // [NOVO] FUNÇÃO DE LOG (COPIADA DO GESTAO-IGJE.JS)
-        /**
-         * Registra uma ação no log do Firestore.
-         * @param {string} acao - Ação realizada (ex: "Membro Criado", "Exclusão Dízimo").
-         * @param {object} detalhes - Objeto com informações relevantes (ex: { membroId: '...' }).
-         */
-        async function registrarLog(acao, detalhes = {}) {
-            // A função 'auth' é definida mais abaixo, no 'main'
-            if (!auth || !auth.currentUser) {
-                console.warn("Tentativa de log sem usuário autenticado.");
-                return;
-            }
-            
-            try {
-                // USA A MESMA COLEÇÃO DE LOGS DO OUTRO SITE
-                const logCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "logs");
-                await addDoc(logCollectionRef, {
-                    timestamp: Timestamp.now(),
-                    userId: auth.currentUser.uid,
-                    userEmail: auth.currentUser.email,
-                    acao: acao,
-                    detalhes: detalhes // Armazena o objeto de detalhes
-                });
-            } catch (error) {
-                console.error("Falha ao registrar log:", error);
-                // Não notifica o usuário para não interromper o fluxo principal
-            }
-        }
-        // [FIM DA FUNÇÃO DE LOG]
-
 
         /**
          * Exibe uma mensagem de feedback (Toast).
@@ -1313,13 +1312,6 @@
                 const docRef = await addDoc(membersCollectionRef, newMember);
                 console.log("Membro cadastrado com ID: ", docRef.id);
                 
-                // [NOVO] Registrar Log de Criação
-                await registrarLog("Membro Criado", {
-                    membroId: docRef.id,
-                    nome: newMember.nome
-                    // Nota: 'newMember' contém todos os dados que acabaram de ser salvos
-                });
-                
                 showMessage("Membro cadastrado com sucesso!", "success");
                 memberForm.reset();
                 conjugeField.classList.add('hidden'); // Esconde campo cônjuge após reset
@@ -1363,9 +1355,6 @@
                 // 1. Reautenticar
                 await reauthenticateUser(password);
 
-                // [NOVO] Captura os dados antigos ANTES de coletar os novos
-                const membroOriginal = membersCache[currentMemberId];
-
                 // 2. Coletar dados do formulário
                 const formData = new FormData(editForm);
                 const updatedMember = {
@@ -1395,14 +1384,6 @@
                 const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
                 await updateDoc(docRef, updatedMember);
                 
-                // [NOVO] Registrar Log de Atualização
-                await registrarLog("Membro Atualizado", {
-                    membroId: currentMemberId,
-                    nome: updatedMember.nome,
-                    dadosAntigos: membroOriginal,
-                    dadosNovos: updatedMember
-                });
-
                 // 4. Sucesso
                 showMessage("Membro atualizado com sucesso!", "success");
                 hideModal(editModal);
@@ -1446,18 +1427,9 @@
                 // 1. Reautenticar
                 await reauthenticateUser(password);
 
-                // [NOVO] Captura os dados que serão excluídos
-                const membroExcluido = membersCache[currentMemberId];
-
                 // 2. Excluir do Firestore
                 const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
                 await deleteDoc(docRef);
-
-                // [NOVO] Registrar Log de Exclusão
-                await registrarLog("Exclusão Membro", {
-                    membroId: currentMemberId,
-                    detalhesExcluidos: membroExcluido
-                });
 
                 // 3. Sucesso
                 showMessage("Membro excluído com sucesso.", "success");
