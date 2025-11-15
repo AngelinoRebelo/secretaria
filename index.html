@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br" class="h-full">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-T-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SECRETÁRIA ADCA - CAPOEIRA GRANDE</title>
     <!-- Carrega o Tailwind CSS -->
@@ -526,6 +526,16 @@
                     </form>
                     <!-- [FIM NOVO] -->
 
+                    <!-- [NOVA SEÇÃO DE AÇÕES] -->
+                    <div class="flex justify-end mb-4">
+                        <button type="button" id="report-button"
+                                class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span>Gerar Relatório de Membros</span>
+                        </button>
+                    </div>
+                    <!-- [FIM DA NOVA SEÇÃO DE AÇÕES] -->
+
                     <!-- Container da Lista -->
                     <div id="member-list" class="space-y-4">
                         <!-- Membros serão inseridos aqui -->
@@ -907,6 +917,8 @@
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const clearSearchButton = document.getElementById('clear-search-button');
+        // [NOVO] Botão de Relatório
+        const reportButton = document.getElementById('report-button');
 
         // --- Elementos do DOM (Modal de Detalhes) ---
         const detailsModal = document.getElementById('details-modal');
@@ -1339,6 +1351,98 @@
             
             renderMemberList(filteredMembers);
         }
+        
+        // [NOVO] Função para Gerar Relatório
+        /**
+         * Gera um relatório simples dos membros em uma nova janela para impressão.
+         */
+        function generateMemberReport() {
+            // Pega os membros do cache
+            const allMembers = Object.values(membersCache);
+
+            if (allMembers.length === 0) {
+                showMessage("Nenhum membro para gerar relatório.", "warning");
+                return;
+            }
+
+            // Ordena por nome
+            allMembers.sort((a, b) => {
+                const nameA = a.nome?.toLowerCase() || '';
+                const nameB = b.nome?.toLowerCase() || '';
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+
+            // Abre uma nova janela
+            const reportWindow = window.open('', '_blank');
+            if (!reportWindow) {
+                showMessage("Não foi possível abrir a janela de relatório. Verifique seu bloqueador de pop-ups.", "error");
+                return;
+            }
+
+            // Constrói o HTML do relatório
+            let reportHTML = `
+                <html>
+                <head>
+                    <title>Relatório de Membros - ADCA Capoeira Grande</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h1 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        tr:nth-child(even) { background-color: #f9f9f9; }
+                        @media print {
+                            button { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Relatório de Membros</h1>
+                    <p>Total de Membros: ${allMembers.length}</p>
+                    <button onclick="window.print()">Imprimir Relatório</button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Função/Ministério</th>
+                                <th>Telefone</th>
+                                <th>Email</th>
+                                <th>Data de Nasc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            // Adiciona cada membro como uma linha da tabela
+            allMembers.forEach(member => {
+                reportHTML += `
+                    <tr>
+                        <td>${member.nome || 'N/A'}</td>
+                        <td>${member.funcao || 'N/A'}</td>
+                        <td>${member.telefone || 'N/A'}</td>
+                        <td>${member.email || 'N/A'}</td>
+                        <td>${formatarData(member.dataNascimento)}</td>
+                    </tr>
+                `;
+            });
+
+            reportHTML += `
+                        </tbody>
+                    </table>
+                    <p style="text-align: right; font-size: 0.8em; margin-top: 20px;">
+                        Relatório gerado em: ${new Date().toLocaleString('pt-BR')}
+                    </p>
+                </body>
+                </html>
+            `;
+
+            // Escreve o HTML na nova janela
+            reportWindow.document.write(reportHTML);
+            reportWindow.document.close();
+        }
+
 
         /**
          * Inicia o listener em tempo real (onSnapshot) para a coleção de membros.
@@ -1795,6 +1899,9 @@
                     searchInput.value = '';
                     handleSearch(); // Chama a pesquisa com campo vazio (mostra todos)
                 });
+                
+                // [NOVO] Listener do Botão de Relatório
+                reportButton.addEventListener('click', generateMemberReport);
 
                 // Lista de Membros (Delegação de Eventos para Modal)
                 memberList.addEventListener('click', (e) => {
