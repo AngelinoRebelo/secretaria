@@ -1,1441 +1,829 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="h-full">
+<html lang="pt-br" class="h-full bg-gray-50">
 <head>
-    <meta charset="UTF-T-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECRETÁRIA ADCA - CAPOEIRA GRANDE</title>
-    <!-- Carrega o Tailwind CSS -->
+    <title>ADCA - Gestão de Membros</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configura a fonte padrão (Inter) -->
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Configuração Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1',
+                            600: '#4f46e5', 700: '#4338ca', 900: '#312e81',
+                        }
+                    }
                 }
             }
         }
     </script>
-    
+
     <style>
-        /* Estilos para abas (Autenticação) */
-        .auth-tab-button.active {
-            border-bottom-color: #3b82f6; /* Cor azul */
-            color: #3b82f6;
-            font-weight: 600;
-        }
-        .auth-tab-button {
-            border-bottom-width: 3px;
-            border-bottom-color: transparent;
-            color: #6b7280; /* Cinza para inativo */
-        }
-        .auth-content-tab { display: none; }
-        .auth-content-tab.active { display: block; }
-
-        /* Estilos para abas (Aplicação Principal) */
-        .app-tab-button.active {
-            border-bottom-color: #ffffff;
-            color: #ffffff;
-            font-weight: 600;
-        }
-        .app-tab-button {
-            border-bottom-width: 3px;
-            border-bottom-color: transparent;
-            color: #dbeafe;
-            opacity: 0.8;
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-            padding-left: 0.25rem;
-            padding-right: 0.25rem;
-        }
-        .app-tab-button:hover { opacity: 1; }
-        .app-content-tab { display: none; }
-        .app-content-tab.active { display: block; }
-
-        /* Estilo para modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding-top: 50px;
-            padding-bottom: 50px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .modal.open {
-            display: flex;
-            opacity: 1;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 24px;
-            border: 1px solid #888;
-            width: 90%;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        .modal.open .modal-content {
-             transform: translateY(0) scale(1);
-             opacity: 1;
-        }
+        /* Utilitários */
+        .nav-link { color: #6b7280; transition: all 0.2s; position: relative; }
+        .nav-link:hover, .nav-link.active { color: #4f46e5; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #4f46e5; }
+        
+        .app-content-tab { display: none; animation: fadeIn 0.3s ease-out; }
+        .app-content-tab.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            line-height: 1;
-        }
-        .close-button:hover, .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* Spinner */
-        .spinner {
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 3px solid #d1d5db;
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            display: inline-block;
-            animation: spin 0.8s linear infinite;
-        }
-        button:disabled .spinner {
-            border-top-color: #ffffff;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        .modal { display: none; position: fixed; inset: 0; z-index: 50; background: rgba(17,24,39,0.5); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s; }
+        .modal.open { display: flex; align-items: center; justify-content: center; opacity: 1; }
+        
+        /* Inputs Modernos */
+        .form-input { width: 100%; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.625rem; transition: all 0.2s; }
+        .form-input:focus { background: white; border-color: #6366f1; ring: 2px; outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Toast */
-        #toast-container {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        .toast {
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            color: white;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: slideIn 0.3s ease-out forwards;
-            opacity: 0;
-        }
-        .toast-success { background-color: #10b981; }
-        .toast-error { background-color: #ef4444; }
-        .toast-warning { background-color: #f59e0b; }
+        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast { padding: 1rem; border-radius: 0.5rem; background: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-left: 4px solid; display: flex; align-items: center; gap: 0.75rem; animation: slideIn 0.3s; min-width: 300px; }
+        .toast-success { border-color: #10b981; } .toast-error { border-color: #ef4444; } .toast-warning { border-color: #f59e0b; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        html, body { height: 100%; }
-        body.logged-out {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] { -moz-appearance: textfield; }
+        body.logged-out #app-content { display: none; }
+        body.logged-out #auth-screen { display: flex; }
         
-        /* Estilos Fotos */
-        .member-list-photo {
-            width: 64px;
-            height: 64px;
-            border-radius: 9999px;
-            object-fit: cover;
-            border: 2px solid #e5e7eb;
-            flex-shrink: 0;
-        }
-        .modal-details-photo {
-            width: 96px;
-            height: 96px;
-            border-radius: 9999px;
-            object-fit: cover;
-            border: 4px solid #e5e7eb;
-            margin: 0 auto 1rem auto;
-        }
-        
-        /* Previews de Upload */
-        .upload-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px dashed #ccc;
-            margin-top: 10px;
-            display: none; /* Oculto até ter imagem */
-        }
-        .upload-preview.visible {
-            display: block;
-        }
+        /* Scrollbar fina para modal */
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans min-h-full antialiased">
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Tela de Autenticação -->
-    <div id="auth-screen" class="w-full max-w-md p-8">
-        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-            <div class="flex flex-col items-center mb-8">
-                <img src="https://i.postimg.cc/NF8psJ8b/adca.png" alt="Logo ADCA" class="h-20 w-auto mb-4 rounded-lg">
-                <h2 class="text-3xl font-bold text-center text-blue-600">SECRETÁRIA ADCA</h2>
+    <!-- TELA DE LOGIN -->
+    <div id="auth-screen" class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-brand-900 via-brand-700 to-indigo-900 p-4">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="inline-flex p-4 bg-white rounded-xl shadow-lg mb-4">
+                    <img src="https://i.postimg.cc/NF8psJ8b/adca.png" alt="Logo" class="h-12 w-auto">
+                </div>
+                <h2 class="text-2xl font-bold text-white">Área Restrita</h2>
+                <p class="text-indigo-200 text-sm">Gestão ADCA - Capoeira Grande</p>
             </div>
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="login-email" name="email" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <form id="login-form" class="space-y-4">
+                <div class="relative">
+                    <i class="ph ph-envelope absolute left-3 top-3.5 text-indigo-200 text-lg"></i>
+                    <input type="email" id="login-email" placeholder="Email" required class="w-full bg-white/10 border border-indigo-300/30 rounded-lg pl-10 pr-4 py-3 text-white placeholder-indigo-300/50 focus:outline-none focus:bg-white/20 focus:border-white/50 transition-all">
                 </div>
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                    <input type="password" id="login-password" name="password" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="relative">
+                    <i class="ph ph-lock-key absolute left-3 top-3.5 text-indigo-200 text-lg"></i>
+                    <input type="password" id="login-password" placeholder="Senha" required class="w-full bg-white/10 border border-indigo-300/30 rounded-lg pl-10 pr-4 py-3 text-white placeholder-indigo-300/50 focus:outline-none focus:bg-white/20 focus:border-white/50 transition-all">
                 </div>
-                <div id="login-error" class="text-red-600 text-sm h-4"></div>
-                <button type="submit" id="login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                    <span>Entrar</span>
+                <div id="login-error" class="text-red-300 text-sm text-center h-5 font-medium"></div>
+                <button type="submit" id="login-button" class="w-full bg-white text-brand-700 font-bold py-3 rounded-lg hover:bg-indigo-50 transition-colors flex justify-center gap-2 items-center shadow-lg">
+                    Entrar <i class="ph ph-arrow-right"></i>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Container Principal do App -->
-    <div id="app-content" class="hidden w-full h-full">
-        <header class="bg-blue-700 text-white shadow-md sticky top-0 z-30">
-            <div class="container mx-auto max-w-6xl px-4 md:px-8">
-                <div class="flex justify-between items-center py-4">
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <div id="app-content" class="hidden flex-1 flex flex-col">
+        <!-- Header -->
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
                     <div class="flex items-center gap-3">
-                        <img src="https://i.postimg.cc/NF8psJ8b/adca.png" alt="Logo" class="h-10 w-auto rounded-md">
-                        <h1 class="text-2xl font-bold hidden sm:block">SECRETARIA ADCA - CAPOEIRA GRANDE</h1>
-                        <h1 class="text-2xl font-bold sm:hidden">ADCA-CG</h1>
+                        <img src="https://i.postimg.cc/NF8psJ8b/adca.png" class="h-8 w-auto">
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-900 leading-tight">Secretaria ADCA</h1>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Capoeira Grande</p>
+                        </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span id="user-email-display" class="text-sm text-blue-100 hidden md:block"></span>
-                        <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 text-sm">Sair</button>
+                        <span id="user-email-display" class="text-sm font-medium text-gray-600 hidden md:block"></span>
+                        <button id="logout-button" class="text-gray-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors" title="Sair">
+                            <i class="ph ph-sign-out text-xl"></i>
+                        </button>
                     </div>
+                </div>
+                <!-- Abas de Navegação -->
+                <div class="flex space-x-1 overflow-x-auto -mb-px">
+                    <button data-tab="dashboard" class="app-tab-button nav-link active px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                        <i class="ph ph-squares-four text-lg"></i> Dashboard
+                    </button>
+                    <button data-tab="cadastro" class="app-tab-button nav-link px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                        <i class="ph ph-user-plus text-lg"></i> Novo Membro
+                    </button>
+                    <button data-tab="visualizar" class="app-tab-button nav-link px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                        <i class="ph ph-users text-lg"></i> Membros
+                    </button>
+                    <button data-tab="aniversariantes" class="app-tab-button nav-link px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                        <i class="ph ph-cake text-lg"></i> Aniversários
+                    </button>
                 </div>
             </div>
-            <nav class="bg-blue-700 border-t border-blue-600">
-                <div class="container mx-auto max-w-6xl px-4 md:px-8">
-                    <div class="flex flex-wrap space-x-6" aria-label="Tabs">
-                        <button id="tab-btn-dashboard" type="button" data-tab="dashboard" class="app-tab-button active text-lg font-medium">Dashboard</button>
-                        <button id="tab-btn-cadastro" type="button" data-tab="cadastro" class="app-tab-button text-lg font-medium">Cadastrar Membro</button>
-                        <button id="tab-btn-visualizar" type="button" data-tab="visualizar" class="app-tab-button text-lg font-medium">Visualizar Membros</button>
-                        <button id="tab-btn-aniversariantes" type="button" data-tab="aniversariantes" class="app-tab-button text-lg font-medium">Aniversariantes</button>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        </nav>
 
-        <main class="container mx-auto max-w-6xl p-4 md:p-8">
-            <div>
-                <!-- Aba Dashboard -->
+        <!-- Conteúdo -->
+        <main class="flex-1 bg-gray-50 py-8 overflow-y-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- DASHBOARD -->
                 <div id="dashboard" class="app-content-tab active">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 flex flex-col justify-between">
-                            <h3 class="text-lg font-semibold text-blue-700">Total de Membros</h3>
-                            <div id="dashboard-total-membros" class="text-5xl font-bold text-gray-900 mt-4">
-                                <div class="spinner h-10 w-10 border-4 border-blue-500 rounded-full"></div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-1 h-full bg-brand-500"></div>
+                            <p class="text-gray-500 text-sm font-medium uppercase">Total de Membros</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <h3 id="dashboard-total-membros" class="text-4xl font-bold text-gray-900">--</h3>
+                                <div class="p-3 bg-brand-50 text-brand-600 rounded-lg"><i class="ph ph-users-three text-2xl"></i></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Aba Cadastro -->
+                <!-- CADASTRO -->
                 <div id="cadastro" class="app-content-tab">
-                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200">
-                        <form id="member-form" class="space-y-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-gray-900">Ficha de Cadastro</h2>
+                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Campos Obrigatórios *</span>
+                        </div>
+                        <form id="member-form" class="p-6 space-y-8">
+                            
+                            <!-- FOTO UPLOAD -->
+                            <div class="flex items-center gap-6">
+                                <div class="relative group">
+                                    <div class="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                                        <img id="foto_preview_cadastro" class="w-full h-full object-cover hidden">
+                                        <i id="foto_icon_placeholder" class="ph ph-camera text-3xl text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Foto de Perfil</label>
+                                    <input type="file" id="foto_upload" name="foto_upload" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-colors cursor-pointer">
+                                    <p class="text-xs text-gray-400 mt-1">Salvo no Banco de Imagens. Max 5MB.</p>
+                                </div>
+                            </div>
+
+                            <!-- DADOS PESSOAIS -->
                             <div>
-                                <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Pessoais</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                                    <div class="md:col-span-2">
-                                        <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                                        <input type="text" id="nome" name="nome" placeholder="Nome do membro" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="funcao" class="block text-sm font-medium text-gray-700 mb-1">Função/Ministério</label>
-                                        <input type="text" id="funcao" name="funcao" placeholder="Ex: Diácono, Louvor" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-
-                                    <!-- CAMPO DE FOTO (UPLOAD) -->
-                                    <div class="md:col-span-2">
-                                        <label for="foto_upload" class="block text-sm font-medium text-gray-700 mb-1">Foto do Membro (Upload)</label>
-                                        <input type="file" id="foto_upload" name="foto_upload" accept="image/*" 
-                                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                        <p class="text-xs text-gray-500 mt-1">A imagem será salva no banco Turso.</p>
-                                        <img id="foto_preview_cadastro" class="upload-preview" alt="Prévia">
-                                    </div>
-
-                                    <div>
-                                        <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
-                                        <input type="date" id="data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
+                                <h3 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ph ph-user"></i> Dados Pessoais</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div class="lg:col-span-2"><input type="text" name="nome" required placeholder="Nome Completo *" class="form-input"></div>
+                                    <div><input type="text" name="funcao" placeholder="Função/Ministério" class="form-input"></div>
+                                    
+                                    <div><label class="text-xs text-gray-500">Data de Nascimento</label><input type="date" name="data_nascimento" class="form-input"></div>
+                                    <div><label class="text-xs text-gray-500">Email *</label><input type="email" name="email" required placeholder="exemplo@email.com" class="form-input"></div>
+                                    <div><label class="text-xs text-gray-500">Telefone</label><input type="tel" name="telefone" placeholder="(00) 00000-0000" class="form-input"></div>
+                                    
+                                    <div><input type="text" name="cpf" placeholder="CPF" class="form-input"></div>
+                                    <div><input type="text" name="rg" placeholder="RG" class="form-input"></div>
+                                    <div><input type="text" name="naturalidade" placeholder="Naturalidade" class="form-input"></div>
+                                    
+                                    <div class="lg:col-span-3"><input type="text" name="endereco" placeholder="Endereço Completo" class="form-input"></div>
+                                    
+                                    <div><input type="text" name="nome_pai" placeholder="Nome do Pai" class="form-input"></div>
+                                    <div class="lg:col-span-2"><input type="text" name="nome_mae" placeholder="Nome da Mãe" class="form-input"></div>
                                     
                                     <div>
-                                        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                                        <input type="tel" id="telefone" name="telefone" placeholder="(00) 90000-0000" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                        <input type="email" id="email" name="email" placeholder="email@exemplo.com" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
-                                        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="rg" class="block text-sm font-medium text-gray-700 mb-1">RG</label>
-                                        <input type="text" id="rg" name="rg" placeholder="00.000.000-0" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="naturalidade" class="block text-sm font-medium text-gray-700 mb-1">Naturalidade</label>
-                                        <input type="text" id="naturalidade" name="naturalidade" placeholder="Ex: Rio de Janeiro - RJ" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div class="md:col-span-3">
-                                        <label for="endereco" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-                                        <textarea id="endereco" name="endereco" rows="3" placeholder="Rua, Número, Bairro, CEP, Cidade, Estado" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                    </div>
-                                    <div class="md:col-span-1">
-                                        <label for="nome_pai" class="block text-sm font-medium text-gray-700 mb-1">Nome do Pai</label>
-                                        <input type="text" id="nome_pai" name="nome_pai" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="nome_mae" class="block text-sm font-medium text-gray-700 mb-1">Nome da Mãe</label>
-                                        <input type="text" id="nome_mae" name="nome_mae" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="estado_civil" class="block text-sm font-medium text-gray-700 mb-1">Estado Civil</label>
-                                        <select id="estado_civil" name="estado_civil" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <option value="">Selecione...</option>
+                                        <select id="estado_civil" name="estado_civil" class="form-input bg-white">
+                                            <option value="">Estado Civil...</option>
                                             <option value="Solteiro(a)">Solteiro(a)</option>
                                             <option value="Casado(a)">Casado(a)</option>
                                             <option value="Divorciado(a)">Divorciado(a)</option>
                                             <option value="Viúvo(a)">Viúvo(a)</option>
                                         </select>
                                     </div>
-                                    <div id="conjuge-field" class="hidden md:col-span-2">
-                                        <label for="conjuge" class="block text-sm font-medium text-gray-700 mb-1">Nome do Cônjuge</label>
-                                        <input type="text" id="conjuge" name="conjuge" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="profissao" class="block text-sm font-medium text-gray-700 mb-1">Profissão</label>
-                                        <input type="text" id="profissao" name="profissao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="escolaridade" class="block text-sm font-medium text-gray-700 mb-1">Escolaridade</label>
-                                        <select id="escolaridade" name="escolaridade" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <option value="">Selecione...</option>
-                                            <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
-                                            <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
-                                            <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
-                                            <option value="Ensino Médio Completo">Ensino Médio Completo</option>
-                                            <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
-                                            <option value="Ensino Superior Completo">Ensino Superior Completo</option>
-                                            <option value="Pós-graduação">Pós-graduação</option>
+                                    <div id="conjuge-field" class="hidden lg:col-span-2"><input type="text" name="conjuge" placeholder="Nome do Cônjuge" class="form-input"></div>
+                                    
+                                    <div><input type="text" name="profissao" placeholder="Profissão" class="form-input"></div>
+                                    <div class="lg:col-span-2">
+                                        <select name="escolaridade" class="form-input bg-white">
+                                            <option value="">Escolaridade...</option>
+                                            <option value="Ensino Fundamental">Ensino Fundamental</option>
+                                            <option value="Ensino Médio">Ensino Médio</option>
+                                            <option value="Ensino Superior">Ensino Superior</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- DADOS ECLESIÁSTICOS -->
                             <div>
-                                <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Eclesiásticas</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                                    <div>
-                                        <label for="data_batismo" class="block text-sm font-medium text-gray-700 mb-1">Data de Batismo</label>
-                                        <input type="date" id="data_batismo" name="data_batismo" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div>
-                                        <label for="data_chegada" class="block text-sm font-medium text-gray-700 mb-1">Data de Chegada na Igreja</label>
-                                        <input type="date" id="data_chegada" name="data_chegada" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div class="md:col-span-3"></div>
-                                    <div>
-                                        <label for="igreja_anterior" class="block text-sm font-medium text-gray-700 mb-1">Igreja de Onde Veio</label>
-                                        <input type="text" id="igreja_anterior" name="igreja_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="cargo_anterior" class="block text-sm font-medium text-gray-700 mb-1">Cargo que Ocupava</label>
-                                        <input type="text" id="cargo_anterior" name="cargo_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
+                                <h3 class="text-sm font-bold text-brand-600 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ph ph-church"></i> Dados Eclesiásticos</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div><label class="text-xs text-gray-500">Data de Batismo</label><input type="date" name="data_batismo" class="form-input"></div>
+                                    <div><label class="text-xs text-gray-500">Chegada na Igreja</label><input type="date" name="data_chegada" class="form-input"></div>
+                                    <div class="lg:col-span-2"><input type="text" name="igreja_anterior" placeholder="Igreja Anterior" class="form-input mt-5"></div>
+                                    <div class="lg:col-span-4"><input type="text" name="cargo_anterior" placeholder="Cargo Anterior" class="form-input"></div>
                                 </div>
                             </div>
 
-                            <button type="submit" id="submit-button" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                                <span>Cadastrar Membro</span>
-                            </button>
+                            <div class="pt-4 border-t border-gray-100 flex justify-end">
+                                <button type="submit" id="submit-button" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-brand-500/30 transition-transform active:scale-95 flex items-center gap-2">
+                                    <span>Salvar Cadastro</span>
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
 
-                <!-- Aba Visualizar -->
+                <!-- LISTA DE MEMBROS -->
                 <div id="visualizar" class="app-content-tab">
-                    <div id="list-loading" class="text-center py-10">
-                        <div class="spinner h-12 w-12 border-4 border-blue-500 rounded-full mx-auto"></div>
-                        <p class="text-gray-600 mt-3">Carregando membros e fotos do Turso...</p>
-                    </div>
-
-                    <form id="search-form" class="mb-6 flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="search-input" placeholder="Pesquisar membro por nome..." class="flex-grow bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <div class="flex gap-3">
-                            <button type="submit" id="search-button" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg"><span>Pesquisar</span></button>
-                            <button type="button" id="clear-search-button" class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out"><span>Limpar</span></button>
-                        </div>
-                    </form>
-
-                    <div class="flex justify-end mb-4">
-                        <button type="button" id="report-button" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            <span>Gerar Relatório de Membros</span>
+                    <div class="flex flex-col md:flex-row gap-4 mb-6 justify-between items-center">
+                        <form id="search-form" class="relative w-full md:w-96">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-input" placeholder="Pesquisar por nome..." class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </form>
+                        <button id="report-button" class="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm">
+                            <i class="ph ph-printer"></i> Imprimir Relatório
                         </button>
                     </div>
-
-                    <div id="member-list" class="space-y-4"></div>
+                    
+                    <div id="list-loading" class="py-12 flex justify-center"><div class="spinner border-brand-200 border-t-brand-600"></div></div>
+                    
+                    <div id="member-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- Cards via JS -->
+                    </div>
                 </div>
 
-                <!-- Aba Aniversariantes -->
+                <!-- ANIVERSARIANTES -->
                 <div id="aniversariantes" class="app-content-tab">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-                            <h3 id="aniversariantes-mes-atual-titulo" class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">Aniversariantes de...</h3>
-                            <div id="aniversariantes-mes-atual-lista" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                                <div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="bg-brand-600 p-4 text-white flex items-center gap-2">
+                                <i class="ph ph-cake text-2xl"></i>
+                                <h3 id="aniversariantes-mes-atual-titulo" class="font-bold text-lg">Mês Atual</h3>
+                            </div>
+                            <div id="aniversariantes-mes-atual-lista" class="p-4 space-y-2">
+                                <!-- Lista JS -->
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-                            <h3 class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">Próximos Meses</h3>
-                            <div id="aniversariantes-proximos-lista" class="space-y-5 max-h-[60vh] overflow-y-auto pr-2">
-                                <div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>
-                            </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 h-fit">
+                            <h3 class="font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Próximos Meses</h3>
+                            <div id="aniversariantes-proximos-lista" class="space-y-4 text-sm"></div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
 
-    <!-- Toast -->
+    <!-- TOAST -->
     <div id="toast-container"></div>
-    
-    <!-- Modal de Detalhes -->
+
+    <!-- MODAL DETALHES (CORRIGIDO) -->
     <div id="details-modal" class="modal">
-        <div class="modal-content relative bg-gray-100 text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
-            <div class="flex justify-between items-center pb-3 border-b border-gray-300">
-                <h2 class="text-2xl font-bold text-blue-800">Detalhes do Membro</h2>
-                <button class="close-button modal-close-btn">&times;</button>
+        <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden m-4 max-h-[90vh] flex flex-col">
+            <!-- Cabeçalho Azul Fixo -->
+            <div class="relative h-28 bg-brand-600 shrink-0 z-0">
+                <button class="modal-close-btn absolute top-4 right-4 text-white/80 hover:text-white p-1 rounded-full hover:bg-white/20 transition-colors z-20"><i class="ph ph-x text-xl"></i></button>
             </div>
-            <div class="space-y-6 mt-5">
-                <img id="modal-detalhes-foto" src="" alt="Foto do Membro" class="modal-details-photo hidden">
-                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                    <h3 class="text-lg font-semibold text-blue-700">Informações Pessoais</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
-                        <div class="md:col-span-2"><strong>Nome:</strong> <span id="modal-detalhes-nome" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Função/Ministério:</strong> <span id="modal-detalhes-funcao" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Data de Nasc.:</strong> <span id="modal-detalhes-data_nascimento" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Telefone:</strong> <span id="modal-detalhes-telefone" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Email:</strong> <span id="modal-detalhes-email" class="font-medium text-gray-700"></span></div>
-                        <div><strong>CPF:</strong> <span id="modal-detalhes-cpf" class="font-medium text-gray-700"></span></div>
-                        <div><strong>RG:</strong> <span id="modal-detalhes-rg" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Naturalidade:</strong> <span id="modal-detalhes-naturalidade" class="font-medium text-gray-700"></span></div>
-                        <div class="md:col-span-3"><strong>Endereço:</strong> <span id="modal-detalhes-endereco" class="block whitespace-pre-wrap font-medium text-gray-700"></span></div>
-                        <div class="md:col-span-1"><strong>Nome do Pai:</strong> <span id="modal-detalhes-nome_pai" class="font-medium text-gray-700"></span></div>
-                        <div class="md:col-span-2"><strong>Nome da Mãe:</strong> <span id="modal-detalhes-nome_mae" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Estado Civil:</strong> <span id="modal-detalhes-estado_civil" class="font-medium text-gray-700"></span></div>
-                        <div id="conjuge-detalhes-container" class="hidden md:col-span-2"><strong>Cônjuge:</strong> <span id="modal-detalhes-conjuge" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Profissão:</strong> <span id="modal-detalhes-profissao" class="font-medium text-gray-700"></span></div>
-                        <div class="md:col-span-2"><strong>Escolaridade:</strong> <span id="modal-detalhes-escolaridade" class="font-medium text-gray-700"></span></div>
-                    </div>
+            
+            <!-- Área da Foto (Fixa, não rola) -->
+            <div class="px-8 relative shrink-0 z-10">
+                <div class="-mt-12 flex justify-between items-end mb-6">
+                    <img id="modal-detalhes-foto" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-md bg-gray-200 object-cover shrink-0">
                     
-                    <h3 class="text-lg font-semibold text-blue-700 pt-4 border-t border-gray-300">Informações Eclesiásticas</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
-                        <div><strong>Data de Batismo:</strong> <span id="modal-detalhes-data_batismo" class="font-medium text-gray-700"></span></div>
-                        <div><strong>Data de Chegada:</strong> <span id="modal-detalhes-data_chegada" class="font-medium text-gray-700"></span></div>
-                        <div class="md:col-span-3"></div>
-                        <div><strong>Igreja de Onde Veio:</strong> <span id="modal-detalhes-igreja_anterior" class="font-medium text-gray-700"></span></div>
-                        <div class="md:col-span-2"><strong>Cargo que Ocupava:</strong> <span id="modal-detalhes-cargo_anterior" class="font-medium text-gray-700"></span></div>
+                    <div class="flex gap-2 mb-0 md:mb-2">
+                        <button id="modal-edit-btn" class="px-4 py-2 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"><i class="ph ph-pencil"></i> Editar</button>
+                        <button id="modal-delete-btn" class="px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"><i class="ph ph-trash"></i> Excluir</button>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
-                <button id="modal-edit-btn" class="w-full md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">Editar</button>
-                <button id="modal-delete-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">Excluir</button>
+
+            <!-- Conteúdo Rolável -->
+            <div class="px-8 pb-8 overflow-y-auto flex-1 scrollbar-thin">
+                <div>
+                    <h2 id="modal-detalhes-nome" class="text-2xl font-bold text-gray-900 uppercase">--</h2>
+                    <p id="modal-detalhes-funcao" class="text-brand-600 font-medium text-lg">--</p>
+                </div>
+
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
+                    <!-- COLUNA 1: PESSOAL -->
+                    <div class="space-y-4">
+                        <h3 class="text-brand-600 font-bold text-sm uppercase border-b border-brand-100 pb-2">Informações Pessoais</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Data de Nasc.</span><span id="modal-detalhes-data_nascimento" class="text-gray-900">--</span></div>
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Telefone</span><span id="modal-detalhes-telefone" class="text-gray-900">--</span></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">CPF</span><span id="modal-detalhes-cpf" class="text-gray-900">--</span></div>
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">RG</span><span id="modal-detalhes-rg" class="text-gray-900">--</span></div>
+                        </div>
+
+                        <div><span class="text-xs text-gray-500 uppercase font-semibold block">Email</span><span id="modal-detalhes-email" class="text-gray-900 break-words">--</span></div>
+                        <div><span class="text-xs text-gray-500 uppercase font-semibold block">Endereço</span><span id="modal-detalhes-endereco" class="text-gray-900">--</span></div>
+                        <div><span class="text-xs text-gray-500 uppercase font-semibold block">Naturalidade</span><span id="modal-detalhes-naturalidade" class="text-gray-900">--</span></div>
+
+                        <div class="grid grid-cols-2 gap-4 pt-2">
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Nome do Pai</span><span id="modal-detalhes-nome_pai" class="text-gray-900">--</span></div>
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Nome da Mãe</span><span id="modal-detalhes-nome_mae" class="text-gray-900">--</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 pt-2">
+                             <div>
+                                <span class="text-xs text-gray-500 uppercase font-semibold block">Estado Civil</span>
+                                <span id="modal-detalhes-estado_civil" class="text-gray-900">--</span>
+                            </div>
+                            <div id="conjuge-detalhes-container" class="hidden">
+                                <span class="text-xs text-gray-500 uppercase font-semibold block">Cônjuge</span>
+                                <span id="modal-detalhes-conjuge" class="text-gray-900">--</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 pt-2">
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Profissão</span><span id="modal-detalhes-profissao" class="text-gray-900">--</span></div>
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Escolaridade</span><span id="modal-detalhes-escolaridade" class="text-gray-900">--</span></div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 2: ECLESIÁSTICO -->
+                    <div class="space-y-4">
+                        <h3 class="text-brand-600 font-bold text-sm uppercase border-b border-brand-100 pb-2">Informações Eclesiásticas</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Data de Batismo</span><span id="modal-detalhes-data_batismo" class="text-gray-900">--</span></div>
+                            <div><span class="text-xs text-gray-500 uppercase font-semibold block">Data de Chegada</span><span id="modal-detalhes-data_chegada" class="text-gray-900">--</span></div>
+                        </div>
+
+                        <div><span class="text-xs text-gray-500 uppercase font-semibold block">Igreja de Onde Veio</span><span id="modal-detalhes-igreja_anterior" class="text-gray-900">--</span></div>
+                        <div><span class="text-xs text-gray-500 uppercase font-semibold block">Cargo que Ocupava</span><span id="modal-detalhes-cargo_anterior" class="text-gray-900">--</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Edição -->
+    <!-- MODAL EDIÇÃO -->
     <div id="edit-modal" class="modal">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content relative bg-white text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
-                <div class="flex justify-between items-center pb-3 border-b border-gray-300">
-                    <h2 class="text-2xl font-bold text-blue-700">Editar Membro</h2>
-                    <button class="close-button modal-close-btn">&times;</button>
+        <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl m-4 p-6 max-h-[90vh] overflow-y-auto scrollbar-thin">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                <h2 class="text-xl font-bold text-gray-900">Editar Membro</h2>
+                <button class="modal-close-btn text-gray-400 hover:text-gray-600"><i class="ph ph-x text-2xl"></i></button>
+            </div>
+            <form id="edit-form" class="space-y-6">
+                <div class="flex items-center gap-4">
+                    <img id="foto_preview_edicao" class="w-16 h-16 rounded-full object-cover hidden">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700">Alterar Foto</label>
+                        <input type="file" id="edit-foto_upload" name="foto_upload" accept="image/*" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+                    </div>
                 </div>
-                <form id="edit-form" class="mt-5 space-y-8">
-                    <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                        <div>
-                            <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Pessoais</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                                <div class="md:col-span-2">
-                                    <label for="edit-nome" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                                    <input type="text" id="edit-nome" name="nome" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-funcao" class="block text-sm font-medium text-gray-700 mb-1">Função/Ministério</label>
-                                    <input type="text" id="edit-funcao" name="funcao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
 
-                                <!-- CAMPO DE EDITAR FOTO -->
-                                <div class="md:col-span-2">
-                                    <label for="edit-foto_upload" class="block text-sm font-medium text-gray-700 mb-1">Alterar Foto (Upload)</label>
-                                    <input type="file" id="edit-foto_upload" name="foto_upload" accept="image/*" 
-                                           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                    <p class="text-xs text-gray-500 mt-1">Deixe vazio para manter a foto atual.</p>
-                                    <img id="foto_preview_edicao" class="upload-preview" alt="Prévia">
-                                </div>
-                                
-                                <div>
-                                    <label for="edit-data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
-                                    <input type="date" id="edit-data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                                    <input type="tel" id="edit-telefone" name="telefone" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <input type="email" id="edit-email" name="email" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-cpf" class="block text-sm font-medium text-gray-700 mb-1">CPF</label>
-                                    <input type="text" id="edit-cpf" name="cpf" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-rg" class="block text-sm font-medium text-gray-700 mb-1">RG</label>
-                                    <input type="text" id="edit-rg" name="rg" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-naturalidade" class="block text-sm font-medium text-gray-700 mb-1">Naturalidade</label>
-                                    <input type="text" id="edit-naturalidade" name="naturalidade" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-3">
-                                    <label for="edit-endereco" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-                                    <textarea id="edit-endereco" name="endereco" rows="3" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                                </div>
-                                <div class="md:col-span-1">
-                                    <label for="edit-nome_pai" class="block text-sm font-medium text-gray-700 mb-1">Nome do Pai</label>
-                                    <input type="text" id="edit-nome_pai" name="nome_pai" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="edit-nome_mae" class="block text-sm font-medium text-gray-700 mb-1">Nome da Mãe</label>
-                                    <input type="text" id="edit-nome_mae" name="nome_mae" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-estado_civil" class="block text-sm font-medium text-gray-700 mb-1">Estado Civil</label>
-                                    <select id="edit-estado_civil" name="estado_civil" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">Selecione...</option>
-                                        <option value="Solteiro(a)">Solteiro(a)</option>
-                                        <option value="Casado(a)">Casado(a)</option>
-                                        <option value="Divorciado(a)">Divorciado(a)</option>
-                                        <option value="Viúvo(a)">Viúvo(a)</option>
-                                    </select>
-                                </div>
-                                <div id="edit-conjuge-field" class="hidden md:col-span-2">
-                                    <label for="edit-conjuge" class="block text-sm font-medium text-gray-700 mb-1">Nome do Cônjuge</label>
-                                    <input type="text" id="edit-conjuge" name="conjuge" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-profissao" class="block text-sm font-medium text-gray-700 mb-1">Profissão</label>
-                                    <input type="text" id="edit-profissao" name="profissao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="edit-escolaridade" class="block text-sm font-medium text-gray-700 mb-1">Escolaridade</label>
-                                    <select id="edit-escolaridade" name="escolaridade" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option value="">Selecione...</option>
-                                        <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
-                                        <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
-                                        <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
-                                        <option value="Ensino Médio Completo">Ensino Médio Completo</option>
-                                        <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
-                                        <option value="Ensino Superior Completo">Ensino Superior Completo</option>
-                                        <option value="Pós-graduação">Pós-graduação</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Eclesiásticas</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
-                                <div>
-                                    <label for="edit-data_batismo" class="block text-sm font-medium text-gray-700 mb-1">Data de Batismo</label>
-                                    <input type="date" id="edit-data_batismo" name="data_batismo" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label for="edit-data_chegada" class="block text-sm font-medium text-gray-700 mb-1">Data de Chegada na Igreja</label>
-                                    <input type="date" id="edit-data_chegada" name="data_chegada" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-3"></div>
-                                <div>
-                                    <label for="edit-igreja_anterior" class="block text-sm font-medium text-gray-700 mb-1">Igreja de Onde Veio</label>
-                                    <input type="text" id="edit-igreja_anterior" name="igreja_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="edit-cargo_anterior" class="block text-sm font-medium text-gray-700 mb-1">Cargo que Ocupava</label>
-                                    <input type="text" id="edit-cargo_anterior" name="cargo_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                            </div>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2"><input type="text" id="edit-nome" name="nome" placeholder="Nome" class="form-input"></div>
+                    <div><input type="text" id="edit-funcao" name="funcao" placeholder="Função" class="form-input"></div>
+                    
+                    <div><input type="date" id="edit-data_nascimento" name="data_nascimento" class="form-input"></div>
+                    <div><input type="tel" id="edit-telefone" name="telefone" placeholder="Telefone" class="form-input"></div>
+                    <div><input type="email" id="edit-email" name="email" placeholder="Email" class="form-input"></div>
+                    
+                    <div><input type="text" id="edit-cpf" name="cpf" placeholder="CPF" class="form-input"></div>
+                    <div><input type="text" id="edit-rg" name="rg" placeholder="RG" class="form-input"></div>
+                    <div><input type="text" id="edit-naturalidade" name="naturalidade" placeholder="Naturalidade" class="form-input"></div>
+                    
+                    <div class="md:col-span-3"><input type="text" id="edit-endereco" name="endereco" placeholder="Endereço" class="form-input"></div>
+                    
+                    <div><input type="text" id="edit-nome_pai" name="nome_pai" placeholder="Pai" class="form-input"></div>
+                    <div class="md:col-span-2"><input type="text" id="edit-nome_mae" name="nome_mae" placeholder="Mãe" class="form-input"></div>
+                    
+                    <div>
+                        <select id="edit-estado_civil" name="estado_civil" class="form-input bg-white">
+                            <option value="Solteiro(a)">Solteiro(a)</option>
+                            <option value="Casado(a)">Casado(a)</option>
+                            <option value="Divorciado(a)">Divorciado(a)</option>
+                            <option value="Viúvo(a)">Viúvo(a)</option>
+                        </select>
+                    </div>
+                    <div id="edit-conjuge-field" class="hidden md:col-span-2"><input type="text" id="edit-conjuge" name="conjuge" placeholder="Cônjuge" class="form-input"></div>
+                    
+                    <div><input type="text" id="edit-profissao" name="profissao" placeholder="Profissão" class="form-input"></div>
+                    <div class="md:col-span-2">
+                        <select id="edit-escolaridade" name="escolaridade" class="form-input bg-white">
+                            <option value="">Escolaridade...</option>
+                            <option value="Ensino Fundamental">Ensino Fundamental</option>
+                            <option value="Ensino Médio">Ensino Médio</option>
+                            <option value="Ensino Superior">Ensino Superior</option>
+                        </select>
                     </div>
 
-                    <div class="pt-6 mt-6 border-t border-gray-300 space-y-4">
-                        <div>
-                            <label for="edit-password" class="block text-sm font-medium text-gray-700 mb-1">Sua Senha (Obrigatória)</label>
-                            <input type="password" id="edit-password" name="edit-password" required placeholder="Digite sua senha para confirmar"
-                                   class="w-full md:w-1/2 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div id="edit-error" class="text-red-600 text-sm h-4"></div>
-                        <div class="flex justify-end gap-3">
-                            <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Cancelar</button>
-                            <button type="submit" id="edit-submit-button" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                                <span>Salvar Alterações</span>
-                            </button>
-                        </div>
+                    <div><input type="date" id="edit-data_batismo" name="data_batismo" class="form-input"></div>
+                    <div><input type="date" id="edit-data_chegada" name="data_chegada" class="form-input"></div>
+                    <div class="md:col-span-3 flex gap-4">
+                        <input type="text" id="edit-igreja_anterior" name="igreja_anterior" placeholder="Igreja Ant." class="form-input w-1/2">
+                        <input type="text" id="edit-cargo_anterior" name="cargo_anterior" placeholder="Cargo Ant." class="form-input w-1/2">
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+                    <label class="text-xs font-bold uppercase text-gray-500 mb-2 block">Confirmação</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="edit-password" name="edit-password" placeholder="Sua senha atual" class="form-input">
+                        <button type="submit" id="edit-submit-button" class="bg-brand-600 hover:bg-brand-700 text-white px-6 rounded-lg font-medium transition-colors">Salvar</button>
+                    </div>
+                    <div id="edit-error" class="text-red-500 text-xs mt-2"></div>
+                </div>
+            </form>
         </div>
     </div>
-    
-    <!-- Modal de Exclusão -->
+
+    <!-- MODAL EXCLUSÃO -->
     <div id="delete-modal" class="modal">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content relative bg-white text-gray-800 rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 mx-auto">
-                <form id="delete-form">
-                    <div class="flex justify-between items-center pb-3">
-                        <h2 class="text-2xl font-bold text-red-600">Confirmar Exclusão</h2>
-                        <button type="button" class="close-button modal-close-btn">&times;</button>
-                    </div>
-                    <div class="mt-4 space-y-4">
-                        <p class="text-gray-700">Você tem certeza que deseja excluir este membro? Esta ação não pode ser desfeita.</p>
-                        <p class="text-yellow-600 text-sm">Isso excluirá os dados do Firebase e a foto do Turso.</p>
-                        <div>
-                            <label for="delete-password" class="block text-sm font-medium text-gray-700 mb-1">Sua Senha (Obrigatória)</label>
-                            <input type="password" id="delete-password" name="delete-password" required placeholder="Digite sua senha para confirmar"
-                                   class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <div id="delete-error" class="text-red-600 text-sm h-4"></div>
-                    </div>
-                    <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
-                        <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Cancelar</button>
-                        <button type="submit" id="delete-submit-button" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                            <span>Excluir Permanentemente</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <div class="modal-content bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><i class="ph ph-warning text-3xl"></i></div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Excluir Membro?</h3>
+            <p class="text-gray-500 text-sm mb-6">Esta ação removerá permanentemente o registro e a foto do banco de dados.</p>
+            <form id="delete-form">
+                <input type="password" id="delete-password" required placeholder="Confirme sua senha" class="form-input mb-2">
+                <p id="delete-error" class="text-red-500 text-xs h-4 mb-4"></p>
+                <div class="flex gap-3">
+                    <button type="button" class="modal-close-btn flex-1 py-2 border border-gray-200 rounded-lg hover:bg-gray-50">Cancelar</button>
+                    <button type="submit" id="delete-submit-button" class="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-lg shadow-red-500/30">Excluir</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Firebase e Turso Logic -->
+    <!-- SCRIPTS -->
     <script type="module">
-        // Importações
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, collection, onSnapshot, query, updateDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // Importação do Cliente Turso (LibSQL)
         import { createClient } from "https://esm.sh/@libsql/client/web";
 
-        // --- CONFIGURAÇÃO DO TURSO ---
-        // ⚠️ ATENÇÃO: VOCÊ PRECISA COLOCAR A URL DO SEU BANCO AQUI ⚠️
-        const TURSO_DB_URL = "libsql://secretariaadca-machaddoo.aws-us-west-2.turso.io"; // <--- SUBSTITUA ISSO
-        const TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NjM3NDI5ODIsImlkIjoiZjA1YjU2MTgtYWY4MS00MmE2LTk5MjgtZTc4ZGU4MTMyZGFmIiwicmlkIjoiMWQ1Yjk3NTMtNjk5OC00MmQ5LTg5MTktNzAwYjM5YmE2MGUyIn0.ofV7BH_LTNkTewN2JbyQVGQQ3pf3H5BrGPlQg6GV0lzCK9ncP5PL9SvNhRuMaypM51ewTLKGtabwsTuzuRu0BA";
+        // =======================================================
+        // ⚠️ CONFIGURAÇÃO DE SEGURANÇA - PREENCHA AQUI ⚠️
+        // =======================================================
+        // Para segurança, não deixe as chaves hardcoded se compartilhar o código.
+        // Substitua os valores abaixo pelas suas credenciais reais do Turso.
+        
+        const TURSO_DB_URL = "libsql://secretariaadca-machaddoo.aws-us-west-2.turso.io"; 
+        const TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NjM3NDQ3NjEsImlkIjoiZjA1YjU2MTgtYWY4MS00MmE2LTk5MjgtZTc4ZGU4MTMyZGFmIiwicmlkIjoiMWQ1Yjk3NTMtNjk5OC00MmQ5LTg5MTktNzAwYjM5YmE2MGUyIn0._tzShbyqWAFJsZmXclqhTAgQmqaXas7bvHMJQ-cOPjaO2r8Zmr-WqP3YgyTqOSHXdxAa5yOemFQq4waL_0WdAw";
 
-        // --- Configuração do Firebase ---
-        const userProvidedConfigString = `{
+        // =======================================================
+
+        const firebaseConfig = JSON.parse(`{
           "apiKey": "AIzaSyA59Apn8I_8uT7XBrMIS_zD1RdtHgJCzOA",
           "authDomain": "gestao-capoeira.firebaseapp.com",
           "projectId": "gestao-capoeira",
           "storageBucket": "gestao-capoeira.firebasestorage.app",
           "messagingSenderId": "90755919",
           "appId": "1:907559288919:web:a4afdb4ed23e9d11196312"
-        }`;
-        const firebaseConfig = JSON.parse(userProvidedConfigString);
+        }`);
         
-        const MESES_DO_ANO = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        const FOTO_PLACEHOLDER_URL = "https://placehold.co/100x100/e2e8f0/718096?text=Foto";
+        const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const PLACEHOLDER_IMG = "https://placehold.co/100x100/e2e8f0/718096?text=Foto";
 
-        // Globais
-        let app, auth, db, userId, membersCollectionRef, tursoClient;
-        let membersCache = {}; 
-        let photosCache = {}; // Cache local para as fotos do Turso { memberId: base64string }
-        let unsubscribeMembers = null;
-        let currentMemberId = null;
+        let app, auth, db, userId, membersRef, turso;
+        let cache = {}, photos = {}, unsub = null, currentId = null;
 
-        // Elementos DOM
-        const authScreen = document.getElementById('auth-screen');
-        const appContent = document.getElementById('app-content');
-        const loginForm = document.getElementById('login-form');
-        const loginButton = document.getElementById('login-button');
-        const loginError = document.getElementById('login-error');
-        const logoutButton = document.getElementById('logout-button');
-        const userEmailDisplay = document.getElementById('user-email-display');
-        
-        const tabButtons = document.querySelectorAll('.app-tab-button');
-        
-        // Dashboard & Aniversariantes
-        const dashboardTotalMembros = document.getElementById('dashboard-total-membros');
-        const aniverMesAtualTitulo = document.getElementById('aniversariantes-mes-atual-titulo');
-        const aniverMesAtualLista = document.getElementById('aniversariantes-mes-atual-lista');
-        const aniverProximosLista = document.getElementById('aniversariantes-proximos-lista');
-
-        // Cadastro
-        const memberForm = document.getElementById('member-form');
-        const submitButton = document.getElementById('submit-button');
-        const estadoCivilSelect = document.getElementById('estado_civil');
-        const conjugeField = document.getElementById('conjuge-field');
-        const fotoInputCadastro = document.getElementById('foto_upload');
-        const fotoPreviewCadastro = document.getElementById('foto_preview_cadastro');
-
-        // Lista
-        const memberList = document.getElementById('member-list');
-        const listLoading = document.getElementById('list-loading');
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const clearSearchButton = document.getElementById('clear-search-button');
-        const reportButton = document.getElementById('report-button');
-
-        // Modais
-        const detailsModal = document.getElementById('details-modal');
-        const modalEditBtn = document.getElementById('modal-edit-btn');
-        const modalDeleteBtn = document.getElementById('modal-delete-btn');
-        
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-form');
-        const editEstadoCivilSelect = document.getElementById('edit-estado_civil');
-        const editConjugeField = document.getElementById('edit-conjuge-field');
-        const editSubmitButton = document.getElementById('edit-submit-button');
-        const editError = document.getElementById('edit-error');
-        const fotoInputEdicao = document.getElementById('edit-foto_upload');
-        const fotoPreviewEdicao = document.getElementById('foto_preview_edicao');
-
-        const deleteModal = document.getElementById('delete-modal');
-        const deleteForm = document.getElementById('delete-form');
-        const deleteSubmitButton = document.getElementById('delete-submit-button');
-        const deleteError = document.getElementById('delete-error');
-
-        const toastContainer = document.getElementById('toast-container');
-        const allCloseModalButtons = document.querySelectorAll('.modal-close-btn');
-
-        // Campos do Modal Detalhes
-        const modalSpans = {
-            nome: document.getElementById('modal-detalhes-nome'),
-            funcao: document.getElementById('modal-detalhes-funcao'),
-            data_nascimento: document.getElementById('modal-detalhes-data_nascimento'),
-            telefone: document.getElementById('modal-detalhes-telefone'),
-            email: document.getElementById('modal-detalhes-email'),
-            cpf: document.getElementById('modal-detalhes-cpf'),
-            rg: document.getElementById('modal-detalhes-rg'),
-            naturalidade: document.getElementById('modal-detalhes-naturalidade'),
-            endereco: document.getElementById('modal-detalhes-endereco'),
-            nome_pai: document.getElementById('modal-detalhes-nome_pai'),
-            nome_mae: document.getElementById('modal-detalhes-nome_mae'),
-            estado_civil: document.getElementById('modal-detalhes-estado_civil'),
-            conjuge: document.getElementById('modal-detalhes-conjuge'),
-            conjugeContainer: document.getElementById('conjuge-detalhes-container'),
-            profissao: document.getElementById('modal-detalhes-profissao'),
-            escolaridade: document.getElementById('modal-detalhes-escolaridade'),
-            data_batismo: document.getElementById('modal-detalhes-data_batismo'),
-            data_chegada: document.getElementById('modal-detalhes-data_chegada'),
-            igreja_anterior: document.getElementById('modal-detalhes-igreja_anterior'),
-            cargo_anterior: document.getElementById('modal-detalhes-cargo_anterior'),
-            foto: document.getElementById('modal-detalhes-foto')
-        };
-
-        // --- FUNÇÕES TURSO ---
-
+        // --- TURSO ---
         async function initTurso() {
-            try {
-                // Verifica se a URL foi preenchida
-                if (TURSO_DB_URL.includes("NOME-DO-SEU-BANCO")) {
-                    console.warn("URL do Turso não configurada.");
-                    // Não iniciamos o cliente se a URL for o placeholder
-                    return;
-                }
-
-                tursoClient = createClient({
-                    url: TURSO_DB_URL,
-                    authToken: TURSO_AUTH_TOKEN,
-                });
-                
-                // Cria a tabela se não existir
-                await tursoClient.execute(`
-                    CREATE TABLE IF NOT EXISTS member_photos (
-                        member_id TEXT PRIMARY KEY,
-                        photo_data TEXT
-                    )
-                `);
-                console.log("Turso: Tabela verificada/criada com sucesso.");
-            } catch (error) {
-                console.error("Erro ao conectar com Turso:", error);
-                showMessage("Erro ao conectar com banco de imagens.", "error");
-            }
-        }
-
-        // Redimensiona imagem e converte para Base64 para não pesar no banco
-        function resizeAndCompressImage(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800;
-                        const MAX_HEIGHT = 800;
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > height) {
-                            if (width > MAX_WIDTH) {
-                                height *= MAX_WIDTH / width;
-                                width = MAX_WIDTH;
-                            }
-                        } else {
-                            if (height > MAX_HEIGHT) {
-                                width *= MAX_HEIGHT / height;
-                                height = MAX_HEIGHT;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Retorna JPEG com qualidade 0.7
-                        resolve(canvas.toDataURL('image/jpeg', 0.7));
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                reader.onerror = (err) => reject(err);
-            });
-        }
-
-        async function savePhotoToTurso(memberId, base64Data) {
-            if (!tursoClient) return;
-            try {
-                await tursoClient.execute({
-                    sql: "INSERT OR REPLACE INTO member_photos (member_id, photo_data) VALUES (?, ?)",
-                    args: [memberId, base64Data]
-                });
-                // Atualiza cache local
-                photosCache[memberId] = base64Data;
-            } catch (e) {
-                console.error("Erro ao salvar foto no Turso:", e);
-                throw e;
-            }
-        }
-
-        async function deletePhotoFromTurso(memberId) {
-            if (!tursoClient) return;
-            try {
-                await tursoClient.execute({
-                    sql: "DELETE FROM member_photos WHERE member_id = ?",
-                    args: [memberId]
-                });
-                delete photosCache[memberId];
-            } catch (e) {
-                console.error("Erro ao deletar foto no Turso:", e);
-            }
-        }
-
-        // Carrega todas as fotos de uma vez para performance (cache)
-        async function fetchAllPhotosFromTurso() {
-            if (!tursoClient) return;
-            try {
-                const result = await tursoClient.execute("SELECT member_id, photo_data FROM member_photos");
-                photosCache = {}; // Limpa cache
-                result.rows.forEach(row => {
-                    photosCache[row.member_id] = row.photo_data;
-                });
-                console.log(`Carregadas ${result.rows.length} fotos do Turso.`);
-                // Re-renderiza lista se necessário
-                handleSearch();
-            } catch (e) {
-                console.error("Erro ao buscar fotos do Turso:", e);
-            }
-        }
-
-        // --- HELPERS ---
-
-        function registrarLog(acao, detalhes = {}) {
-            if (!auth || !auth.currentUser) return;
-            const logCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "logs");
-            addDoc(logCollectionRef, {
-                timestamp: Timestamp.now(),
-                userId: auth.currentUser.uid,
-                userEmail: auth.currentUser.email,
-                acao: acao,
-                detalhes: detalhes
-            }).catch(err => console.error("Log falhou", err));
-        }
-
-        function showMessage(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type === 'error' ? 'toast-error' : type === 'warning' ? 'toast-warning' : 'toast-success'}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = "slideOut 0.3s ease-out forwards";
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function getDateFromInput(dataInput) {
-            if (!dataInput) return null;
-            if (dataInput.toDate) return dataInput.toDate();
-            if (dataInput instanceof Date) return dataInput;
-            if (typeof dataInput === 'string' && dataInput.includes('-')) {
-                const p = dataInput.split('-');
-                return new Date(Date.UTC(p[0], p[1]-1, p[2]));
-            }
-            return null;
-        }
-
-        function formatarData(dataInput) {
-            const d = getDateFromInput(dataInput);
-            return d ? d.toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : "N/A";
-        }
-
-        async function reauthenticateUser(password) {
-            const user = auth.currentUser;
-            if (!user) throw new Error("Usuário não logado.");
-            try {
-                const credential = EmailAuthProvider.credential(user.email, password);
-                await reauthenticateWithCredential(user, credential);
-                return true;
-            } catch (error) {
-                throw new Error("Senha incorreta.");
-            }
-        }
-
-        function populateEditForm(member) {
-            document.getElementById('edit-nome').value = member.nome || '';
-            document.getElementById('edit-funcao').value = member.funcao || '';
-            document.getElementById('edit-data_nascimento').value = member.dataNascimento || ''; 
-            document.getElementById('edit-telefone').value = member.telefone || '';
-            document.getElementById('edit-email').value = member.email || '';
-            document.getElementById('edit-cpf').value = member.cpf || '';
-            document.getElementById('edit-rg').value = member.rg || '';
-            document.getElementById('edit-naturalidade').value = member.naturalidade || '';
-            document.getElementById('edit-endereco').value = member.endereco || '';
-            document.getElementById('edit-nome_pai').value = member.nomePai || ''; 
-            document.getElementById('edit-nome_mae').value = member.nomeMae || ''; 
-            document.getElementById('edit-estado_civil').value = member.estadoCivil || ''; 
-            document.getElementById('edit-conjuge').value = member.conjuge || '';
-            document.getElementById('edit-profissao').value = member.profissao || '';
-            document.getElementById('edit-escolaridade').value = member.escolaridade || '';
-            document.getElementById('edit-data_batismo').value = member.dataBatismo || ''; 
-            document.getElementById('edit-data_chegada').value = member.dataChegada || ''; 
-            document.getElementById('edit-igreja_anterior').value = member.igrejaAnterior || ''; 
-            document.getElementById('edit-cargo_anterior').value = member.cargoAnterior || ''; 
-
-            if (member.estadoCivil === 'Casado(a)') { 
-                editConjugeField.classList.remove('hidden');
-            } else {
-                editConjugeField.classList.add('hidden');
-            }
-            
-            // Limpa inputs de arquivo e senha
-            fotoInputEdicao.value = '';
-            fotoPreviewEdicao.classList.remove('visible');
-            document.getElementById('edit-password').value = '';
-            editError.textContent = '';
-        }
-
-        function showModal(id) {
-            document.getElementById(id).classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-        function hideModal(el) {
-            el.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-
-        function showDetailsModal() {
-            const member = membersCache[currentMemberId];
-            if (!member) return;
-
-            // Foto vem do cache do Turso
-            const fotoBase64 = photosCache[currentMemberId];
-            if (fotoBase64) {
-                modalSpans.foto.src = fotoBase64;
-                modalSpans.foto.classList.remove('hidden');
-            } else {
-                modalSpans.foto.classList.add('hidden');
-            }
-
-            modalSpans.nome.textContent = member.nome || 'N/A';
-            modalSpans.funcao.textContent = member.funcao || 'N/A';
-            modalSpans.data_nascimento.textContent = formatarData(member.dataNascimento);
-            modalSpans.telefone.textContent = member.telefone || 'N/A';
-            modalSpans.email.textContent = member.email || 'N/A';
-            modalSpans.cpf.textContent = member.cpf || 'N/A';
-            modalSpans.rg.textContent = member.rg || 'N/A';
-            modalSpans.naturalidade.textContent = member.naturalidade || 'N/A';
-            modalSpans.endereco.textContent = member.endereco || 'N/A';
-            modalSpans.nome_pai.textContent = member.nomePai || 'N/A';
-            modalSpans.nome_mae.textContent = member.nomeMae || 'N/A';
-            modalSpans.estado_civil.textContent = member.estadoCivil || 'N/A';
-            modalSpans.profissao.textContent = member.profissao || 'N/A';
-            modalSpans.escolaridade.textContent = member.escolaridade || 'N/A';
-            modalSpans.data_batismo.textContent = formatarData(member.dataBatismo);
-            modalSpans.data_chegada.textContent = formatarData(member.dataChegada);
-            modalSpans.igreja_anterior.textContent = member.igrejaAnterior || 'N/A';
-            modalSpans.cargo_anterior.textContent = member.cargoAnterior || 'N/A';
-            
-            if (member.estadoCivil === 'Casado(a)' && member.conjuge) {
-                modalSpans.conjuge.textContent = member.conjuge;
-                modalSpans.conjugeContainer.classList.remove('hidden');
-            } else {
-                modalSpans.conjugeContainer.classList.add('hidden');
-            }
-            showModal('details-modal');
-        }
-
-        function renderMemberList(memberArray) {
-            listLoading.classList.add('hidden');
-            memberList.innerHTML = '';
-
-            if (memberArray.length === 0) {
-                memberList.innerHTML = '<p class="text-gray-600 text-center">Nenhum membro encontrado.</p>';
+            // Verifica se o usuário configurou as chaves
+            if(TURSO_DB_URL.includes("COLE_AQUI") || TURSO_AUTH_TOKEN.includes("COLE_AQUI")) {
+                console.warn("⚠️ ATENÇÃO: Configure as chaves do Turso no início do script!");
+                showMsg("Erro: Banco de Imagens não configurado no código.", "error");
                 return;
             }
+            
+            try {
+                turso = createClient({ url: TURSO_DB_URL, authToken: TURSO_AUTH_TOKEN });
+                await turso.execute(`CREATE TABLE IF NOT EXISTS member_photos (member_id TEXT PRIMARY KEY, photo_data TEXT)`);
+            } catch(e){ console.error("Turso Error", e); }
+        }
 
-            memberArray.forEach((member) => {
-                const memberEl = document.createElement('div');
-                memberEl.className = "bg-white p-4 rounded-lg shadow-md border border-gray-200 flex items-center gap-4";
-                
-                // Foto vem do cache do Turso ou placeholder
-                const fotoUrl = photosCache[member.id] || FOTO_PLACEHOLDER_URL;
+        function compressImg(file) {
+            return new Promise((resolve, reject) => {
+                const r = new FileReader();
+                r.readAsDataURL(file);
+                r.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const cvs = document.createElement('canvas');
+                        const MAX = 800;
+                        let w=img.width, h=img.height;
+                        if(w>h){ if(w>MAX){ h*=MAX/w; w=MAX; }} else { if(h>MAX){ w*=MAX/h; h=MAX; }}
+                        cvs.width=w; cvs.height=h;
+                        cvs.getContext('2d').drawImage(img,0,0,w,h);
+                        resolve(cvs.toDataURL('image/jpeg', 0.7));
+                    };
+                };
+            });
+        }
 
-                memberEl.innerHTML = `
-                    <img src="${fotoUrl}" alt="Foto" class="member-list-photo">
-                    <div class="flex-grow">
-                        <h3 class="text-xl font-semibold text-blue-700">${member.nome || 'Sem Nome'}</h3>
-                        <p class="text-gray-700 mt-1">${member.funcao || 'Sem Função'}</p>
-                        <p class="text-sm text-gray-500 mt-1">${member.telefone || 'Sem Tel'}</p>
+        async function savePhoto(id, data) { if(turso){ await turso.execute({sql:"INSERT OR REPLACE INTO member_photos VALUES (?,?)", args:[id,data]}); photos[id]=data; }}
+        async function delPhoto(id) { if(turso){ await turso.execute({sql:"DELETE FROM member_photos WHERE member_id = ?", args:[id]}); delete photos[id]; }}
+        async function loadPhotos() { if(turso){ const r = await turso.execute("SELECT * FROM member_photos"); photos={}; r.rows.forEach(row=>photos[row.member_id]=row.photo_data); renderList(); }}
+
+        // --- UI UTILS ---
+        const getEl = (id) => document.getElementById(id);
+        const showMsg = (msg, type='success') => {
+            const t = document.createElement('div');
+            t.className = `toast ${type==='error'?'toast-error':type==='warning'?'toast-warning':'toast-success'}`;
+            t.innerHTML = `<i class="ph ${type==='success'?'ph-check-circle':type==='error'?'ph-warning-circle':'ph-info'} text-xl"></i><span>${msg}</span>`;
+            getEl('toast-container').appendChild(t);
+            setTimeout(()=> { t.style.transform='translateX(100%)'; setTimeout(()=>t.remove(),300); }, 3000);
+        };
+
+        function renderList() {
+            const list = getEl('member-list');
+            getEl('list-loading').classList.add('hidden');
+            list.innerHTML = '';
+            
+            const term = getEl('search-input').value.toLowerCase();
+            const all = Object.values(cache).filter(m => (m.nome||'').toLowerCase().includes(term));
+            all.sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+
+            if(all.length === 0) return list.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8">Nenhum membro encontrado.</div>';
+
+            all.forEach(m => {
+                const img = photos[m.id] || PLACEHOLDER_IMG;
+                list.innerHTML += `
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group relative">
+                    <div class="flex items-center gap-4">
+                        <img src="${img}" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm bg-gray-100">
+                        <div class="overflow-hidden">
+                            <h4 class="font-bold text-gray-900 truncate">${m.nome}</h4>
+                            <p class="text-xs text-brand-600 uppercase font-bold tracking-wider truncate">${m.funcao || 'Membro'}</p>
+                            <p class="text-xs text-gray-400 mt-1"><i class="ph ph-phone"></i> ${m.telefone||'-'}</p>
+                        </div>
                     </div>
-                    <button data-member-id="${member.id}" class="details-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 flex-shrink-0">
-                        Ver Detalhes
-                    </button>
-                `;
-                memberList.appendChild(memberEl);
+                    <button onclick="openDetails('${m.id}')" class="absolute inset-0 w-full h-full cursor-pointer z-10 opacity-0">Ver</button>
+                </div>`;
             });
         }
-        
-        function updateDashboard(total) {
-            dashboardTotalMembros.textContent = total;
+
+        // --- CORREÇÃO DO ACESSO A DADOS ---
+        // Helper para acessar propriedades camelCase (antigas) ou snake_case (novas)
+        function getValue(obj, key) {
+            if (obj[key] !== undefined) return obj[key];
+            // Tenta converter snake_case para camelCase (ex: data_nascimento -> dataNascimento)
+            const camel = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+            if (obj[camel] !== undefined) return obj[camel];
+            return undefined;
         }
-        
-        function updateAniversariantes(membros) {
-            const hoje = new Date();
-            const mesAtual = hoje.getMonth();
+
+        window.openDetails = (id) => {
+            currentId = id;
+            const m = cache[id];
+            if(!m) return;
             
-            aniverMesAtualTitulo.textContent = `Aniversariantes de ${MESES_DO_ANO[mesAtual]}`;
-            const grupos = {};
-            for (let i = 0; i < 12; i++) grupos[i] = [];
-
-            membros.forEach(membro => {
-                const d = getDateFromInput(membro.dataNascimento);
-                if (d) grupos[d.getUTCMonth()].push({ dia: d.getUTCDate(), nome: membro.nome, funcao: membro.funcao });
-            });
-
-            for (let i = 0; i < 12; i++) grupos[i].sort((a, b) => a.dia - b.dia);
-
-            aniverMesAtualLista.innerHTML = "";
-            if (grupos[mesAtual].length === 0) {
-                aniverMesAtualLista.innerHTML = `<p class="text-gray-500">Nenhum aniversariante este mês.</p>`;
-            } else {
-                grupos[mesAtual].forEach(m => {
-                    aniverMesAtualLista.innerHTML += `
-                        <div class="py-3 flex items-center space-x-4 border-b border-gray-200 last:border-b-0">
-                            <div class="font-bold text-blue-600 text-2xl w-10 text-center">${m.dia}</div>
-                            <div class="flex-1"><p class="font-medium">${m.nome}</p><p class="text-sm text-gray-500">${m.funcao}</p></div>
-                        </div>`;
-                });
-            }
-
-            aniverProximosLista.innerHTML = "";
-            let htmlProx = "";
-            for (let i = 1; i <= 11; i++) {
-                const idx = (mesAtual + i) % 12;
-                if (grupos[idx].length > 0) {
-                    htmlProx += `<div class="py-2"><h4 class="font-semibold text-lg text-blue-700">${MESES_DO_ANO[idx]}</h4><ul class="mt-2">${grupos[idx].map(m => `<li class="text-sm text-gray-700 ml-5 list-disc">${m.dia} - ${m.nome}</li>`).join('')}</ul></div>`;
+            const fields = ['nome','funcao','telefone','email','data_nascimento','endereco','cpf','rg','estado_civil','conjuge','nome_pai','nome_mae','profissao','escolaridade','data_batismo','data_chegada','naturalidade','igreja_anterior','cargo_anterior'];
+            fields.forEach(f => {
+                const el = getEl(`modal-detalhes-${f}`);
+                if(el) {
+                    const val = getValue(m, f);
+                    el.textContent = (f.includes('data') ? formatDate(val) : val) || '-';
                 }
-            }
-            aniverProximosLista.innerHTML = htmlProx || `<p class="text-gray-500">Nenhum aniversariante próximo.</p>`;
-        }
-
-        function handleSearch() {
-            const term = searchInput.value.toLowerCase();
-            const all = Object.values(membersCache);
-            const filtered = all.filter(m => (m.nome || '').toLowerCase().includes(term));
-            filtered.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-            renderMemberList(filtered);
-        }
-
-        function generateMemberReport() {
-            const all = Object.values(membersCache);
-            if (all.length === 0) { showMessage("Sem dados para relatório.", "warning"); return; }
-            all.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-            
-            const w = window.open('', '_blank');
-            let html = `<html><head><title>Relatório</title><style>body{font-family:sans-serif}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}</style></head><body><h1>Relatório de Membros</h1><table><thead><tr><th>Nome</th><th>Função</th><th>Telefone</th><th>Email</th></tr></thead><tbody>`;
-            all.forEach(m => html += `<tr><td>${m.nome}</td><td>${m.funcao}</td><td>${m.telefone}</td><td>${m.email}</td></tr>`);
-            html += `</tbody></table><button onclick="window.print()">Imprimir</button></body></html>`;
-            w.document.write(html);
-            w.document.close();
-        }
-
-        function listenForMembers() {
-            if (!membersCollectionRef) return;
-            if (unsubscribeMembers) unsubscribeMembers();
-            
-            listLoading.classList.remove('hidden');
-            // Carrega fotos do Turso em paralelo
-            fetchAllPhotosFromTurso();
-
-            const q = query(membersCollectionRef);
-            unsubscribeMembers = onSnapshot(q, (snapshot) => {
-                membersCache = {};
-                let total = 0;
-                const aniversariantes = [];
-                snapshot.docs.forEach(doc => {
-                    const data = { id: doc.id, ...doc.data() };
-                    membersCache[doc.id] = data;
-                    aniversariantes.push(data);
-                    total++;
-                });
-                updateDashboard(total);
-                updateAniversariantes(aniversariantes);
-                handleSearch();
-            }, (error) => {
-                console.error(error);
-                listLoading.classList.add('hidden');
             });
-        }
 
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            if (!userId) return;
+            // Foto
+            const imgEl = getEl('modal-detalhes-foto');
+            imgEl.src = photos[id] || PLACEHOLDER_IMG;
+            imgEl.classList.remove('hidden');
+            
+            // Condicional Conjuge (Usando getValue para suportar dados antigos)
+            const estCivil = getValue(m, 'estado_civil') || getValue(m, 'estadoCivil');
+            if(estCivil === 'Casado(a)') getEl('conjuge-detalhes-container').classList.remove('hidden');
+            else getEl('conjuge-detalhes-container').classList.add('hidden');
 
-            submitButton.disabled = true;
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
-            submitButton.textContent = ' Salvando...';
-            submitButton.prepend(spinner);
+            getEl('details-modal').classList.add('open');
+        };
 
+        function formatDate(d) {
+            if(!d) return '-';
             try {
-                const formData = new FormData(memberForm);
-                
-                // Objeto para Firebase (Texto)
-                const newMember = {
-                    createdAt: new Date(),
-                    nome: formData.get('nome'),
-                    funcao: formData.get('funcao'),
-                    dataNascimento: formData.get('data_nascimento'),
-                    telefone: formData.get('telefone'),
-                    email: formData.get('email'),
-                    cpf: formData.get('cpf'),
-                    rg: formData.get('rg'),
-                    naturalidade: formData.get('naturalidade'),
-                    endereco: formData.get('endereco'),
-                    nomePai: formData.get('nome_pai'),
-                    nomeMae: formData.get('nome_mae'),
-                    estadoCivil: formData.get('estado_civil'),
-                    conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null,
-                    profissao: formData.get('profissao'),
-                    escolaridade: formData.get('escolaridade'),
-                    dataBatismo: formData.get('data_batismo'),
-                    dataChegada: formData.get('data_chegada'),
-                    igrejaAnterior: formData.get('igreja_anterior'),
-                    cargoAnterior: formData.get('cargo_anterior'),
-                    hasPhoto: false // Flag simples
-                };
-
-                // 1. Salva no Firebase para gerar ID
-                const docRef = await addDoc(membersCollectionRef, newMember);
-                const memberId = docRef.id;
-
-                // 2. Processa a Foto para o Turso
-                const file = fotoInputCadastro.files[0];
-                if (file) {
-                    const base64 = await resizeAndCompressImage(file);
-                    await savePhotoToTurso(memberId, base64);
-                    // Opcional: Atualizar flag no firebase
-                    await updateDoc(docRef, { hasPhoto: true });
-                }
-
-                await registrarLog("Membro Criado", { membroId: memberId, nome: newMember.nome });
-                showMessage("Membro cadastrado!", "success");
-                memberForm.reset();
-                conjugeField.classList.add('hidden');
-                fotoPreviewCadastro.classList.remove('visible');
-
-            } catch (error) {
-                console.error(error);
-                showMessage("Erro ao cadastrar.", "error");
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Cadastrar Membro';
-            }
-        }
-        
-        async function handleEditSubmit(e) {
-            e.preventDefault();
-            if (!userId || !currentMemberId) return;
-            const pwd = document.getElementById('edit-password').value;
-            if (!pwd) { editError.textContent = 'Senha obrigatória.'; return; }
-
-            editSubmitButton.disabled = true;
-            editSubmitButton.textContent = ' Salvando...';
-
-            try {
-                await reauthenticateUser(pwd);
-
-                const formData = new FormData(editForm);
-                const updatedData = {
-                    nome: formData.get('nome'),
-                    funcao: formData.get('funcao'),
-                    dataNascimento: formData.get('data_nascimento'),
-                    telefone: formData.get('telefone'),
-                    email: formData.get('email'),
-                    cpf: formData.get('cpf'),
-                    rg: formData.get('rg'),
-                    naturalidade: formData.get('naturalidade'),
-                    endereco: formData.get('endereco'),
-                    nomePai: formData.get('nome_pai'),
-                    nomeMae: formData.get('nome_mae'),
-                    estadoCivil: formData.get('estado_civil'),
-                    conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null,
-                    profissao: formData.get('profissao'),
-                    escolaridade: formData.get('escolaridade'),
-                    dataBatismo: formData.get('data_batismo'),
-                    dataChegada: formData.get('data_chegada'),
-                    igrejaAnterior: formData.get('igreja_anterior'),
-                    cargoAnterior: formData.get('cargo_anterior'),
-                    updatedAt: new Date()
-                };
-
-                // 1. Atualiza Firebase
-                const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
-                await updateDoc(docRef, updatedData);
-
-                // 2. Atualiza Foto no Turso se houver nova
-                const file = fotoInputEdicao.files[0];
-                if (file) {
-                    const base64 = await resizeAndCompressImage(file);
-                    await savePhotoToTurso(currentMemberId, base64);
-                }
-
-                await registrarLog("Membro Editado", { membroId: currentMemberId });
-                showMessage("Editado com sucesso!", "success");
-                hideModal(editModal);
-
-            } catch (error) {
-                editError.textContent = error.message;
-            } finally {
-                editSubmitButton.disabled = false;
-                editSubmitButton.textContent = 'Salvar Alterações';
-            }
-        }
-        
-        async function handleDeleteSubmit(e) {
-            e.preventDefault();
-            if (!userId || !currentMemberId) return;
-            const pwd = document.getElementById('delete-password').value;
-            if (!pwd) { deleteError.textContent = 'Senha obrigatória.'; return; }
-
-            deleteSubmitButton.disabled = true;
-            deleteSubmitButton.textContent = ' Excluindo...';
-
-            try {
-                await reauthenticateUser(pwd);
-
-                // 1. Exclui do Firebase
-                await deleteDoc(doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId));
-                
-                // 2. Exclui do Turso
-                await deletePhotoFromTurso(currentMemberId);
-
-                await registrarLog("Membro Excluído", { membroId: currentMemberId });
-                showMessage("Excluído!", "success");
-                hideModal(deleteModal);
-
-            } catch (error) {
-                deleteError.textContent = error.message;
-            } finally {
-                deleteSubmitButton.disabled = false;
-                deleteSubmitButton.textContent = 'Excluir Permanentemente';
-            }
+                // Verifica se é Timestamp do Firestore (dados antigos podem ser)
+                if (d.seconds) return new Date(d.seconds * 1000).toLocaleDateString('pt-BR');
+                // Verifica se é string
+                const date = new Date(d);
+                if(typeof d === 'string' && d.length === 10) return new Date(d + 'T00:00:00').toLocaleDateString('pt-BR');
+                if(!isNaN(date.getTime())) return date.toLocaleDateString('pt-BR');
+                return d;
+            } catch(e) { return d; }
         }
 
-        function switchTab(targetId) {
-            document.querySelectorAll('.app-content-tab').forEach(tab => tab.style.display = 'none');
-            tabButtons.forEach(button => button.classList.remove('active'));
-            document.getElementById(targetId).style.display = 'block';
-            document.querySelector(`.app-tab-button[data-tab="${targetId}"]`).classList.add('active');
-        }
-
-        // Preview de Imagens
-        function setupImagePreviews() {
-            fotoInputCadastro.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(ev) {
-                        fotoPreviewCadastro.src = ev.target.result;
-                        fotoPreviewCadastro.classList.add('visible');
-                    }
-                    reader.readAsDataURL(file);
-                } else {
-                    fotoPreviewCadastro.classList.remove('visible');
-                }
-            });
-            
-            fotoInputEdicao.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(ev) {
-                        fotoPreviewEdicao.src = ev.target.result;
-                        fotoPreviewEdicao.classList.add('visible');
-                    }
-                    reader.readAsDataURL(file);
-                } else {
-                    fotoPreviewEdicao.classList.remove('visible');
-                }
-            });
-        }
-
+        // --- MAIN ---
         async function main() {
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            
-            // Inicializa Turso
             await initTurso();
 
-            setupImagePreviews();
-
+            // Auth Listener
             onAuthStateChanged(auth, (user) => {
-                if (user) {
+                if(user) {
                     userId = user.uid;
-                    userEmailDisplay.textContent = user.email;
-                    userEmailDisplay.classList.remove('hidden');
+                    getEl('user-email-display').textContent = user.email;
                     document.body.classList.remove('logged-out');
-                    authScreen.style.display = 'none';
-                    appContent.style.display = 'block';
-                    
-                    membersCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "membros");
+                    getEl('auth-screen').classList.add('hidden');
+                    getEl('app-content').classList.remove('hidden');
+                    membersRef = collection(db, "dadosIgreja", "ADCA-CG", "membros");
+                    startListener();
                     switchTab('dashboard');
-                    listenForMembers();
                 } else {
                     userId = null;
                     document.body.classList.add('logged-out');
-                    authScreen.style.display = 'block';
-                    appContent.style.display = 'none';
-                    if (unsubscribeMembers) unsubscribeMembers();
+                    getEl('auth-screen').classList.remove('hidden');
+                    getEl('app-content').classList.add('hidden');
+                    if(unsub) unsub();
                 }
             });
 
-            loginForm.addEventListener('submit', async (e) => {
+            // Listeners
+            function startListener() {
+                loadPhotos();
+                unsub = onSnapshot(query(membersRef), (snap) => {
+                    cache = {};
+                    let total = 0, aniv = [];
+                    snap.forEach(d => {
+                        const data = {id: d.id, ...d.data()};
+                        cache[d.id] = data;
+                        aniv.push(data);
+                        total++;
+                    });
+                    getEl('dashboard-total-membros').textContent = total;
+                    renderList();
+                    updateAniversariantes(aniv);
+                });
+            }
+
+            function updateAniversariantes(list) {
+                const m = new Date().getMonth();
+                const el = getEl('aniversariantes-mes-atual-lista');
+                const prox = getEl('aniversariantes-proximos-lista');
+                el.innerHTML = ''; prox.innerHTML = '';
+                
+                const grouped = Array(12).fill().map(()=>[]);
+                list.forEach(x => {
+                    // Suporta camelCase e snake_case
+                    const nasc = getValue(x, 'data_nascimento');
+                    if(nasc) {
+                        const d = new Date(nasc + 'T00:00:00'); 
+                        if(!isNaN(d)) grouped[d.getMonth()].push({...x, dia: d.getDate()});
+                    }
+                });
+
+                grouped.forEach(g => g.sort((a,b)=>a.dia-b.dia));
+
+                // Mês Atual
+                if(grouped[m].length) {
+                    grouped[m].forEach(x => {
+                        el.innerHTML += `<div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded"><span class="font-bold text-brand-600 w-8">${x.dia}</span><span class="flex-1 truncate">${x.nome}</span></div>`;
+                    });
+                } else el.innerHTML = '<p class="text-gray-400 text-sm italic">Nenhum.</p>';
+
+                // Próximos
+                for(let i=1; i<=11; i++) {
+                    const idx = (m+i)%12;
+                    if(grouped[idx].length) {
+                        const names = grouped[idx].map(x=>`${x.dia} - ${x.nome}`).join(', ');
+                        prox.innerHTML += `<div><span class="font-bold text-gray-700">${MESES[idx]}:</span> <span class="text-gray-500">${names}</span></div>`;
+                    }
+                }
+            }
+
+            // Forms
+            getEl('login-form').onsubmit = async(e) => {
                 e.preventDefault();
-                loginError.textContent = '';
-                loginButton.disabled = true;
+                try { await signInWithEmailAndPassword(auth, getEl('login-email').value, getEl('login-password').value); }
+                catch(e){ getEl('login-error').textContent = 'Erro de login.'; }
+            };
+            getEl('logout-button').onclick = () => signOut(auth);
+
+            getEl('member-form').onsubmit = async(e) => {
+                e.preventDefault();
+                const btn = getEl('submit-button'); btn.disabled=true; btn.textContent = 'Salvando...';
                 try {
-                    await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value);
-                } catch (err) {
-                    loginError.textContent = 'Erro no login.';
-                } finally {
-                    loginButton.disabled = false;
-                }
-            });
+                    const fd = new FormData(e.target);
+                    // ⚠️ CAPTURA TODOS OS CAMPOS ⚠️
+                    const obj = { createdAt: new Date().toISOString() };
+                    for(let [k,v] of fd.entries()) if(k!=='foto_upload') obj[k] = v;
+                    
+                    const ref = await addDoc(membersRef, obj);
+                    const file = getEl('foto_upload').files[0];
+                    if(file) await savePhoto(ref.id, await compressImg(file));
+                    
+                    showMsg('Membro cadastrado!');
+                    e.target.reset();
+                    getEl('foto_preview_cadastro').classList.add('hidden');
+                    getEl('foto_icon_placeholder').classList.remove('hidden');
+                    getEl('conjuge-field').classList.add('hidden');
+                } catch(err) { console.error(err); showMsg('Erro.', 'error'); }
+                btn.disabled=false; btn.textContent='Salvar Cadastro';
+            };
 
-            logoutButton.addEventListener('click', () => signOut(auth));
-            tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+            // Edit Logic
+            getEl('modal-edit-btn').onclick = () => {
+                const m = cache[currentId];
+                if(!m) return;
+                getEl('details-modal').classList.remove('open');
+                
+                // Popula TODOS os campos de edição com suporte a dados antigos
+                const inputs = getEl('edit-form').querySelectorAll('input, select, textarea');
+                inputs.forEach(i => {
+                    if(i.type !== 'file' && i.type !== 'password') {
+                        const val = getValue(m, i.name);
+                        if(val) i.value = val;
+                        else i.value = '';
+                    }
+                });
+                
+                // Foto Preview
+                const img = getEl('foto_preview_edicao');
+                if(photos[currentId]) { img.src=photos[currentId]; img.classList.remove('hidden'); }
+                else img.classList.add('hidden');
+
+                const ec = getValue(m, 'estado_civil');
+                if(ec ==='Casado(a)') getEl('edit-conjuge-field').classList.remove('hidden');
+                else getEl('edit-conjuge-field').classList.add('hidden');
+                
+                getEl('edit-modal').classList.add('open');
+            };
+
+            getEl('edit-form').onsubmit = async(e) => {
+                e.preventDefault();
+                const pwd = getEl('edit-password').value;
+                if(!pwd) return getEl('edit-error').textContent='Senha necessária.';
+                
+                try {
+                    await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, pwd));
+                    const fd = new FormData(e.target);
+                    const obj = { updatedAt: new Date().toISOString() };
+                    // ⚠️ CAPTURA TODOS OS CAMPOS DO FORM DE EDIÇÃO ⚠️
+                    for(let [k,v] of fd.entries()) if(k!=='foto_upload' && k!=='edit-password') obj[k] = v;
+                    
+                    await updateDoc(doc(db,"dadosIgreja","ADCA-CG","membros",currentId), obj);
+                    const f = getEl('edit-foto_upload').files[0];
+                    if(f) await savePhoto(currentId, await compressImg(f));
+                    
+                    showMsg('Atualizado!');
+                    getEl('edit-modal').classList.remove('open');
+                    getEl('edit-password').value='';
+                } catch(e){ getEl('edit-error').textContent = 'Senha incorreta.'; }
+            };
+
+            // Delete Logic
+            getEl('modal-delete-btn').onclick = () => {
+                getEl('details-modal').classList.remove('open');
+                getEl('delete-modal').classList.add('open');
+            };
+            getEl('delete-form').onsubmit = async(e) => {
+                e.preventDefault();
+                try {
+                    await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, getEl('delete-password').value));
+                    await deleteDoc(doc(db,"dadosIgreja","ADCA-CG","membros",currentId));
+                    await delPhoto(currentId);
+                    showMsg('Excluído.');
+                    getEl('delete-modal').classList.remove('open');
+                    getEl('delete-password').value='';
+                } catch(e){ getEl('delete-error').textContent='Senha incorreta.'; }
+            };
+
+            // Tabs & Modals
+            document.querySelectorAll('.app-tab-button').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+            function switchTab(id) {
+                document.querySelectorAll('.app-content-tab').forEach(t=>t.classList.remove('active'));
+                document.querySelectorAll('.app-tab-button').forEach(b=>b.classList.remove('active'));
+                getEl(id).classList.add('active');
+                document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+            }
+            document.querySelectorAll('.modal-close-btn').forEach(b => b.onclick = (e) => e.target.closest('.modal').classList.remove('open'));
             
-            memberForm.addEventListener('submit', handleFormSubmit);
-            editForm.addEventListener('submit', handleEditSubmit);
-            deleteForm.addEventListener('submit', handleDeleteSubmit);
+            // Utils
+            getEl('search-input').oninput = renderList;
+            getEl('estado_civil').onchange = (e) => e.target.value==='Casado(a)' ? getEl('conjuge-field').classList.remove('hidden') : getEl('conjuge-field').classList.add('hidden');
+            getEl('edit-estado_civil').onchange = (e) => e.target.value==='Casado(a)' ? getEl('edit-conjuge-field').classList.remove('hidden') : getEl('edit-conjuge-field').classList.add('hidden');
             
-            estadoCivilSelect.addEventListener('change', (e) => e.target.value === 'Casado(a)' ? conjugeField.classList.remove('hidden') : conjugeField.classList.add('hidden'));
-            editEstadoCivilSelect.addEventListener('change', (e) => e.target.value === 'Casado(a)' ? editConjugeField.classList.remove('hidden') : editConjugeField.classList.add('hidden'));
-            
-            searchForm.addEventListener('submit', (e) => { e.preventDefault(); handleSearch(); });
-            clearSearchButton.addEventListener('click', () => { searchInput.value = ''; handleSearch(); });
-            reportButton.addEventListener('click', generateMemberReport);
-
-            memberList.addEventListener('click', (e) => {
-                const btn = e.target.closest('.details-button');
-                if (btn) {
-                    currentMemberId = btn.dataset.memberId;
-                    showDetailsModal();
+            getEl('foto_upload').onchange = (e) => {
+                if(e.target.files[0]) {
+                    const url = URL.createObjectURL(e.target.files[0]);
+                    getEl('foto_preview_cadastro').src=url;
+                    getEl('foto_preview_cadastro').classList.remove('hidden');
+                    getEl('foto_icon_placeholder').classList.add('hidden');
                 }
-            });
-
-            modalEditBtn.addEventListener('click', () => {
-                if (membersCache[currentMemberId]) {
-                    populateEditForm(membersCache[currentMemberId]);
-                    hideModal(detailsModal);
-                    showModal('edit-modal');
+            };
+            getEl('edit-foto_upload').onchange = (e) => {
+                if(e.target.files[0]) {
+                    getEl('foto_preview_edicao').src=URL.createObjectURL(e.target.files[0]);
+                    getEl('foto_preview_edicao').classList.remove('hidden');
                 }
-            });
-
-            modalDeleteBtn.addEventListener('click', () => {
-                document.getElementById('delete-password').value = '';
-                deleteError.textContent = '';
-                hideModal(detailsModal);
-                showModal('delete-modal');
-            });
-
-            allCloseModalButtons.forEach(btn => btn.addEventListener('click', (e) => hideModal(e.target.closest('.modal'))));
+            };
         }
-
         document.addEventListener('DOMContentLoaded', main);
     </script>
 </body>
