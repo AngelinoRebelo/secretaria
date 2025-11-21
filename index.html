@@ -691,6 +691,25 @@
             } catch(e) { return d; }
         }
 
+        // --- LOGGING FUNCTION (NOVA) ---
+        async function registrarLog(acao, detalhes) {
+            if (!auth.currentUser) return;
+            try {
+                // Salva na coleção 'logs' que o site de logs monitora
+                const logsRef = collection(db, "dadosIgreja", "ADCA-CG", "logs");
+                await addDoc(logsRef, {
+                    timestamp: new Date(), // Data atual
+                    userEmail: auth.currentUser.email, // Usuário que fez a ação
+                    acao: acao,
+                    detalhes: detalhes
+                });
+                console.log("Log registrado com sucesso:", acao);
+            } catch (err) {
+                console.error("Falha ao salvar log:", err);
+            }
+        }
+
+
         // --- MAIN ---
         async function main() {
             app = initializeApp(firebaseConfig);
@@ -779,6 +798,7 @@
             getEl('logout-button').onclick = () => signOut(auth);
             getEl('report-button').onclick = window.generateMemberReport;
 
+            // --- CADASTRO COM LOG ---
             getEl('member-form').onsubmit = async(e) => {
                 e.preventDefault();
                 const btn = getEl('submit-button'); btn.disabled=true; btn.textContent = 'Salvando...';
@@ -791,6 +811,13 @@
                     const file = getEl('foto_upload').files[0];
                     if(file) await savePhoto(ref.id, await compressImg(file));
                     
+                    // [NOVO] Registra o log de criação
+                    await registrarLog("Membro Criado", { 
+                        membroId: ref.id, 
+                        nome: obj.nome, 
+                        ...obj 
+                    });
+
                     showMsg('Membro cadastrado!');
                     e.target.reset();
                     getEl('foto_preview_cadastro').classList.add('hidden');
@@ -826,6 +853,7 @@
                 getEl('edit-modal').classList.add('open');
             };
 
+            // --- EDIÇÃO COM LOG ---
             getEl('edit-form').onsubmit = async(e) => {
                 e.preventDefault();
                 const pwd = getEl('edit-password').value;
@@ -834,20 +862,35 @@
                 try {
                     await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, pwd));
                     const fd = new FormData(e.target);
+                    
+                    // Captura os dados antigos antes da alteração (clone simples)
+                    const oldData = { ...cache[currentId] };
+
                     const obj = { updatedAt: new Date().toISOString() };
                     for(let [k,v] of fd.entries()) if(k!=='foto_upload' && k!=='edit-password') obj[k] = v;
                     
+                    // Combina dados antigos com novos para ter o objeto "Final" completo
+                    const newData = { ...oldData, ...obj };
+
                     await updateDoc(doc(db,"dadosIgreja","ADCA-CG","membros",currentId), obj);
                     const f = getEl('edit-foto_upload').files[0];
                     if(f) await savePhoto(currentId, await compressImg(f));
                     
+                    // [NOVO] Registra o log de atualização com comparação
+                    await registrarLog("Membro Atualizado", {
+                        membroId: currentId,
+                        nome: newData.nome,
+                        dadosAntigos: oldData,
+                        dadosNovos: newData
+                    });
+
                     showMsg('Atualizado!');
                     getEl('edit-modal').classList.remove('open');
                     getEl('edit-password').value='';
-                } catch(e){ getEl('edit-error').textContent = 'Senha incorreta.'; }
+                } catch(e){ console.error(e); getEl('edit-error').textContent = 'Senha incorreta ou erro.'; }
             };
 
-            // Delete Logic
+            // --- EXCLUSÃO COM LOG ---
             getEl('modal-delete-btn').onclick = () => {
                 getEl('details-modal').classList.remove('open');
                 getEl('delete-modal').classList.add('open');
@@ -856,12 +899,23 @@
                 e.preventDefault();
                 try {
                     await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, getEl('delete-password').value));
+                    
+                    // Captura dados antes de deletar
+                    const deletedData = { ...cache[currentId] };
+
                     await deleteDoc(doc(db,"dadosIgreja","ADCA-CG","membros",currentId));
                     await delPhoto(currentId);
+
+                    // [NOVO] Registra o log de exclusão
+                    await registrarLog("Exclusão Membro", {
+                        membroId: currentId,
+                        detalhesExcluidos: deletedData
+                    });
+
                     showMsg('Excluído.');
                     getEl('delete-modal').classList.remove('open');
                     getEl('delete-password').value='';
-                } catch(e){ getEl('delete-error').textContent='Senha incorreta.'; }
+                } catch(e){ console.error(e); getEl('delete-error').textContent='Senha incorreta ou erro.'; }
             };
 
             // Tabs & Modals
