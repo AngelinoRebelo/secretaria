@@ -470,7 +470,7 @@
         // Para segurança, não deixe as chaves hardcoded se compartilhar o código.
         // Substitua os valores abaixo pelas suas credenciais reais do Turso.
         
-        const TURSO_DB_URL = "libsql://secretariaadca-machaddoo.aws-us-west-2.turso.io"; 
+        const TURSO_DB_URL = "https://secretariaadca-machaddoo.aws-us-west-2.turso.io"; 
         const TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NjM3NDQ3NjEsImlkIjoiZjA1YjU2MTgtYWY4MS00MmE2LTk5MjgtZTc4ZGU4MTMyZGFmIiwicmlkIjoiMWQ1Yjk3NTMtNjk5OC00MmQ5LTg5MTktNzAwYjM5YmE2MGUyIn0._tzShbyqWAFJsZmXclqhTAgQmqaXas7bvHMJQ-cOPjaO2r8Zmr-WqP3YgyTqOSHXdxAa5yOemFQq4waL_0WdAw";
 
         // =======================================================
@@ -567,15 +567,93 @@
             });
         }
 
-        // --- CORREÇÃO DO ACESSO A DADOS ---
-        // Helper para acessar propriedades camelCase (antigas) ou snake_case (novas)
+        // --- HELPER VALORES ---
         function getValue(obj, key) {
             if (obj[key] !== undefined) return obj[key];
-            // Tenta converter snake_case para camelCase (ex: data_nascimento -> dataNascimento)
             const camel = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
             if (obj[camel] !== undefined) return obj[camel];
             return undefined;
         }
+
+        // --- RELATÓRIO (RESTAURADO) ---
+        window.generateMemberReport = () => {
+            const allMembers = Object.values(cache);
+            if (allMembers.length === 0) {
+                showMsg("Nenhum membro para gerar relatório.", "warning");
+                return;
+            }
+
+            allMembers.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+
+            const reportWindow = window.open('', '_blank');
+            if (!reportWindow) {
+                showMsg("Desbloqueie pop-ups para ver o relatório.", "error");
+                return;
+            }
+
+            let reportHTML = `
+                <html>
+                <head>
+                    <title>Relatório de Membros - ADCA</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h1 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+                        th { background-color: #f2f2f2; }
+                        tr:nth-child(even) { background-color: #f9f9f9; }
+                        .print-btn { display: block; margin: 0 auto 20px; padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 5px; cursor: pointer; }
+                        @media print { .print-btn { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <button class="print-btn" onclick="window.print()">Imprimir Relatório</button>
+                    <h1>Relatório de Membros</h1>
+                    <p>Total de Membros: ${allMembers.length}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Função</th>
+                                <th>Telefone</th>
+                                <th>Email</th>
+                                <th>Nascimento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            allMembers.forEach(member => {
+                const nome = getValue(member, 'nome') || 'N/A';
+                const funcao = getValue(member, 'funcao') || 'N/A';
+                const telefone = getValue(member, 'telefone') || 'N/A';
+                const email = getValue(member, 'email') || 'N/A';
+                const nasc = formatDate(getValue(member, 'data_nascimento'));
+
+                reportHTML += `
+                    <tr>
+                        <td>${nome}</td>
+                        <td>${funcao}</td>
+                        <td>${telefone}</td>
+                        <td>${email}</td>
+                        <td>${nasc}</td>
+                    </tr>
+                `;
+            });
+
+            reportHTML += `
+                        </tbody>
+                    </table>
+                    <p style="text-align: right; font-size: 0.8em; margin-top: 20px;">
+                        Gerado em: ${new Date().toLocaleString('pt-BR')}
+                    </p>
+                </body>
+                </html>
+            `;
+
+            reportWindow.document.write(reportHTML);
+            reportWindow.document.close();
+        };
 
         window.openDetails = (id) => {
             currentId = id;
@@ -591,12 +669,10 @@
                 }
             });
 
-            // Foto
             const imgEl = getEl('modal-detalhes-foto');
             imgEl.src = photos[id] || PLACEHOLDER_IMG;
             imgEl.classList.remove('hidden');
             
-            // Condicional Conjuge (Usando getValue para suportar dados antigos)
             const estCivil = getValue(m, 'estado_civil') || getValue(m, 'estadoCivil');
             if(estCivil === 'Casado(a)') getEl('conjuge-detalhes-container').classList.remove('hidden');
             else getEl('conjuge-detalhes-container').classList.add('hidden');
@@ -607,9 +683,7 @@
         function formatDate(d) {
             if(!d) return '-';
             try {
-                // Verifica se é Timestamp do Firestore (dados antigos podem ser)
                 if (d.seconds) return new Date(d.seconds * 1000).toLocaleDateString('pt-BR');
-                // Verifica se é string
                 const date = new Date(d);
                 if(typeof d === 'string' && d.length === 10) return new Date(d + 'T00:00:00').toLocaleDateString('pt-BR');
                 if(!isNaN(date.getTime())) return date.toLocaleDateString('pt-BR');
@@ -670,7 +744,6 @@
                 
                 const grouped = Array(12).fill().map(()=>[]);
                 list.forEach(x => {
-                    // Suporta camelCase e snake_case
                     const nasc = getValue(x, 'data_nascimento');
                     if(nasc) {
                         const d = new Date(nasc + 'T00:00:00'); 
@@ -697,20 +770,20 @@
                 }
             }
 
-            // Forms
+            // Forms & Buttons
             getEl('login-form').onsubmit = async(e) => {
                 e.preventDefault();
                 try { await signInWithEmailAndPassword(auth, getEl('login-email').value, getEl('login-password').value); }
                 catch(e){ getEl('login-error').textContent = 'Erro de login.'; }
             };
             getEl('logout-button').onclick = () => signOut(auth);
+            getEl('report-button').onclick = window.generateMemberReport;
 
             getEl('member-form').onsubmit = async(e) => {
                 e.preventDefault();
                 const btn = getEl('submit-button'); btn.disabled=true; btn.textContent = 'Salvando...';
                 try {
                     const fd = new FormData(e.target);
-                    // ⚠️ CAPTURA TODOS OS CAMPOS ⚠️
                     const obj = { createdAt: new Date().toISOString() };
                     for(let [k,v] of fd.entries()) if(k!=='foto_upload') obj[k] = v;
                     
@@ -733,7 +806,6 @@
                 if(!m) return;
                 getEl('details-modal').classList.remove('open');
                 
-                // Popula TODOS os campos de edição com suporte a dados antigos
                 const inputs = getEl('edit-form').querySelectorAll('input, select, textarea');
                 inputs.forEach(i => {
                     if(i.type !== 'file' && i.type !== 'password') {
@@ -743,7 +815,6 @@
                     }
                 });
                 
-                // Foto Preview
                 const img = getEl('foto_preview_edicao');
                 if(photos[currentId]) { img.src=photos[currentId]; img.classList.remove('hidden'); }
                 else img.classList.add('hidden');
@@ -764,7 +835,6 @@
                     await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(auth.currentUser.email, pwd));
                     const fd = new FormData(e.target);
                     const obj = { updatedAt: new Date().toISOString() };
-                    // ⚠️ CAPTURA TODOS OS CAMPOS DO FORM DE EDIÇÃO ⚠️
                     for(let [k,v] of fd.entries()) if(k!=='foto_upload' && k!=='edit-password') obj[k] = v;
                     
                     await updateDoc(doc(db,"dadosIgreja","ADCA-CG","membros",currentId), obj);
