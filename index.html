@@ -19,11 +19,8 @@
         }
     </script>
     
-    <!-- O script do Postimages foi REMOVIDO -->
-    <!-- As funções de callback (onUploadCadastro, onUploadEdicao) foram REMOVIDAS -->
-
     <style>
-        /* Estilos para abas (Autenticação) - DO SEU CSS */
+        /* Estilos para abas (Autenticação) */
         .auth-tab-button.active {
             border-bottom-color: #3b82f6; /* Cor azul */
             color: #3b82f6;
@@ -34,46 +31,32 @@
             border-bottom-color: transparent;
             color: #6b7280; /* Cinza para inativo */
         }
-        /* Ocultar conteúdo das abas de autenticação por padrão */
-        .auth-content-tab {
-            display: none;
-        }
-        /* Mostrar conteúdo da aba de autenticação ativa */
-        .auth-content-tab.active {
-            display: block;
-        }
+        .auth-content-tab { display: none; }
+        .auth-content-tab.active { display: block; }
 
-        /* Estilos para abas (Aplicação Principal) - DO SEU CSS */
+        /* Estilos para abas (Aplicação Principal) */
         .app-tab-button.active {
-            border-bottom-color: #ffffff; /* Cor branca */
+            border-bottom-color: #ffffff;
             color: #ffffff;
             font-weight: 600;
         }
         .app-tab-button {
             border-bottom-width: 3px;
             border-bottom-color: transparent;
-            color: #dbeafe; /* Azul claro para inativo */
+            color: #dbeafe;
             opacity: 0.8;
             padding-top: 0.75rem;
             padding-bottom: 0.75rem;
             padding-left: 0.25rem;
             padding-right: 0.25rem;
         }
-        .app-tab-button:hover {
-            opacity: 1;
-        }
-        /* Ocultar conteúdo das abas da aplicação por padrão */
-        .app-content-tab {
-            display: none;
-        }
-        /* Mostrar conteúdo da aba da aplicação ativa */
-        .app-content-tab.active {
-            display: block;
-        }
+        .app-tab-button:hover { opacity: 1; }
+        .app-content-tab { display: none; }
+        .app-content-tab.active { display: block; }
 
-        /* Estilo para modal (Janela Pop-up) - DO SEU CSS */
+        /* Estilo para modal */
         .modal {
-            display: none; /* Oculto por padrão */
+            display: none;
             position: fixed;
             z-index: 100;
             left: 0;
@@ -81,18 +64,14 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5); /* Fundo mais escuro */
+            background-color: rgba(0, 0, 0, 0.5);
             padding-top: 50px;
             padding-bottom: 50px;
-        }
-        
-        /* Ajuste para animação de fade-in/out */
-        .modal {
             opacity: 0;
             transition: opacity 0.3s ease;
         }
         .modal.open {
-            display: flex; /* Usar flex para centralizar */
+            display: flex;
             opacity: 1;
             align-items: center;
             justify-content: center;
@@ -100,7 +79,7 @@
 
         .modal-content {
             background-color: #fefefe;
-            margin: auto; /* Centralizado pelo flex */
+            margin: auto;
             padding: 24px;
             border: 1px solid #888;
             width: 90%;
@@ -123,41 +102,32 @@
             font-weight: bold;
             line-height: 1;
         }
-
-        .close-button:hover,
-        .close-button:focus {
+        .close-button:hover, .close-button:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
         }
 
-        /* Spinner de Carregamento - DO SEU CSS */
+        /* Spinner */
         .spinner {
-            width: 1.25rem; /* 20px */
-            height: 1.25rem; /* 20px */
-            border: 3px solid #d1d5db; /* border-gray-300 */
-            border-top-color: #3b82f6; /* border-t-blue-500 */
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 3px solid #d1d5db;
+            border-top-color: #3b82f6;
             border-radius: 50%;
             display: inline-block;
             animation: spin 0.8s linear infinite;
         }
-
-        /* Spinner dentro de botões */
         button:disabled .spinner {
             border-top-color: #ffffff;
             border: 3px solid rgba(255, 255, 255, 0.3);
         }
-
         @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        /* Toast (Notificações) - DO SEU CSS */
+        /* Toast */
         #toast-container {
             position: fixed;
             bottom: 1.5rem;
@@ -167,7 +137,6 @@
             flex-direction: column;
             gap: 0.75rem;
         }
-
         .toast {
             padding: 1rem 1.5rem;
             border-radius: 0.5rem;
@@ -177,209 +146,138 @@
             animation: slideIn 0.3s ease-out forwards;
             opacity: 0;
         }
-
-        .toast-success {
-            background-color: #10b981; /* green-500 */
-        }
-        .toast-error {
-            background-color: #ef4444; /* red-500 */
-        }
-        .toast-warning {
-            background-color: #f59e0b; /* amber-500 */
-        }
+        .toast-success { background-color: #10b981; }
+        .toast-error { background-color: #ef4444; }
+        .toast-warning { background-color: #f59e0b; }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-
         @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
         }
 
-        /* Estilos Adicionais para Layout */
-        html, body {
-            height: 100%;
-        }
-        
-        /* Centraliza a tela de login */
+        html, body { height: 100%; }
         body.logged-out {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Oculta setas de input[type=number] */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+        input[type=number] { -moz-appearance: textfield; }
         
-        /* Estilos para as fotos dos membros */
+        /* Estilos Fotos */
         .member-list-photo {
-            width: 64px; /* w-16 */
-            height: 64px; /* h-16 */
-            border-radius: 9999px; /* rounded-full */
-            object-fit: cover; /* object-cover */
-            border: 2px solid #e5e7eb; /* border-2 border-gray-200 */
-            flex-shrink: 0; /* Não encolhe */
+            width: 64px;
+            height: 64px;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+            flex-shrink: 0;
         }
         .modal-details-photo {
-            width: 96px; /* w-24 */
-            height: 96px; /* h-24 */
-            border-radius: 9999px; /* rounded-full */
-            object-fit: cover; /* object-cover */
-            border: 4px solid #e5e7eb; /* border-4 border-gray-200 */
-            margin: 0 auto 1rem auto; /* mx-auto mb-4 */
+            width: 96px;
+            height: 96px;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 4px solid #e5e7eb;
+            margin: 0 auto 1rem auto;
         }
-
-        /* O estilo de preview do formulário foi REMOVIDO */
+        
+        /* Previews de Upload */
+        .upload-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px dashed #ccc;
+            margin-top: 10px;
+            display: none; /* Oculto até ter imagem */
+        }
+        .upload-preview.visible {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900 font-sans min-h-full antialiased">
 
-    <!-- Tela de Autenticação (Login) -->
+    <!-- Tela de Autenticação -->
     <div id="auth-screen" class="w-full max-w-md p-8">
-        <!-- Card de Login Branco, parecido com a imagem -->
         <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-            
-            <!-- INÍCIO DA SEÇÃO DO LOGO (LOGIN) -->
             <div class="flex flex-col items-center mb-8">
-                <!-- 
-                  ADICIONE A URL DA SUA LOGO AQUI 
-                  Recomendo uma imagem com cerca de 80px de altura (h-20)
-                -->
-                <img src="https://i.postimg.cc/NF8psJ8b/adca.png" 
-                     alt="Logo ADCA" 
-                     class="h-20 w-auto mb-4 rounded-lg">
+                <img src="https://i.postimg.cc/NF8psJ8b/adca.png" alt="Logo ADCA" class="h-20 w-auto mb-4 rounded-lg">
                 <h2 class="text-3xl font-bold text-center text-blue-600">SECRETÁRIA ADCA</h2>
             </div>
-            <!-- FIM DA SEÇÃO DO LOGO (LOGIN) -->
-            
             <form id="login-form" class="space-y-6">
                 <div>
                     <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="login-email" name="email" required 
-                           class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="email" id="login-email" name="email" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
                     <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                    <input type="password" id="login-password" name="password" required 
-                           class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="login-password" name="password" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                
-                <div id="login-error" class="text-red-600 text-sm h-4">
-                    <!-- Mensagens de erro de login aqui -->
-                </div>
-
-                <button type="submit" id="login-button" 
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                <div id="login-error" class="text-red-600 text-sm h-4"></div>
+                <button type="submit" id="login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
                     <span>Entrar</span>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Container Principal do App (Oculto por padrão) -->
+    <!-- Container Principal do App -->
     <div id="app-content" class="hidden w-full h-full">
-        
-        <!-- NOVO CABEÇALHO AZUL -->
         <header class="bg-blue-700 text-white shadow-md sticky top-0 z-30">
             <div class="container mx-auto max-w-6xl px-4 md:px-8">
                 <div class="flex justify-between items-center py-4">
-                    
-                    <!-- INÍCIO DA SEÇÃO DO LOGO (CABEÇALHO) -->
                     <div class="flex items-center gap-3">
-                        <!-- 
-                          ADICIONE A URL DA SUA LOGO AQUI 
-                          Recomendo uma imagem com cerca de 40px de altura (h-10)
-                        -->
-                        <img src="https://i.postimg.cc/NF8psJ8b/adca.png" 
-                             alt="Logo" 
-                             class="h-10 w-auto rounded-md">
-                        <!-- Título completo para telas médias e maiores -->
-                        <h1 class="text-2xl font-bold hidden sm:block">
-                            SECRETARIA ADCA - CAPOEIRA GRANDE
-                        </h1>
-                        <!-- Título curto para telas pequenas -->
-                        <h1 class="text-2xl font-bold sm:hidden">
-                            ADCA-CG
-                        </h1>
+                        <img src="https://i.postimg.cc/NF8psJ8b/adca.png" alt="Logo" class="h-10 w-auto rounded-md">
+                        <h1 class="text-2xl font-bold hidden sm:block">SECRETARIA ADCA - CAPOEIRA GRANDE</h1>
+                        <h1 class="text-2xl font-bold sm:hidden">ADCA-CG</h1>
                     </div>
-                    <!-- FIM DA SEÇÃO DO LOGO (CABEÇALHO) -->
-
                     <div class="flex items-center gap-4">
                         <span id="user-email-display" class="text-sm text-blue-100 hidden md:block"></span>
-                        <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 text-sm">
-                            Sair
-                        </button>
+                        <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 text-sm">Sair</button>
                     </div>
                 </div>
             </div>
-            
-            <!-- NOVA NAVEGAÇÃO DAS ABAS -->
             <nav class="bg-blue-700 border-t border-blue-600">
                 <div class="container mx-auto max-w-6xl px-4 md:px-8">
                     <div class="flex flex-wrap space-x-6" aria-label="Tabs">
-                        <button id="tab-btn-dashboard" type="button" data-tab="dashboard" class="app-tab-button active text-lg font-medium">
-                            Dashboard
-                        </button>
-                        <button id="tab-btn-cadastro" type="button" data-tab="cadastro" class="app-tab-button text-lg font-medium">
-                            Cadastrar Membro
-                        </button>
-                        <button id="tab-btn-visualizar" type="button" data-tab="visualizar" class="app-tab-button text-lg font-medium">
-                            Visualizar Membros
-                        </button>
-                        <button id="tab-btn-aniversariantes" type="button" data-tab="aniversariantes" class="app-tab-button text-lg font-medium">
-                            Aniversariantes
-                        </button>
+                        <button id="tab-btn-dashboard" type="button" data-tab="dashboard" class="app-tab-button active text-lg font-medium">Dashboard</button>
+                        <button id="tab-btn-cadastro" type="button" data-tab="cadastro" class="app-tab-button text-lg font-medium">Cadastrar Membro</button>
+                        <button id="tab-btn-visualizar" type="button" data-tab="visualizar" class="app-tab-button text-lg font-medium">Visualizar Membros</button>
+                        <button id="tab-btn-aniversariantes" type="button" data-tab="aniversariantes" class="app-tab-button text-lg font-medium">Aniversariantes</button>
                     </div>
                 </div>
             </nav>
         </header>
 
-        <!-- NOVO CONTAINER DE CONTEÚDO PRINCIPAL -->
         <main class="container mx-auto max-w-6xl p-4 md:p-8">
-            <!-- Conteúdo das Abas -->
             <div>
-                <!-- Aba 0: Dashboard -->
+                <!-- Aba Dashboard -->
                 <div id="dashboard" class="app-content-tab active">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Card Total de Membros -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 flex flex-col justify-between">
                             <h3 class="text-lg font-semibold text-blue-700">Total de Membros</h3>
                             <div id="dashboard-total-membros" class="text-5xl font-bold text-gray-900 mt-4">
-                                <!-- Spinner de carregamento -->
                                 <div class="spinner h-10 w-10 border-4 border-blue-500 rounded-full"></div>
                             </div>
                         </div>
-                        <!-- Outros cards do dashboard podem ser adicionados aqui -->
                     </div>
                 </div>
 
-                <!-- Aba 1: Formulário de Cadastro -->
+                <!-- Aba Cadastro -->
                 <div id="cadastro" class="app-content-tab">
                     <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200">
                         <form id="member-form" class="space-y-8">
-                            
-                            <!-- Seção de Informações Pessoais -->
                             <div>
                                 <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Pessoais</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
@@ -392,16 +290,19 @@
                                         <input type="text" id="funcao" name="funcao" placeholder="Ex: Diácono, Louvor" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
 
-                                    <!-- [REVERTIDO] Campo de Foto URL (manual) -->
+                                    <!-- CAMPO DE FOTO (UPLOAD) -->
                                     <div class="md:col-span-2">
-                                        <label for="foto_url" class="block text-sm font-medium text-gray-700 mb-1">Foto (URL)</label>
-                                        <input type="text" id="foto_url" name="foto_url" placeholder="Cole o link direto da imagem (postimages.org)" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <label for="foto_upload" class="block text-sm font-medium text-gray-700 mb-1">Foto do Membro (Upload)</label>
+                                        <input type="file" id="foto_upload" name="foto_upload" accept="image/*" 
+                                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                        <p class="text-xs text-gray-500 mt-1">A imagem será salva no banco Turso.</p>
+                                        <img id="foto_preview_cadastro" class="upload-preview" alt="Prévia">
                                     </div>
+
                                     <div>
                                         <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
                                         <input type="date" id="data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
-                                    <!-- Fim da Alteração -->
                                     
                                     <div>
                                         <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
@@ -469,7 +370,6 @@
                                 </div>
                             </div>
 
-                            <!-- Seção de Informações Eclesiásticas -->
                             <div>
                                 <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Eclesiásticas</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
@@ -481,7 +381,7 @@
                                         <label for="data_chegada" class="block text-sm font-medium text-gray-700 mb-1">Data de Chegada na Igreja</label>
                                         <input type="date" id="data_chegada" name="data_chegada" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     </div>
-                                    <div class="md:col-span-3"></div> <!-- Espaçador -->
+                                    <div class="md:col-span-3"></div>
                                     <div>
                                         <label for="igreja_anterior" class="block text-sm font-medium text-gray-700 mb-1">Igreja de Onde Veio</label>
                                         <input type="text" id="igreja_anterior" name="igreja_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -493,104 +393,71 @@
                                 </div>
                             </div>
 
-                            <button type="submit" id="submit-button" 
-                                    class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                            <button type="submit" id="submit-button" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
                                 <span>Cadastrar Membro</span>
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Aba 2: Lista de Membros -->
+                <!-- Aba Visualizar -->
                 <div id="visualizar" class="app-content-tab">
-                    <!-- Indicador de Carregamento -->
                     <div id="list-loading" class="text-center py-10">
                         <div class="spinner h-12 w-12 border-4 border-blue-500 rounded-full mx-auto"></div>
-                        <p class="text-gray-600 mt-3">Carregando membros...</p>
+                        <p class="text-gray-600 mt-3">Carregando membros e fotos do Turso...</p>
                     </div>
 
-                    <!-- [NOVO] Barra de Pesquisa -->
                     <form id="search-form" class="mb-6 flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="search-input" placeholder="Pesquisar membro por nome..."
-                               class="flex-grow bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="search-input" placeholder="Pesquisar membro por nome..." class="flex-grow bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <div class="flex gap-3">
-                            <button type="submit" id="search-button"
-                                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
-                                <span>Pesquisar</span>
-                            </button>
-                            <button type="button" id="clear-search-button"
-                                    class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out">
-                                <span>Limpar</span>
-                            </button>
+                            <button type="submit" id="search-button" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg"><span>Pesquisar</span></button>
+                            <button type="button" id="clear-search-button" class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out"><span>Limpar</span></button>
                         </div>
                     </form>
-                    <!-- [FIM NOVO] -->
 
-                    <!-- [NOVA SEÇÃO DE AÇÕES] -->
                     <div class="flex justify-end mb-4">
-                        <button type="button" id="report-button"
-                                class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                        <button type="button" id="report-button" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             <span>Gerar Relatório de Membros</span>
                         </button>
                     </div>
-                    <!-- [FIM DA NOVA SEÇÃO DE AÇÕES] -->
 
-                    <!-- Container da Lista -->
-                    <div id="member-list" class="space-y-4">
-                        <!-- Membros serão inseridos aqui -->
-                    </div>
+                    <div id="member-list" class="space-y-4"></div>
                 </div>
 
-                <!-- Aba 3: Aniversariantes -->
+                <!-- Aba Aniversariantes -->
                 <div id="aniversariantes" class="app-content-tab">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Coluna Mês Atual -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-                            <h3 id="aniversariantes-mes-atual-titulo" class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">
-                                Aniversariantes de...
-                            </h3>
+                            <h3 id="aniversariantes-mes-atual-titulo" class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">Aniversariantes de...</h3>
                             <div id="aniversariantes-mes-atual-lista" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                                <!-- Lista do mês atual será inserida aqui -->
                                 <div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>
                             </div>
                         </div>
-
-                        <!-- Coluna Próximos Meses -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-                            <h3 class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">
-                                Próximos Meses
-                            </h3>
+                            <h3 class="text-2xl font-semibold text-blue-700 mb-5 border-b border-gray-300 pb-3">Próximos Meses</h3>
                             <div id="aniversariantes-proximos-lista" class="space-y-5 max-h-[60vh] overflow-y-auto pr-2">
-                                <!-- Lista dos próximos meses será inserida aqui -->
                                 <div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- Container de Toasts (Notificações) -->
+    <!-- Toast -->
     <div id="toast-container"></div>
     
     <!-- Modal de Detalhes -->
     <div id="details-modal" class="modal">
-        <!-- Conteúdo do Modal -->
         <div class="modal-content relative bg-gray-100 text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
-            <!-- Cabeçalho do Modal -->
             <div class="flex justify-between items-center pb-3 border-b border-gray-300">
                 <h2 class="text-2xl font-bold text-blue-800">Detalhes do Membro</h2>
                 <button class="close-button modal-close-btn">&times;</button>
             </div>
-
-            <!-- Corpo do Modal -->
             <div class="space-y-6 mt-5">
-                <!-- [NOVO] Foto do Membro no Modal -->
                 <img id="modal-detalhes-foto" src="" alt="Foto do Membro" class="modal-details-photo hidden">
-
                 <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                     <h3 class="text-lg font-semibold text-blue-700">Informações Pessoais</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
@@ -621,34 +488,23 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Rodapé do Modal com Botões -->
             <div class="flex flex-col md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
-                <button id="modal-edit-btn" class="w-full md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-                    Editar
-                </button>
-                <button id="modal-delete-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-                    Excluir
-                </button>
+                <button id="modal-edit-btn" class="w-full md:w-auto bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">Editar</button>
+                <button id="modal-delete-btn" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">Excluir</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Edição (Agora light mode) -->
+    <!-- Modal de Edição -->
     <div id="edit-modal" class="modal">
-        <!-- Conteúdo do Modal -->
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="modal-content relative bg-white text-gray-800 rounded-2xl shadow-xl w-full max-w-4xl p-6 md:p-8 mx-auto">
-                <!-- Cabeçalho do Modal -->
                 <div class="flex justify-between items-center pb-3 border-b border-gray-300">
                     <h2 class="text-2xl font-bold text-blue-700">Editar Membro</h2>
                     <button class="close-button modal-close-btn">&times;</button>
                 </div>
-
-                <!-- Formulário de Edição -->
                 <form id="edit-form" class="mt-5 space-y-8">
                     <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                        <!-- Campos de Edição (iguais ao de cadastro, mas com 'edit-' no id) -->
                         <div>
                             <h3 class="text-xl font-semibold mb-5 text-blue-700 border-b border-gray-300 pb-2">Informações Pessoais</h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
@@ -661,17 +517,19 @@
                                     <input type="text" id="edit-funcao" name="funcao" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
 
-                                <!-- [REVERTIDO] Campo de Foto URL (manual) -->
+                                <!-- CAMPO DE EDITAR FOTO -->
                                 <div class="md:col-span-2">
-                                    <label for="edit-foto_url" class="block text-sm font-medium text-gray-700 mb-1">Foto (URL)</label>
-                                    <input type="text" id="edit-foto_url" name="foto_url" placeholder="Cole o link direto da imagem (postimages.org)" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <label for="edit-foto_upload" class="block text-sm font-medium text-gray-700 mb-1">Alterar Foto (Upload)</label>
+                                    <input type="file" id="edit-foto_upload" name="foto_upload" accept="image/*" 
+                                           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                    <p class="text-xs text-gray-500 mt-1">Deixe vazio para manter a foto atual.</p>
+                                    <img id="foto_preview_edicao" class="upload-preview" alt="Prévia">
                                 </div>
+                                
                                 <div>
                                     <label for="edit-data_nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nasc.</label>
                                     <input type="date" id="edit-data_nascimento" name="data_nascimento" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
-                                <!-- Fim da Alteração -->
-                                
                                 <div>
                                     <label for="edit-telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
                                     <input type="tel" id="edit-telefone" name="telefone" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -748,7 +606,7 @@
                                     <label for="edit-data_chegada" class="block text-sm font-medium text-gray-700 mb-1">Data de Chegada na Igreja</label>
                                     <input type="date" id="edit-data_chegada" name="data_chegada" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 </div>
-                                <div class="md:col-span-3"></div> <!-- Espaçador -->
+                                <div class="md:col-span-3"></div>
                                 <div>
                                     <label for="edit-igreja_anterior" class="block text-sm font-medium text-gray-700 mb-1">Igreja de Onde Veio</label>
                                     <input type="text" id="edit-igreja_anterior" name="igreja_anterior" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -761,22 +619,16 @@
                         </div>
                     </div>
 
-                    <!-- Seção de Senha e Salvar -->
                     <div class="pt-6 mt-6 border-t border-gray-300 space-y-4">
                         <div>
                             <label for="edit-password" class="block text-sm font-medium text-gray-700 mb-1">Sua Senha (Obrigatória)</label>
                             <input type="password" id="edit-password" name="edit-password" required placeholder="Digite sua senha para confirmar"
                                    class="w-full md:w-1/2 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div id="edit-error" class="text-red-600 text-sm h-4">
-                            <!-- Mensagens de erro de edição aqui -->
-                        </div>
+                        <div id="edit-error" class="text-red-600 text-sm h-4"></div>
                         <div class="flex justify-end gap-3">
-                            <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-                                Cancelar
-                            </button>
-                            <button type="submit" id="edit-submit-button" 
-                                    class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                            <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Cancelar</button>
+                            <button type="submit" id="edit-submit-button" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
                                 <span>Salvar Alterações</span>
                             </button>
                         </div>
@@ -786,43 +638,28 @@
         </div>
     </div>
     
-    <!-- Modal de Exclusão (Agora light mode) -->
+    <!-- Modal de Exclusão -->
     <div id="delete-modal" class="modal">
-        <!-- Fundo escuro (Backdrop) -->
-        <!-- <div class="modal-backdrop fixed inset-0 bg-black bg-opacity-75"></div> -->
-        
-        <!-- Conteúdo do Modal -->
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="modal-content relative bg-white text-gray-800 rounded-2xl shadow-xl w-full max-w-lg p-6 md:p-8 mx-auto">
                 <form id="delete-form">
-                    <!-- Cabeçalho do Modal -->
                     <div class="flex justify-between items-center pb-3">
                         <h2 class="text-2xl font-bold text-red-600">Confirmar Exclusão</h2>
                         <button type="button" class="close-button modal-close-btn">&times;</button>
                     </div>
-
-                    <!-- Corpo do Modal -->
                     <div class="mt-4 space-y-4">
                         <p class="text-gray-700">Você tem certeza que deseja excluir este membro? Esta ação não pode ser desfeita.</p>
-                        <p class="text-yellow-600 text-sm">Aviso: Isso excluirá permanentemente o registro do membro. Os registros financeiros (dízimos, etc.) associados a ele NÃO serão excluídos.</p>
-                        
+                        <p class="text-yellow-600 text-sm">Isso excluirá os dados do Firebase e a foto do Turso.</p>
                         <div>
                             <label for="delete-password" class="block text-sm font-medium text-gray-700 mb-1">Sua Senha (Obrigatória)</label>
                             <input type="password" id="delete-password" name="delete-password" required placeholder="Digite sua senha para confirmar"
                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <div id="delete-error" class="text-red-600 text-sm h-4">
-                            <!-- Mensagens de erro de exclusão aqui -->
-                        </div>
+                        <div id="delete-error" class="text-red-600 text-sm h-4"></div>
                     </div>
-
-                    <!-- Rodapé do Modal com Botões -->
                     <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-3 pt-6 mt-6 border-t border-gray-300">
-                        <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-                            Cancelar
-                        </button>
-                        <button type="submit" id="delete-submit-button" 
-                                class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
+                        <button type="button" class="modal-close-btn w-full md:w-auto bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Cancelar</button>
+                        <button type="submit" id="delete-submit-button" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2 shadow-lg">
                             <span>Excluir Permanentemente</span>
                         </button>
                     </div>
@@ -831,31 +668,19 @@
         </div>
     </div>
 
-
-    <!-- Firebase SDKs -->
+    <!-- Firebase e Turso Logic -->
     <script type="module">
-        // Importa as funções necessárias do Firebase SDK
+        // Importações
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged,
-            EmailAuthProvider, // Importa para reautenticação
-            reauthenticateWithCredential // Importa para reautenticação
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            addDoc, 
-            collection, 
-            onSnapshot, 
-            query, 
-            setLogLevel,
-            updateDoc, // Importa para edição
-            deleteDoc,  // Importa para exclusão
-            Timestamp // [CORREÇÃO] Importa o Timestamp
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, collection, onSnapshot, query, updateDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Importação do Cliente Turso (LibSQL)
+        import { createClient } from "https://esm.sh/@libsql/client/web";
+
+        // --- CONFIGURAÇÃO DO TURSO ---
+        // ⚠️ ATENÇÃO: VOCÊ PRECISA COLOCAR A URL DO SEU BANCO AQUI ⚠️
+        const TURSO_DB_URL = "libsql://secretariaadca-machaddoo.aws-us-west-2.turso.io"; // <--- SUBSTITUA ISSO
+        const TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NjM3NDI5ODIsImlkIjoiZjA1YjU2MTgtYWY4MS00MmE2LTk5MjgtZTc4ZGU4MTMyZGFmIiwicmlkIjoiMWQ1Yjk3NTMtNjk5OC00MmQ5LTg5MTktNzAwYjM5YmE2MGUyIn0.ofV7BH_LTNkTewN2JbyQVGQQ3pf3H5BrGPlQg6GV0lzCK9ncP5PL9SvNhRuMaypM51ewTLKGtabwsTuzuRu0BA";
 
         // --- Configuração do Firebase ---
         const userProvidedConfigString = `{
@@ -866,64 +691,74 @@
           "messagingSenderId": "90755919",
           "appId": "1:907559288919:web:a4afdb4ed23e9d11196312"
         }`;
-        
         const firebaseConfig = JSON.parse(userProvidedConfigString);
         
-        // --- Constantes ---
         const MESES_DO_ANO = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        // [NOVO] URL da foto placeholder
         const FOTO_PLACEHOLDER_URL = "https://placehold.co/100x100/e2e8f0/718096?text=Foto";
 
+        // Globais
+        let app, auth, db, userId, membersCollectionRef, tursoClient;
+        let membersCache = {}; 
+        let photosCache = {}; // Cache local para as fotos do Turso { memberId: base64string }
+        let unsubscribeMembers = null;
+        let currentMemberId = null;
 
-        // --- Variáveis Globais do App ---
-        let app, auth, db, userId, membersCollectionRef;
-        let membersCache = {}; // Cache para guardar dados dos membros
-        let unsubscribeMembers = null; // Para parar de ouvir os dados ao fazer logout
-        let currentMemberId = null; // Guarda o ID do membro selecionado (para edição/exclusão)
-
-        // --- Elementos do DOM (Autenticação) ---
+        // Elementos DOM
         const authScreen = document.getElementById('auth-screen');
         const appContent = document.getElementById('app-content');
         const loginForm = document.getElementById('login-form');
         const loginButton = document.getElementById('login-button');
-        const loginButtonText = loginButton.querySelector('span');
         const loginError = document.getElementById('login-error');
         const logoutButton = document.getElementById('logout-button');
         const userEmailDisplay = document.getElementById('user-email-display');
-
-        // --- Elementos do DOM (Abas) ---
-        const tabButtons = document.querySelectorAll('.app-tab-button'); // Pega todos os botões de aba
         
-        // --- Elementos do DOM (Dashboard) ---
+        const tabButtons = document.querySelectorAll('.app-tab-button');
+        
+        // Dashboard & Aniversariantes
         const dashboardTotalMembros = document.getElementById('dashboard-total-membros');
-
-        // --- Elementos do DOM (Aniversariantes) ---
         const aniverMesAtualTitulo = document.getElementById('aniversariantes-mes-atual-titulo');
         const aniverMesAtualLista = document.getElementById('aniversariantes-mes-atual-lista');
         const aniverProximosLista = document.getElementById('aniversariantes-proximos-lista');
 
-        // --- Elementos do DOM (Formulário de Cadastro) ---
+        // Cadastro
         const memberForm = document.getElementById('member-form');
         const submitButton = document.getElementById('submit-button');
-        const submitButtonText = submitButton.querySelector('span');
         const estadoCivilSelect = document.getElementById('estado_civil');
         const conjugeField = document.getElementById('conjuge-field');
-        // const fotoPreviewCadastro = document.getElementById('foto-preview'); // REMOVIDO
+        const fotoInputCadastro = document.getElementById('foto_upload');
+        const fotoPreviewCadastro = document.getElementById('foto_preview_cadastro');
 
-        // --- Elementos do DOM (Lista) ---
+        // Lista
         const memberList = document.getElementById('member-list');
         const listLoading = document.getElementById('list-loading');
-        // [NOVO] Elementos de Pesquisa
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const clearSearchButton = document.getElementById('clear-search-button');
-        // [NOVO] Botão de Relatório
         const reportButton = document.getElementById('report-button');
 
-        // --- Elementos do DOM (Modal de Detalhes) ---
+        // Modais
         const detailsModal = document.getElementById('details-modal');
         const modalEditBtn = document.getElementById('modal-edit-btn');
         const modalDeleteBtn = document.getElementById('modal-delete-btn');
+        
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-form');
+        const editEstadoCivilSelect = document.getElementById('edit-estado_civil');
+        const editConjugeField = document.getElementById('edit-conjuge-field');
+        const editSubmitButton = document.getElementById('edit-submit-button');
+        const editError = document.getElementById('edit-error');
+        const fotoInputEdicao = document.getElementById('edit-foto_upload');
+        const fotoPreviewEdicao = document.getElementById('foto_preview_edicao');
+
+        const deleteModal = document.getElementById('delete-modal');
+        const deleteForm = document.getElementById('delete-form');
+        const deleteSubmitButton = document.getElementById('delete-submit-button');
+        const deleteError = document.getElementById('delete-error');
+
+        const toastContainer = document.getElementById('toast-container');
+        const allCloseModalButtons = document.querySelectorAll('.modal-close-btn');
+
+        // Campos do Modal Detalhes
         const modalSpans = {
             nome: document.getElementById('modal-detalhes-nome'),
             funcao: document.getElementById('modal-detalhes-funcao'),
@@ -945,166 +780,181 @@
             data_chegada: document.getElementById('modal-detalhes-data_chegada'),
             igreja_anterior: document.getElementById('modal-detalhes-igreja_anterior'),
             cargo_anterior: document.getElementById('modal-detalhes-cargo_anterior'),
-            foto: document.getElementById('modal-detalhes-foto') // [NOVO] Span da foto
+            foto: document.getElementById('modal-detalhes-foto')
         };
 
-        // --- Elementos do DOM (Modal de Edição) ---
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-form');
-        const editEstadoCivilSelect = document.getElementById('edit-estado_civil');
-        const editConjugeField = document.getElementById('edit-conjuge-field');
-        const editSubmitButton = document.getElementById('edit-submit-button');
-        const editSubmitButtonText = editSubmitButton.querySelector('span');
-        const editError = document.getElementById('edit-error');
-        // const fotoPreviewEdicao = document.getElementById('edit-foto-preview'); // REMOVIDO
+        // --- FUNÇÕES TURSO ---
 
-        // --- Elementos do DOM (Modal de Exclusão) ---
-        const deleteModal = document.getElementById('delete-modal');
-        const deleteForm = document.getElementById('delete-form');
-        const deleteSubmitButton = document.getElementById('delete-submit-button');
-        const deleteSubmitButtonText = deleteSubmitButton.querySelector('span');
-        const deleteError = document.getElementById('delete-error');
-
-        // --- Elementos do DOM (Geral) ---
-        const toastContainer = document.getElementById('toast-container');
-        const allCloseModalButtons = document.querySelectorAll('.modal-close-btn');
-
-        // --- Funções Auxiliares ---
-
-        // [NOVO] FUNÇÃO DE LOG (COPIADA DO GESTAO-IGJE.JS)
-        /**
-         * Registra uma ação no log do Firestore.
-         * @param {string} acao - Ação realizada (ex: "Membro Criado", "Exclusão Dízimo").
-         * @param {object} detalhes - Objeto com informações relevantes (ex: { membroId: '...' }).
-         */
-        async function registrarLog(acao, detalhes = {}) {
-            // A função 'auth' é definida mais abaixo, no 'main'
-            if (!auth || !auth.currentUser) {
-                console.warn("Tentativa de log sem usuário autenticado.");
-                return;
-            }
-            
+        async function initTurso() {
             try {
-                // USA A MESMA COLEÇÃO DE LOGS DO OUTRO SITE
-                const logCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "logs");
-                await addDoc(logCollectionRef, {
-                    timestamp: Timestamp.now(), // [CORREÇÃO] Agora 'Timestamp' está importado
-                    userId: auth.currentUser.uid,
-                    userEmail: auth.currentUser.email,
-                    acao: acao,
-                    detalhes: detalhes // Armazena o objeto de detalhes
+                // Verifica se a URL foi preenchida
+                if (TURSO_DB_URL.includes("NOME-DO-SEU-BANCO")) {
+                    console.warn("URL do Turso não configurada.");
+                    // Não iniciamos o cliente se a URL for o placeholder
+                    return;
+                }
+
+                tursoClient = createClient({
+                    url: TURSO_DB_URL,
+                    authToken: TURSO_AUTH_TOKEN,
                 });
+                
+                // Cria a tabela se não existir
+                await tursoClient.execute(`
+                    CREATE TABLE IF NOT EXISTS member_photos (
+                        member_id TEXT PRIMARY KEY,
+                        photo_data TEXT
+                    )
+                `);
+                console.log("Turso: Tabela verificada/criada com sucesso.");
             } catch (error) {
-                console.error("Falha ao registrar log:", error);
-                // Não notifica o usuário para não interromper o fluxo principal
+                console.error("Erro ao conectar com Turso:", error);
+                showMessage("Erro ao conectar com banco de imagens.", "error");
             }
         }
-        // [FIM DA FUNÇÃO DE LOG]
 
+        // Redimensiona imagem e converte para Base64 para não pesar no banco
+        function resizeAndCompressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 800;
+                        let width = img.width;
+                        let height = img.height;
 
-        /**
-         * Exibe uma mensagem de feedback (Toast).
-         */
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Retorna JPEG com qualidade 0.7
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
+        async function savePhotoToTurso(memberId, base64Data) {
+            if (!tursoClient) return;
+            try {
+                await tursoClient.execute({
+                    sql: "INSERT OR REPLACE INTO member_photos (member_id, photo_data) VALUES (?, ?)",
+                    args: [memberId, base64Data]
+                });
+                // Atualiza cache local
+                photosCache[memberId] = base64Data;
+            } catch (e) {
+                console.error("Erro ao salvar foto no Turso:", e);
+                throw e;
+            }
+        }
+
+        async function deletePhotoFromTurso(memberId) {
+            if (!tursoClient) return;
+            try {
+                await tursoClient.execute({
+                    sql: "DELETE FROM member_photos WHERE member_id = ?",
+                    args: [memberId]
+                });
+                delete photosCache[memberId];
+            } catch (e) {
+                console.error("Erro ao deletar foto no Turso:", e);
+            }
+        }
+
+        // Carrega todas as fotos de uma vez para performance (cache)
+        async function fetchAllPhotosFromTurso() {
+            if (!tursoClient) return;
+            try {
+                const result = await tursoClient.execute("SELECT member_id, photo_data FROM member_photos");
+                photosCache = {}; // Limpa cache
+                result.rows.forEach(row => {
+                    photosCache[row.member_id] = row.photo_data;
+                });
+                console.log(`Carregadas ${result.rows.length} fotos do Turso.`);
+                // Re-renderiza lista se necessário
+                handleSearch();
+            } catch (e) {
+                console.error("Erro ao buscar fotos do Turso:", e);
+            }
+        }
+
+        // --- HELPERS ---
+
+        function registrarLog(acao, detalhes = {}) {
+            if (!auth || !auth.currentUser) return;
+            const logCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "logs");
+            addDoc(logCollectionRef, {
+                timestamp: Timestamp.now(),
+                userId: auth.currentUser.uid,
+                userEmail: auth.currentUser.email,
+                acao: acao,
+                detalhes: detalhes
+            }).catch(err => console.error("Log falhou", err));
+        }
+
         function showMessage(message, type = 'success') {
             const toast = document.createElement('div');
-            let typeClass = 'toast-success';
-            if (type === 'error') typeClass = 'toast-error';
-            if (type === 'warning') typeClass = 'toast-warning';
-            
-            toast.className = `toast ${typeClass}`;
+            toast.className = `toast ${type === 'error' ? 'toast-error' : type === 'warning' ? 'toast-warning' : 'toast-success'}`;
             toast.textContent = message;
-            
             toastContainer.appendChild(toast);
-
-            // Remove o toast após 3 segundos
             setTimeout(() => {
                 toast.style.animation = "slideOut 0.3s ease-out forwards";
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
+                setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        /**
-         * Converte string 'aaaa-mm-dd' para um Date UTC.
-         * Retorna null se a data for inválida.
-         */
         function getDateFromInput(dataInput) {
-            try {
-                if (!dataInput) return null;
-                
-                // Se for Timestamp do Firebase
-                if (dataInput && typeof dataInput.toDate === 'function') {
-                    return dataInput.toDate();
-                }
-                // Se já for Date
-                if (dataInput instanceof Date) {
-                    return dataInput;
-                }
-                // Se for string 'aaaa-mm-dd'
-                if (typeof dataInput === 'string' && dataInput.includes('-')) {
-                    const parts = dataInput.split('-');
-                    if (parts.length === 3) {
-                        // Ano, Mês (base 0), Dia
-                        const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-                        if (!isNaN(date.getTime())) return date;
-                    }
-                }
-            } catch (e) {
-                console.error("Data inválida:", dataInput, e);
-                return null;
+            if (!dataInput) return null;
+            if (dataInput.toDate) return dataInput.toDate();
+            if (dataInput instanceof Date) return dataInput;
+            if (typeof dataInput === 'string' && dataInput.includes('-')) {
+                const p = dataInput.split('-');
+                return new Date(Date.UTC(p[0], p[1]-1, p[2]));
             }
             return null;
         }
 
-        /**
-         * Formata data (AAAA-MM-DD ou Date) para DD/MM/AAAA.
-         */
         function formatarData(dataInput) {
-            const dateObj = getDateFromInput(dataInput);
-            if (!dateObj) return "N/A";
-            
-            try {
-                return dateObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-            } catch (e) {
-                return "N/A";
-            }
+            const d = getDateFromInput(dataInput);
+            return d ? d.toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : "N/A";
         }
 
-        /**
-         * Reautentica o usuário com a senha fornecida.
-         * Lança um erro se a reautenticação falhar.
-         */
         async function reauthenticateUser(password) {
             const user = auth.currentUser;
-            if (!user) {
-                throw new Error("Usuário não está logado.");
-            }
-            if (!user.email) {
-                throw new Error("Usuário não tem email associado.");
-            }
-
+            if (!user) throw new Error("Usuário não logado.");
             try {
                 const credential = EmailAuthProvider.credential(user.email, password);
                 await reauthenticateWithCredential(user, credential);
-                return true; // Sucesso
+                return true;
             } catch (error) {
-                console.error("Erro ao reautenticar:", error.code);
-                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    throw new Error("Senha incorreta.");
-                } else {
-                    throw new Error("Erro de autenticação.");
-                }
+                throw new Error("Senha incorreta.");
             }
         }
 
-        /**
-         * [ALTERADO] Mapeia os dados de um membro para os campos do formulário de edição.
-         */
         function populateEditForm(member) {
             document.getElementById('edit-nome').value = member.nome || '';
             document.getElementById('edit-funcao').value = member.funcao || '';
-            document.getElementById('edit-foto_url').value = member.fotoUrl || ''; // [NOVO]
             document.getElementById('edit-data_nascimento').value = member.dataNascimento || ''; 
             document.getElementById('edit-telefone').value = member.telefone || '';
             document.getElementById('edit-email').value = member.email || '';
@@ -1123,59 +973,41 @@
             document.getElementById('edit-igreja_anterior').value = member.igrejaAnterior || ''; 
             document.getElementById('edit-cargo_anterior').value = member.cargoAnterior || ''; 
 
-            // Lógica do preview foi REMOVIDA
-
-            // Lógica do campo Cônjuge
             if (member.estadoCivil === 'Casado(a)') { 
                 editConjugeField.classList.remove('hidden');
             } else {
                 editConjugeField.classList.add('hidden');
             }
             
-            // Limpa campos de senha e erro
+            // Limpa inputs de arquivo e senha
+            fotoInputEdicao.value = '';
+            fotoPreviewEdicao.classList.remove('visible');
             document.getElementById('edit-password').value = '';
             editError.textContent = '';
         }
 
-        /**
-         * Abre um modal.
-         */
-        function showModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('open');
-                document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
-            }
+        function showModal(id) {
+            document.getElementById(id).classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function hideModal(el) {
+            el.classList.remove('open');
+            document.body.style.overflow = '';
         }
 
-        /**
-         * Fecha o modal ativo.
-         */
-        function hideModal(modal) {
-            if (modal) {
-                modal.classList.remove('open');
-                // O CSS do modal agora o esconde (display: none)
-                document.body.style.overflow = '';
-            }
-        }
-
-        /**
-         * [ALTERADO] Exibe o modal com os detalhes do membro, incluindo a foto.
-         */
         function showDetailsModal() {
             const member = membersCache[currentMemberId];
             if (!member) return;
 
-            // [NOVO] Preenche a foto
-            if (member.fotoUrl) {
-                modalSpans.foto.src = member.fotoUrl;
+            // Foto vem do cache do Turso
+            const fotoBase64 = photosCache[currentMemberId];
+            if (fotoBase64) {
+                modalSpans.foto.src = fotoBase64;
                 modalSpans.foto.classList.remove('hidden');
             } else {
-                modalSpans.foto.src = ''; // Limpa se não houver foto
                 modalSpans.foto.classList.add('hidden');
             }
 
-            // Preenche os campos de texto
             modalSpans.nome.textContent = member.nome || 'N/A';
             modalSpans.funcao.textContent = member.funcao || 'N/A';
             modalSpans.data_nascimento.textContent = formatarData(member.dataNascimento);
@@ -1195,53 +1027,37 @@
             modalSpans.igreja_anterior.textContent = member.igrejaAnterior || 'N/A';
             modalSpans.cargo_anterior.textContent = member.cargoAnterior || 'N/A';
             
-            // Lógica para campo Cônjuge
             if (member.estadoCivil === 'Casado(a)' && member.conjuge) {
                 modalSpans.conjuge.textContent = member.conjuge;
                 modalSpans.conjugeContainer.classList.remove('hidden');
             } else {
-                modalSpans.conjuge.textContent = '';
                 modalSpans.conjugeContainer.classList.add('hidden');
             }
-
-            // Exibe o modal
             showModal('details-modal');
         }
 
-        /**
-         * [ALTERADO] Renderiza a lista de membros no DOM com foto.
-         */
         function renderMemberList(memberArray) {
             listLoading.classList.add('hidden');
-            memberList.innerHTML = ''; // Limpa a lista atual
+            memberList.innerHTML = '';
 
             if (memberArray.length === 0) {
-                 // Mensagem mais amigável se for filtro
-                const searchTerm = searchInput.value;
-                if (searchTerm) {
-                    memberList.innerHTML = `<p class="text-gray-600 text-center">Nenhum membro encontrado para "${searchTerm}".</p>`;
-                } else {
-                    memberList.innerHTML = '<p class="text-gray-600 text-center">Nenhum membro cadastrado ainda.</p>';
-                }
+                memberList.innerHTML = '<p class="text-gray-600 text-center">Nenhum membro encontrado.</p>';
                 return;
             }
 
             memberArray.forEach((member) => {
                 const memberEl = document.createElement('div');
-                // [NOVO] Card de membro com foto
                 memberEl.className = "bg-white p-4 rounded-lg shadow-md border border-gray-200 flex items-center gap-4";
                 
-                const nome = member.nome || 'Nome não informado';
-                const funcao = member.funcao || 'Sem função';
-                const telefone = member.telefone || 'Sem telefone';
-                const fotoUrl = member.fotoUrl || FOTO_PLACEHOLDER_URL; // Usa o placeholder
+                // Foto vem do cache do Turso ou placeholder
+                const fotoUrl = photosCache[member.id] || FOTO_PLACEHOLDER_URL;
 
                 memberEl.innerHTML = `
-                    <img src="${fotoUrl}" alt="Foto de ${nome}" class="member-list-photo">
+                    <img src="${fotoUrl}" alt="Foto" class="member-list-photo">
                     <div class="flex-grow">
-                        <h3 class="text-xl font-semibold text-blue-700">${nome}</h3>
-                        <p class="text-gray-700 mt-1">${funcao}</p>
-                        <p class="text-sm text-gray-500 mt-1">${telefone}</p>
+                        <h3 class="text-xl font-semibold text-blue-700">${member.nome || 'Sem Nome'}</h3>
+                        <p class="text-gray-700 mt-1">${member.funcao || 'Sem Função'}</p>
+                        <p class="text-sm text-gray-500 mt-1">${member.telefone || 'Sem Tel'}</p>
                     </div>
                     <button data-member-id="${member.id}" class="details-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 flex-shrink-0">
                         Ver Detalhes
@@ -1251,720 +1067,376 @@
             });
         }
         
-        /**
-         * Atualiza o card do Dashboard com o total de membros.
-         */
         function updateDashboard(total) {
             dashboardTotalMembros.textContent = total;
         }
         
-        /**
-         * Processa e renderiza as listas de aniversariantes.
-         */
         function updateAniversariantes(membros) {
             const hoje = new Date();
-            const mesAtual = hoje.getMonth(); // 0-11
-            const anoAtual = hoje.getFullYear();
+            const mesAtual = hoje.getMonth();
             
             aniverMesAtualTitulo.textContent = `Aniversariantes de ${MESES_DO_ANO[mesAtual]}`;
-            
             const grupos = {};
-            for (let i = 0; i < 12; i++) { grupos[i] = []; }
+            for (let i = 0; i < 12; i++) grupos[i] = [];
 
-            // 1. Agrupar membros por mês
             membros.forEach(membro => {
-                const dataNasc = getDateFromInput(membro.dataNascimento);
-                if (dataNasc) {
-                    const mes = dataNasc.getUTCMonth();
-                    grupos[mes].push({
-                        dia: dataNasc.getUTCDate(),
-                        nome: membro.nome,
-                        funcao: membro.funcao || 'Membro'
-                    });
-                }
+                const d = getDateFromInput(membro.dataNascimento);
+                if (d) grupos[d.getUTCMonth()].push({ dia: d.getUTCDate(), nome: membro.nome, funcao: membro.funcao });
             });
 
-            // 2. Ordenar aniversariantes dentro de cada mês pelo dia
-            for (let i = 0; i < 12; i++) {
-                grupos[i].sort((a, b) => a.dia - b.dia);
-            }
+            for (let i = 0; i < 12; i++) grupos[i].sort((a, b) => a.dia - b.dia);
 
-            // 3. Renderizar Mês Atual
             aniverMesAtualLista.innerHTML = "";
             if (grupos[mesAtual].length === 0) {
                 aniverMesAtualLista.innerHTML = `<p class="text-gray-500">Nenhum aniversariante este mês.</p>`;
             } else {
-                grupos[mesAtual].forEach(membro => {
-                    const div = document.createElement('div');
-                    div.className = "py-3 flex items-center space-x-4 border-b border-gray-200 last:border-b-0";
-                    div.innerHTML = `
-                        <div class="font-bold text-blue-600 text-2xl w-10 text-center">${membro.dia}</div>
-                        <div class="flex-1">
-                            <p class="text-base font-medium text-gray-900">${membro.nome}</p>
-                            <p class="text-sm text-gray-500">${membro.funcao}</p>
-                        </div>
-                    `;
-                    aniverMesAtualLista.appendChild(div);
+                grupos[mesAtual].forEach(m => {
+                    aniverMesAtualLista.innerHTML += `
+                        <div class="py-3 flex items-center space-x-4 border-b border-gray-200 last:border-b-0">
+                            <div class="font-bold text-blue-600 text-2xl w-10 text-center">${m.dia}</div>
+                            <div class="flex-1"><p class="font-medium">${m.nome}</p><p class="text-sm text-gray-500">${m.funcao}</p></div>
+                        </div>`;
                 });
             }
 
-            // 4. Renderizar Próximos Meses
             aniverProximosLista.innerHTML = "";
-            let proximosMesesContent = "";
+            let htmlProx = "";
             for (let i = 1; i <= 11; i++) {
-                const proximoMesIndex = (mesAtual + i) % 12;
-                const mes = grupos[proximoMesIndex];
-                
-                if (mes.length > 0) {
-                    let listaHTML = mes.map(membro => {
-                        return `<li class="text-sm text-gray-700 ml-5 list-disc">${membro.dia} - ${membro.nome}</li>`;
-                    }).join('');
-                    
-                    proximosMesesContent += `
-                        <div class="py-2">
-                            <h4 class="font-semibold text-lg text-blue-700">${MESES_DO_ANO[proximoMesIndex]}</h4>
-                            <ul class="mt-2">${listaHTML}</ul>
-                        </div>
-                    `;
+                const idx = (mesAtual + i) % 12;
+                if (grupos[idx].length > 0) {
+                    htmlProx += `<div class="py-2"><h4 class="font-semibold text-lg text-blue-700">${MESES_DO_ANO[idx]}</h4><ul class="mt-2">${grupos[idx].map(m => `<li class="text-sm text-gray-700 ml-5 list-disc">${m.dia} - ${m.nome}</li>`).join('')}</ul></div>`;
                 }
             }
-            aniverProximosLista.innerHTML = proximosMesesContent || `<p class="text-gray-500">Nenhum aniversariante nos próximos meses.</p>`;
+            aniverProximosLista.innerHTML = htmlProx || `<p class="text-gray-500">Nenhum aniversariante próximo.</p>`;
         }
 
-        // Função para filtrar e renderizar a lista
         function handleSearch() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const allMembers = Object.values(membersCache);
-            
-            const filteredMembers = allMembers.filter(member => {
-                return (member.nome || '').toLowerCase().includes(searchTerm);
-            });
-            
-            // Re-sorta os filtrados alfabeticamente
-            filteredMembers.sort((a, b) => {
-                const nameA = a.nome?.toLowerCase() || '';
-                const nameB = b.nome?.toLowerCase() || '';
-                if (nameA < nameB) return -1;
-                if (nameA > nameB) return 1;
-                return 0;
-            });
-            
-            renderMemberList(filteredMembers);
+            const term = searchInput.value.toLowerCase();
+            const all = Object.values(membersCache);
+            const filtered = all.filter(m => (m.nome || '').toLowerCase().includes(term));
+            filtered.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            renderMemberList(filtered);
         }
-        
-        // [NOVO] Função para Gerar Relatório
-        /**
-         * Gera um relatório simples dos membros em uma nova janela para impressão.
-         */
+
         function generateMemberReport() {
-            // Pega os membros do cache
-            const allMembers = Object.values(membersCache);
-
-            if (allMembers.length === 0) {
-                showMessage("Nenhum membro para gerar relatório.", "warning");
-                return;
-            }
-
-            // Ordena por nome
-            allMembers.sort((a, b) => {
-                const nameA = a.nome?.toLowerCase() || '';
-                const nameB = b.nome?.toLowerCase() || '';
-                if (nameA < nameB) return -1;
-                if (nameA > nameB) return 1;
-                return 0;
-            });
-
-            // Abre uma nova janela
-            const reportWindow = window.open('', '_blank');
-            if (!reportWindow) {
-                showMessage("Não foi possível abrir a janela de relatório. Verifique seu bloqueador de pop-ups.", "error");
-                return;
-            }
-
-            // Constrói o HTML do relatório
-            let reportHTML = `
-                <html>
-                <head>
-                    <title>Relatório de Membros - ADCA Capoeira Grande</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h1 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                        th { background-color: #f2f2f2; }
-                        tr:nth-child(even) { background-color: #f9f9f9; }
-                        @media print {
-                            button { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Relatório de Membros</h1>
-                    <p>Total de Membros: ${allMembers.length}</p>
-                    <button onclick="window.print()">Imprimir Relatório</button>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Função/Ministério</th>
-                                <th>Telefone</th>
-                                <th>Email</th>
-                                <th>Data de Nasc.</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            // Adiciona cada membro como uma linha da tabela
-            allMembers.forEach(member => {
-                reportHTML += `
-                    <tr>
-                        <td>${member.nome || 'N/A'}</td>
-                        <td>${member.funcao || 'N/A'}</td>
-                        <td>${member.telefone || 'N/A'}</td>
-                        <td>${member.email || 'N/A'}</td>
-                        <td>${formatarData(member.dataNascimento)}</td>
-                    </tr>
-                `;
-            });
-
-            reportHTML += `
-                        </tbody>
-                    </table>
-                    <p style="text-align: right; font-size: 0.8em; margin-top: 20px;">
-                        Relatório gerado em: ${new Date().toLocaleString('pt-BR')}
-                    </p>
-                </body>
-                </html>
-            `;
-
-            // Escreve o HTML na nova janela
-            reportWindow.document.write(reportHTML);
-            reportWindow.document.close();
+            const all = Object.values(membersCache);
+            if (all.length === 0) { showMessage("Sem dados para relatório.", "warning"); return; }
+            all.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            
+            const w = window.open('', '_blank');
+            let html = `<html><head><title>Relatório</title><style>body{font-family:sans-serif}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}</style></head><body><h1>Relatório de Membros</h1><table><thead><tr><th>Nome</th><th>Função</th><th>Telefone</th><th>Email</th></tr></thead><tbody>`;
+            all.forEach(m => html += `<tr><td>${m.nome}</td><td>${m.funcao}</td><td>${m.telefone}</td><td>${m.email}</td></tr>`);
+            html += `</tbody></table><button onclick="window.print()">Imprimir</button></body></html>`;
+            w.document.write(html);
+            w.document.close();
         }
 
-
-        /**
-         * Inicia o listener em tempo real (onSnapshot) para a coleção de membros.
-         */
         function listenForMembers() {
             if (!membersCollectionRef) return;
-            if (unsubscribeMembers) unsubscribeMembers(); // Cancela listener anterior, se houver
+            if (unsubscribeMembers) unsubscribeMembers();
             
             listLoading.classList.remove('hidden');
+            // Carrega fotos do Turso em paralelo
+            fetchAllPhotosFromTurso();
+
             const q = query(membersCollectionRef);
-
             unsubscribeMembers = onSnapshot(q, (snapshot) => {
-                console.log("Recebido snapshot da coleção de membros.");
-                membersCache = {}; // Limpa o cache
-                let totalMembros = 0;
-                
-                const membrosParaAniversario = [];
-                
+                membersCache = {};
+                let total = 0;
+                const aniversariantes = [];
                 snapshot.docs.forEach(doc => {
-                    const memberData = { id: doc.id, ...doc.data() };
-                    membersCache[doc.id] = memberData;
-                    membrosParaAniversario.push(memberData); // Adiciona para processamento
-                    totalMembros++;
+                    const data = { id: doc.id, ...doc.data() };
+                    membersCache[doc.id] = data;
+                    aniversariantes.push(data);
+                    total++;
                 });
-                
-                // Atualiza o dashboard e aniversariantes
-                updateDashboard(totalMembros);
-                updateAniversariantes(membrosParaAniversario);
-                
-                // Chama o handleSearch, que vai ler o cache
-                // e aplicar o filtro (ou mostrar todos se o filtro estiver vazio)
+                updateDashboard(total);
+                updateAniversariantes(aniversariantes);
                 handleSearch();
-
             }, (error) => {
-                console.error("Erro ao carregar membros: ", error);
-                if (error.code === 'permission-denied' || error.code === 'unauthenticated') {
-                     showMessage("Sessão expirada ou sem permissão. Faça login novamente.", "error");
-                     signOut(auth); // Força o logout para mostrar a tela de login
-                } else {
-                    showMessage("Erro ao carregar lista de membros.", "error");
-                }
+                console.error(error);
                 listLoading.classList.add('hidden');
-                // Limpa dashboard e aniversariantes em caso de erro
-                dashboardTotalMembros.textContent = "Erro";
-                aniverMesAtualLista.innerHTML = `<p class="text-red-500">Erro ao carregar dados.</p>`;
-                aniverProximosLista.innerHTML = `<p class="text-red-500">Erro ao carregar dados.</p>`;
             });
         }
 
-        /**
-         * [ALTERADO] Manipula o envio do formulário de cadastro, incluindo fotoUrl.
-         */
         async function handleFormSubmit(e) {
             e.preventDefault();
-            if (!userId) { 
-                showMessage("Você precisa estar logado para cadastrar um membro.", "error");
-                return;
-            }
+            if (!userId) return;
 
             submitButton.disabled = true;
-            submitButtonText.textContent = 'Cadastrando...';
             const spinner = document.createElement('div');
             spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
+            submitButton.textContent = ' Salvando...';
             submitButton.prepend(spinner);
 
             try {
                 const formData = new FormData(memberForm);
                 
-                // Mapeia os IDs do formulário (snake_case) para as chaves do banco de dados (camelCase)
+                // Objeto para Firebase (Texto)
                 const newMember = {
                     createdAt: new Date(),
-                    nome: formData.get('nome') || null,
-                    funcao: formData.get('funcao') || null,
-                    fotoUrl: formData.get('foto_url') || null, // [NOVO]
-                    dataNascimento: formData.get('data_nascimento') || null,
-                    telefone: formData.get('telefone') || null,
-                    email: formData.get('email') || null,
-                    cpf: formData.get('cpf') || null,
-                    rg: formData.get('rg') || null,
-                    naturalidade: formData.get('naturalidade') || null,
-                    endereco: formData.get('endereco') || null,
-                    nomePai: formData.get('nome_pai') || null,
-                    nomeMae: formData.get('nome_mae') || null,
-                    estadoCivil: formData.get('estado_civil') || null,
+                    nome: formData.get('nome'),
+                    funcao: formData.get('funcao'),
+                    dataNascimento: formData.get('data_nascimento'),
+                    telefone: formData.get('telefone'),
+                    email: formData.get('email'),
+                    cpf: formData.get('cpf'),
+                    rg: formData.get('rg'),
+                    naturalidade: formData.get('naturalidade'),
+                    endereco: formData.get('endereco'),
+                    nomePai: formData.get('nome_pai'),
+                    nomeMae: formData.get('nome_mae'),
+                    estadoCivil: formData.get('estado_civil'),
                     conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null,
-                    profissao: formData.get('profissao') || null,
-                    escolaridade: formData.get('escolaridade') || null,
-                    dataBatismo: formData.get('data_batismo') || null,
-                    dataChegada: formData.get('data_chegada') || null,
-                    igrejaAnterior: formData.get('igreja_anterior') || null,
-                    cargoAnterior: formData.get('cargo_anterior') || null
+                    profissao: formData.get('profissao'),
+                    escolaridade: formData.get('escolaridade'),
+                    dataBatismo: formData.get('data_batismo'),
+                    dataChegada: formData.get('data_chegada'),
+                    igrejaAnterior: formData.get('igreja_anterior'),
+                    cargoAnterior: formData.get('cargo_anterior'),
+                    hasPhoto: false // Flag simples
                 };
 
-                // Validação básica
-                if (!newMember.nome || !newMember.email) {
-                    showMessage("Nome e E-mail são campos obrigatórios.", "warning");
-                    throw new Error("Validation failed");
+                // 1. Salva no Firebase para gerar ID
+                const docRef = await addDoc(membersCollectionRef, newMember);
+                const memberId = docRef.id;
+
+                // 2. Processa a Foto para o Turso
+                const file = fotoInputCadastro.files[0];
+                if (file) {
+                    const base64 = await resizeAndCompressImage(file);
+                    await savePhotoToTurso(memberId, base64);
+                    // Opcional: Atualizar flag no firebase
+                    await updateDoc(docRef, { hasPhoto: true });
                 }
 
-                const docRef = await addDoc(membersCollectionRef, newMember);
-                console.log("Membro cadastrado com ID: ", docRef.id);
-                
-                // Registrar Log de Criação
-                await registrarLog("Membro Criado", {
-                    membroId: docRef.id,
-                    nome: newMember.nome
-                });
-                
-                showMessage("Membro cadastrado com sucesso!", "success");
+                await registrarLog("Membro Criado", { membroId: memberId, nome: newMember.nome });
+                showMessage("Membro cadastrado!", "success");
                 memberForm.reset();
-                conjugeField.classList.add('hidden'); // Esconde campo cônjuge após reset
-                // fotoPreviewCadastro.classList.add('hidden'); // REMOVIDO
-                // fotoPreviewCadastro.src = ''; // REMOVIDO
+                conjugeField.classList.add('hidden');
+                fotoPreviewCadastro.classList.remove('visible');
 
             } catch (error) {
-                console.error("Erro ao adicionar membro: ", error);
-                if (error.message !== "Validation failed") {
-                    showMessage("Erro ao cadastrar membro. Tente novamente.", "error");
-                }
+                console.error(error);
+                showMessage("Erro ao cadastrar.", "error");
             } finally {
                 submitButton.disabled = false;
-                submitButtonText.textContent = 'Cadastrar Membro';
-                if(submitButton.firstChild) {
-                    submitButton.removeChild(submitButton.firstChild);
-                }
+                submitButton.textContent = 'Cadastrar Membro';
             }
         }
         
-        /**
-         * [ALTERADO] Manipula o envio do formulário de EDIÇÃO, incluindo fotoUrl.
-         */
         async function handleEditSubmit(e) {
             e.preventDefault();
             if (!userId || !currentMemberId) return;
+            const pwd = document.getElementById('edit-password').value;
+            if (!pwd) { editError.textContent = 'Senha obrigatória.'; return; }
 
-            const password = document.getElementById('edit-password').value;
-            if (!password) {
-                editError.textContent = 'A senha é obrigatória para salvar.';
-                return;
-            }
-
-            // Ativa o loading
             editSubmitButton.disabled = true;
-            editSubmitButtonText.textContent = 'Salvando...';
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
-            editSubmitButton.prepend(spinner);
-            editError.textContent = '';
+            editSubmitButton.textContent = ' Salvando...';
 
             try {
-                // 1. Reautenticar
-                await reauthenticateUser(password);
+                await reauthenticateUser(pwd);
 
-                // Captura os dados antigos ANTES de coletar os novos
-                const membroOriginal = membersCache[currentMemberId];
-
-                // 2. Coletar dados do formulário
                 const formData = new FormData(editForm);
-                const updatedMember = {
-                    nome: formData.get('nome') || null,
-                    funcao: formData.get('funcao') || null,
-                    fotoUrl: formData.get('foto_url') || null, // [NOVO]
-                    dataNascimento: formData.get('data_nascimento') || null,
-                    telefone: formData.get('telefone') || null,
-                    email: formData.get('email') || null,
-                    cpf: formData.get('cpf') || null,
-                    rg: formData.get('rg') || null,
-                    naturalidade: formData.get('naturalidade') || null,
-                    endereco: formData.get('endereco') || null,
-                    nomePai: formData.get('nome_pai') || null,
-                    nomeMae: formData.get('nome_mae') || null,
-                    estadoCivil: formData.get('estado_civil') || null,
+                const updatedData = {
+                    nome: formData.get('nome'),
+                    funcao: formData.get('funcao'),
+                    dataNascimento: formData.get('data_nascimento'),
+                    telefone: formData.get('telefone'),
+                    email: formData.get('email'),
+                    cpf: formData.get('cpf'),
+                    rg: formData.get('rg'),
+                    naturalidade: formData.get('naturalidade'),
+                    endereco: formData.get('endereco'),
+                    nomePai: formData.get('nome_pai'),
+                    nomeMae: formData.get('nome_mae'),
+                    estadoCivil: formData.get('estado_civil'),
                     conjuge: (formData.get('estado_civil') === 'Casado(a)') ? formData.get('conjuge') : null,
-                    profissao: formData.get('profissao') || null,
-                    escolaridade: formData.get('escolaridade') || null,
-                    dataBatismo: formData.get('data_batismo') || null,
-                    dataChegada: formData.get('data_chegada') || null,
-                    igrejaAnterior: formData.get('igreja_anterior') || null,
-                    cargoAnterior: formData.get('cargo_anterior') || null,
-                    updatedAt: new Date() // Adiciona um timestamp de atualização
+                    profissao: formData.get('profissao'),
+                    escolaridade: formData.get('escolaridade'),
+                    dataBatismo: formData.get('data_batismo'),
+                    dataChegada: formData.get('data_chegada'),
+                    igrejaAnterior: formData.get('igreja_anterior'),
+                    cargoAnterior: formData.get('cargo_anterior'),
+                    updatedAt: new Date()
                 };
 
-                // 3. Atualizar no Firestore
+                // 1. Atualiza Firebase
                 const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
-                await updateDoc(docRef, updatedMember);
-                
-                // Registrar Log de Atualização
-                await registrarLog("Membro Atualizado", {
-                    membroId: currentMemberId,
-                    nome: updatedMember.nome,
-                    dadosAntigos: membroOriginal,
-                    dadosNovos: updatedMember
-                });
+                await updateDoc(docRef, updatedData);
 
-                // 4. Sucesso
-                showMessage("Membro atualizado com sucesso!", "success");
+                // 2. Atualiza Foto no Turso se houver nova
+                const file = fotoInputEdicao.files[0];
+                if (file) {
+                    const base64 = await resizeAndCompressImage(file);
+                    await savePhotoToTurso(currentMemberId, base64);
+                }
+
+                await registrarLog("Membro Editado", { membroId: currentMemberId });
+                showMessage("Editado com sucesso!", "success");
                 hideModal(editModal);
-                currentMemberId = null; // Limpa o ID selecionado
 
             } catch (error) {
-                console.error("Erro ao atualizar membro:", error);
-                editError.textContent = error.message; // Exibe "Senha incorreta." ou outro erro
+                editError.textContent = error.message;
             } finally {
-                // Desativa o loading
                 editSubmitButton.disabled = false;
-                editSubmitButtonText.textContent = 'Salvar Alterações';
-                if(editSubmitButton.firstChild) {
-                    editSubmitButton.removeChild(editSubmitButton.firstChild);
-                }
+                editSubmitButton.textContent = 'Salvar Alterações';
             }
         }
         
-        /**
-         * Manipula o envio do formulário de EXCLUSÃO.
-         */
         async function handleDeleteSubmit(e) {
             e.preventDefault();
             if (!userId || !currentMemberId) return;
+            const pwd = document.getElementById('delete-password').value;
+            if (!pwd) { deleteError.textContent = 'Senha obrigatória.'; return; }
 
-            const password = document.getElementById('delete-password').value;
-            if (!password) {
-                deleteError.textContent = 'A senha é obrigatória para excluir.';
-                return;
-            }
-            
-            // Ativa o loading
             deleteSubmitButton.disabled = true;
-            deleteSubmitButtonText.textContent = 'Excluindo...';
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner h-5 w-5 border-2 border-white rounded-full';
-            deleteSubmitButton.prepend(spinner);
-            deleteError.textContent = '';
+            deleteSubmitButton.textContent = ' Excluindo...';
 
             try {
-                // 1. Reautenticar
-                await reauthenticateUser(password);
+                await reauthenticateUser(pwd);
 
-                // Captura os dados que serão excluídos
-                const membroExcluido = membersCache[currentMemberId];
+                // 1. Exclui do Firebase
+                await deleteDoc(doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId));
+                
+                // 2. Exclui do Turso
+                await deletePhotoFromTurso(currentMemberId);
 
-                // 2. Excluir do Firestore
-                const docRef = doc(db, "dadosIgreja", "ADCA-CG", "membros", currentMemberId);
-                await deleteDoc(docRef);
-
-                // Registrar Log de Exclusão
-                await registrarLog("Exclusão Membro", {
-                    membroId: currentMemberId,
-                    detalhesExcluidos: membroExcluido
-                });
-
-                // 3. Sucesso
-                showMessage("Membro excluído com sucesso!", "success");
+                await registrarLog("Membro Excluído", { membroId: currentMemberId });
+                showMessage("Excluído!", "success");
                 hideModal(deleteModal);
-                currentMemberId = null; // Limpa o ID selecionado
 
             } catch (error) {
-                console.error("Erro ao excluir membro:", error);
-                deleteError.textContent = error.message; // Exibe "Senha incorreta." ou outro erro
+                deleteError.textContent = error.message;
             } finally {
-                // Desativa o loading
                 deleteSubmitButton.disabled = false;
-                deleteSubmitButtonText.textContent = 'Excluir Permanentemente';
-                if(deleteSubmitButton.firstChild) {
-                    deleteSubmitButton.removeChild(deleteSubmitButton.firstChild);
-                }
+                deleteSubmitButton.textContent = 'Excluir Permanentemente';
             }
         }
 
-        /**
-         * [ALTERADO] Alterna a visibilidade das abas e inicializa o Postimages se necessário.
-         */
         function switchTab(targetId) {
-            // Esconde todos os conteúdos
-            document.querySelectorAll('.app-content-tab').forEach(tab => {
-                tab.style.display = 'none'; // Usa display: none conforme seu CSS
-            });
-            // Remove 'active' de todos os botões
-            tabButtons.forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // Mostra o conteúdo alvo
-            const content = document.getElementById(targetId);
-            if (content) {
-                content.style.display = 'block'; // Usa display: block conforme seu CSS
-            }
-            // Adiciona 'active' ao botão alvo
-            const activeButton = document.querySelector(`.app-tab-button[data-tab="${targetId}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active');
-            }
-
-            // Lógica de reinicialização do Postimages REMOVIDA
+            document.querySelectorAll('.app-content-tab').forEach(tab => tab.style.display = 'none');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            document.getElementById(targetId).style.display = 'block';
+            document.querySelector(`.app-tab-button[data-tab="${targetId}"]`).classList.add('active');
         }
 
-        /**
-         * Função principal de inicialização.
-         */
+        // Preview de Imagens
+        function setupImagePreviews() {
+            fotoInputCadastro.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        fotoPreviewCadastro.src = ev.target.result;
+                        fotoPreviewCadastro.classList.add('visible');
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    fotoPreviewCadastro.classList.remove('visible');
+                }
+            });
+            
+            fotoInputEdicao.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        fotoPreviewEdicao.src = ev.target.result;
+                        fotoPreviewEdicao.classList.add('visible');
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    fotoPreviewEdicao.classList.remove('visible');
+                }
+            });
+        }
+
         async function main() {
-            try {
-                // Inicializa Firebase
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                // setLogLevel('Debug'); // Descomente para mais logs
-                console.log("Firebase App inicializado. Projeto:", firebaseConfig.projectId);
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // Inicializa Turso
+            await initTurso();
 
-                // Gerencia a autenticação
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        // Usuário ESTÁ logado
-                        userId = user.uid;
-                        userEmailDisplay.textContent = user.email;
-                        userEmailDisplay.classList.remove('hidden');
-                        console.log("Usuário autenticado:", userId);
+            setupImagePreviews();
 
-                        // Remove o 'flex' do body para alinhar o app no topo
-                        document.body.classList.remove('logged-out');
-
-                        // Esconde login, mostra app
-                        authScreen.style.display = 'none';
-                        appContent.style.display = 'block';
-
-                        // Define a referência da coleção (SÓ DEPOIS de logar)
-                        membersCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "membros");
-                        console.log("Caminho da coleção:", membersCollectionRef.path);
-                        
-                        // Define a aba inicial
-                        switchTab('dashboard');
-
-                        // Começa a ouvir os dados
-                        listenForMembers();
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    userEmailDisplay.textContent = user.email;
+                    userEmailDisplay.classList.remove('hidden');
+                    document.body.classList.remove('logged-out');
+                    authScreen.style.display = 'none';
+                    appContent.style.display = 'block';
                     
-                    } else {
-                        // Usuário NÃO está logado
-                        console.log("Nenhum usuário. Exibindo tela de login.");
-                        userId = null;
-                        userEmailDisplay.classList.add('hidden');
-                        
-                        // Adiciona 'flex' ao body para centralizar o login
-                        document.body.classList.add('logged-out');
-                        
-                        // Esconde app, mostra login
-                        authScreen.style.display = 'block';
-                        appContent.style.display = 'none';
+                    membersCollectionRef = collection(db, "dadosIgreja", "ADCA-CG", "membros");
+                    switchTab('dashboard');
+                    listenForMembers();
+                } else {
+                    userId = null;
+                    document.body.classList.add('logged-out');
+                    authScreen.style.display = 'block';
+                    appContent.style.display = 'none';
+                    if (unsubscribeMembers) unsubscribeMembers();
+                }
+            });
 
-                        // Para de ouvir dados se estava ouvindo
-                        if (unsubscribeMembers) {
-                            unsubscribeMembers();
-                            unsubscribeMembers = null;
-                            console.log("Listener de membros interrompido.");
-                        }
-                        // Limpa dados da tela
-                        memberList.innerHTML = '';
-                        membersCache = {};
-                        dashboardTotalMembros.innerHTML = `<div class="spinner h-10 w-10 border-4 border-blue-500 rounded-full"></div>`;
-                        aniverMesAtualLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>`;
-                        aniverProximosLista.innerHTML = `<div class="spinner h-8 w-8 border-4 border-blue-500 rounded-full"></div>`;
-                        
-                        // Fecha todos os modais caso estejam abertos
-                        hideModal(detailsModal);
-                        hideModal(editModal);
-                        hideModal(deleteModal);
-                    }
-                });
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                loginError.textContent = '';
+                loginButton.disabled = true;
+                try {
+                    await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value);
+                } catch (err) {
+                    loginError.textContent = 'Erro no login.';
+                } finally {
+                    loginButton.disabled = false;
+                }
+            });
 
-                // --- Event Listeners ---
+            logoutButton.addEventListener('click', () => signOut(auth));
+            tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+            
+            memberForm.addEventListener('submit', handleFormSubmit);
+            editForm.addEventListener('submit', handleEditSubmit);
+            deleteForm.addEventListener('submit', handleDeleteSubmit);
+            
+            estadoCivilSelect.addEventListener('change', (e) => e.target.value === 'Casado(a)' ? conjugeField.classList.remove('hidden') : conjugeField.classList.add('hidden'));
+            editEstadoCivilSelect.addEventListener('change', (e) => e.target.value === 'Casado(a)' ? editConjugeField.classList.remove('hidden') : editConjugeField.classList.add('hidden'));
+            
+            searchForm.addEventListener('submit', (e) => { e.preventDefault(); handleSearch(); });
+            clearSearchButton.addEventListener('click', () => { searchInput.value = ''; handleSearch(); });
+            reportButton.addEventListener('click', generateMemberReport);
 
-                // Listener do Formulário de Login
-                loginForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    loginError.textContent = ''; // Limpa erro anterior
-                    
-                    const email = document.getElementById('login-email').value;
-                    const password = document.getElementById('login-password').value;
+            memberList.addEventListener('click', (e) => {
+                const btn = e.target.closest('.details-button');
+                if (btn) {
+                    currentMemberId = btn.dataset.memberId;
+                    showDetailsModal();
+                }
+            });
 
-                    // Mostra estado de carregamento
-                    loginButton.disabled = true;
-                    loginButtonText.textContent = 'Entrando...';
-                    const spinner = document.createElement('div');
-                    spinner.className = 'spinner'; // Usa a classe .spinner do seu CSS
-                    loginButton.prepend(spinner);
-
-                    try {
-                        await signInWithEmailAndPassword(auth, email, password);
-                        // Sucesso! onAuthStateChanged vai cuidar de mostrar o app
-                    } catch (error) {
-                        console.error("Erro no login:", error.code);
-                        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                            loginError.textContent = 'Email ou senha inválidos.';
-                        } else {
-                            loginError.textContent = 'Erro ao tentar fazer login.';
-                        }
-                    } finally {
-                        // Remove estado de carregamento
-                        loginButton.disabled = false;
-                        loginButtonText.textContent = 'Entrar';
-                        if (loginButton.firstChild && loginButton.firstChild.classList.contains('spinner')) {
-                            loginButton.removeChild(loginButton.firstChild);
-                        }
-                    }
-                });
-
-                // Listener do Botão de Logout
-                logoutButton.addEventListener('click', async () => {
-                    try {
-                        await signOut(auth);
-                        // Sucesso! onAuthStateChanged vai cuidar de mostrar o login
-                    } catch (error) {
-                        console.error("Erro ao sair:", error);
-                        showMessage("Erro ao tentar sair.", "error");
-                    }
-                });
-                
-                // Abas
-                tabButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        // 'tab-btn-cadastro' -> 'cadastro'
-                        const tabId = button.dataset.tab;
-                        switchTab(tabId);
-                    });
-                });
-
-                // Formulário de Cadastro
-                memberForm.addEventListener('submit', handleFormSubmit);
-                estadoCivilSelect.addEventListener('change', (e) => {
-                    if (e.target.value === 'Casado(a)') {
-                        conjugeField.classList.remove('hidden');
-                    } else {
-                        conjugeField.classList.add('hidden');
-                    }
-                });
-
-                // Formulário de Edição
-                editForm.addEventListener('submit', handleEditSubmit);
-                editEstadoCivilSelect.addEventListener('change', (e) => {
-                    if (e.target.value === 'Casado(a)') {
-                        editConjugeField.classList.remove('hidden');
-                    } else {
-                        editConjugeField.classList.add('hidden');
-                    }
-                });
-                
-                // Formulário de Exclusão
-                deleteForm.addEventListener('submit', handleDeleteSubmit);
-                
-                // [NOVO] Listener da Barra de Pesquisa
-                searchForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    handleSearch();
-                });
-
-                clearSearchButton.addEventListener('click', () => {
-                    searchInput.value = '';
-                    handleSearch(); // Chama a pesquisa com campo vazio (mostra todos)
-                });
-                
-                // [NOVO] Listener do Botão de Relatório
-                reportButton.addEventListener('click', generateMemberReport);
-
-                // Lista de Membros (Delegação de Eventos para Modal)
-                memberList.addEventListener('click', (e) => {
-                    const detailsButton = e.target.closest('.details-button');
-                    if (detailsButton) {
-                        currentMemberId = detailsButton.dataset.memberId; // Salva o ID
-                        const memberData = membersCache[currentMemberId];
-                        if (memberData) {
-                            showDetailsModal();
-                        } else {
-                            console.warn("Não foi possível encontrar dados do membro no cache para o ID:", currentMemberId);
-                            showMessage("Erro ao carregar detalhes.", "error");
-                        }
-                    }
-                });
-                
-                // Botões do Modal de Detalhes
-                modalEditBtn.addEventListener('click', () => {
-                    const member = membersCache[currentMemberId];
-                    if (member) {
-                        populateEditForm(member);
-                        hideModal(detailsModal);
-                        showModal('edit-modal');
-                        
-                        // Lógica de reinicialização do Postimages REMOVIDA
-                    }
-                });
-                
-                modalDeleteBtn.addEventListener('click', () => {
-                    deleteError.textContent = ''; // Limpa erro anterior
-                    document.getElementById('delete-password').value = ''; // Limpa senha
+            modalEditBtn.addEventListener('click', () => {
+                if (membersCache[currentMemberId]) {
+                    populateEditForm(membersCache[currentMemberId]);
                     hideModal(detailsModal);
-                    showModal('delete-modal');
-                });
+                    showModal('edit-modal');
+                }
+            });
 
-                // Listeners para fechar Modais
-                allCloseModalButtons.forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const modal = e.target.closest('.modal');
-                        hideModal(modal);
-                    });
-                });
-                
-                // Fecha modal ao clicar no backdrop (fundo)
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.addEventListener('click', (e) => {
-                        // Se o clique foi no próprio modal (backdrop) e não no content
-                        if (e.target === modal) {
-                            hideModal(modal);
-                        }
-                    });
-                });
+            modalDeleteBtn.addEventListener('click', () => {
+                document.getElementById('delete-password').value = '';
+                deleteError.textContent = '';
+                hideModal(detailsModal);
+                showModal('delete-modal');
+            });
 
-
-            } catch (e) {
-                console.error("Erro crítico na inicialização do Firebase:", e);
-                document.body.innerHTML = `<div class="p-8 text-red-600">Erro crítico ao conectar. Verifique o console.</div>`;
-            }
+            allCloseModalButtons.forEach(btn => btn.addEventListener('click', (e) => hideModal(e.target.closest('.modal'))));
         }
 
-        // Inicia a aplicação quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', main);
-
     </script>
 </body>
 </html>
